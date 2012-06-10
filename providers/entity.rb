@@ -23,15 +23,9 @@ end
 
 
 def load_current_resource
-  @current_resource = nil
-  if node[:cloud_monitoring][:entity_id] then
-    @current_resource = cm.view[node[:cloud_monitoring][:entity_id]]
-  end
+  @current_resource = get_entity_by_id node[:cloud_monitoring][:entity_id]
   if @current_resource == nil then
-    possible = view.select {|key, value| value.label === @new_resource.name}
-    if !possible.empty? then
-      @current_resource = possible.values.first
-      node.set[:cloud_monitoring][:entity_id] = @current_resource.identity
-    end
+    @current_resource = get_entity_by_name @new_resource.name
+    node.set[:cloud_monitoring][:entity_id] = @current_resource.identity unless @current_resource.nil?
   end
 end

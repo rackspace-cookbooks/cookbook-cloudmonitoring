@@ -28,5 +28,36 @@ module Rackspace
       cm
       @@view
     end
+
+    def get_entity_by_id(id)
+      view[id]
+    end
+
+    def get_entity_by_name(name)
+      possible = view.select {|key, value| value.label === name}
+      if !possible.empty? then
+        possible.values.first
+      else
+        nil
+      end
+    end
+
+    def get_check_by_id(entity_id, id)
+      chk = view[entity_id].checks.filter { |x| x.identity === id }
+      if !chk.empty? then
+        chk.first
+      else
+        nil
+      end
+    end
+
+    def get_check_by_name(entity_id, name)
+      possible = view[entity_id].checks.filter {|x| x.label === name}
+      if !possible.empty? then
+        possible.values.first
+      else
+        nil
+      end
+    end
   end
 end

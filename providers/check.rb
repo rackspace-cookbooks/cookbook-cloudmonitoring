@@ -1,18 +1,18 @@
 include Rackspace::CloudMonitoring
 
 action :create do
-  checks = cm.checks.new(:label => new_resource.label, :type => new_resource.type,
-                         :metadata => new_resource.metadata, :agent_id => new_resource.agent_id)
+  check = cm.checks.new(:label => new_resource.label, :type => new_resource.type, :details => new_resource.details,
+                        :metadata => new_resource.metadata)
   if @current_resource.nil? then
-    entity.save
+    check.save
     new_resource.updated_by_last_action(true)
     clear
   else
     # Compare attributes
-    if !entity.compare? @current_resource then
-      # It's different
-      entity.id = @current_resource.id
-      entity.save
+    if !check.compare? @current_resource then
+      # It's different issue and update
+      check.id = @current_resource.id
+      check.save
       new_resource.updated_by_last_action(true)
       clear
     else
@@ -23,15 +23,10 @@ end
 
 
 def load_current_resource
-  @current_resource = nil
-  if node[:cloud_monitoring][:entity_id] then
-    @current_resource = cm.view[node[:cloud_monitoring][:entity_id]]
-  end
+  @entity = get_entity_by_id @new_resource.entity_id
+  @current_resource = get_check_by_id node[:cloud_monitoring][:checks][@new_resource.name]
   if @current_resource == nil then
-    possible = view.select {|key, value| value.label === @new_resource.name}
-    if !possible.empty? then
-      @current_resource = possible.values.first
-      node.set[:cloud_monitoring][:entity_id] = @current_resource.identity
-    end
+    @current_resource = get_check_by_name @entity.id, @new_resource.name
+    node.set[:cloud_monitoring][:checks][@new_resource.name] = @current_resource.identity unless @current_resource.nil?
   end
 end

@@ -11,3 +11,4 @@ attribute :period, :kind_of => Integer
 attribute :timeout, :kind_of => Integer
 attribute :disabled, :kind_of => [TrueClass, FalseClass]
 attribute :monitoring_zones_poll, :kind_of => Array
+attribute :entity_id, :kind_of => String
