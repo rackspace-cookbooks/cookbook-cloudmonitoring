@@ -43,7 +43,7 @@ module Rackspace
     end
 
     def get_check_by_id(entity_id, id)
-      chk = view[entity_id].checks.filter { |x| x.identity === id }
+      chk = view[entity_id].checks.select { |x| x.identity === id }
       if !chk.empty? then
         chk.first
       else
@@ -52,9 +52,9 @@ module Rackspace
     end
 
     def get_check_by_name(entity_id, name)
-      possible = view[entity_id].checks.filter {|x| x.label === name}
+      possible = view[entity_id].checks.select {|x| x.label === name}
       if !possible.empty? then
-        possible.values.first
+        possible.first
       else
         nil
       end

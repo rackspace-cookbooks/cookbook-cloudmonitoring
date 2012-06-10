@@ -17,3 +17,5 @@
 # limitations under the License.
 #
 default['cloud_monitoring']['rackspace-monitoring-version'] = '0.1.2'
+default['cloud_monitoring'][:checks] = {}
+default['cloud_monitoring'][:alarms] = {}
