@@ -53,3 +53,7 @@ end
 This operation is idempotent, and will select the node based on the name of the resource, which maps to the label of the
 entity.  If an attribute of the resource changes the provider will issue a `PUT` instead of a `POST` to update the
 resource instead of creating another one.
+
+This will set an attribute on the node `node[:cloud\_monitoring][:entity\_id]`.  This attribute will be saved in the
+chef server.  It is bi-directional, it can re-attach your cloud monitoring entities to your chef node based on the
+label.  Keep in mind nothing is removed unless explicitly told so, which is idiomatic chef.
