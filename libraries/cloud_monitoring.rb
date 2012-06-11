@@ -16,26 +16,21 @@ module Rackspace
       @@cm
     end
 
+    def tokens
+      @@tokens ||= Hash[cm.agent_tokens.all.map {|x| [x.identity, x]}]
+    end
+
     def clear
       @@view = nil
+    end
+
+    def clear_tokens
+      @@tokens = nil
     end
 
     def view
       cm
       @@view
-    end
-
-    def get_entity_by_id(id)
-      view[id]
-    end
-
-    def get_entity_by_name(name)
-      possible = view.select {|key, value| value.label === name}
-      if !possible.empty? then
-        possible.values.first
-      else
-        nil
-      end
     end
 
     def get_type(entity_id, type)
@@ -69,20 +64,48 @@ module Rackspace
       end
     end
 
-    def get_check_by_id(entity_id, id)
-      get_child_by_id entity_id, id, 'checks'
+    #####
+    # Specific objects
+    def get_entity_by_id(id)
+      view[id]
     end
 
-    def get_alarm_by_id(entity_id, id)
-      get_child_by_id entity_id, id, 'alarms'
+    def get_entity_by_name(name)
+      possible = view.select {|key, value| value.label === name}
+      if !possible.empty? then
+        possible.values.first
+      else
+        nil
+      end
+    end
+
+    def get_check_by_id(entity_id, id)
+      get_child_by_id entity_id, id, 'checks'
     end
 
     def get_check_by_name(entity_id, name)
       get_child_by_name entity_id, name, 'checks'
     end
 
+    def get_alarm_by_id(entity_id, id)
+      get_child_by_id entity_id, id, 'alarms'
+    end
+
     def get_alarm_by_name(entity_id, name)
       get_child_by_name entity_id, name, 'alarms'
+    end
+
+    def get_token_by_id(token)
+      tokens[token]
+    end
+
+    def get_token_by_name(name)
+      possible = tokens.select {|key, value| value.label === name}
+      if !possible.empty? then
+        possible.values.first
+      else
+        nil
+      end
     end
   end
 end
