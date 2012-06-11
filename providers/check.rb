@@ -1,7 +1,7 @@
 include Rackspace::CloudMonitoring
 
 action :create do
-  check = @entity.checks.new(:label => new_resource.label, :type => new_resource.check_type, :details => new_resource.details,
+  check = @entity.checks.new(:label => new_resource.label, :type => new_resource.type, :details => new_resource.details,
                              :metadata => new_resource.metadata, :monitoring_zones_poll => new_resource.monitoring_zones_poll,
                              :target_alias => new_resource.target_alias, :target_hostname => new_resource.target_hostname,
                              :target_resolver => new_resource.target_resolver)

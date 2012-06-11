@@ -42,22 +42,51 @@ module Rackspace
       end
     end
 
-    def get_check_by_id(entity_id, id)
-      chk = view[entity_id].checks.select { |x| x.identity === id }
-      if !chk.empty? then
-        chk.first
+    def get_type(entity_id, type)
+      if type == 'checks' then
+        view[entity_id].checks
+      elsif type == 'alarms' then
+        view[entity_id].alarms
+      else
+        raise Exception, "type #{type} not found."
+      end
+    end
+
+    def get_child_by_id(entity_id, id, type)
+      objs = get_type entity_id, type
+      obj = objs.select { |x| x.identity === id }
+      if !obj.empty? then
+        obj.first
+      else
+        nil
+      end
+
+    end
+
+    def get_child_by_name(entity_id, name, type)
+      objs = get_type entity_id, type
+      obj = objs.select {|x| x.label === name}
+      if !obj.empty? then
+        obj.first
       else
         nil
       end
     end
 
+    def get_check_by_id(entity_id, id)
+      get_child_by_id entity_id, id, 'checks'
+    end
+
+    def get_alarm_by_id(entity_id, id)
+      get_child_by_id entity_id, id, 'alarms'
+    end
+
     def get_check_by_name(entity_id, name)
-      possible = view[entity_id].checks.select {|x| x.label === name}
-      if !possible.empty? then
-        possible.first
-      else
-        nil
-      end
+      get_child_by_name entity_id, name, 'checks'
+    end
+
+    def get_alarm_by_name(entity_id, name)
+      get_child_by_name entity_id, name, 'alarms'
     end
   end
 end

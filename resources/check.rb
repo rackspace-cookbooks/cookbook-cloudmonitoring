@@ -1,7 +1,7 @@
 actions :create, :enable, :disable, :delete
 
 attribute :label, :kind_of => String, :name_attribute => true
-attribute :check_type, :kind_of => String
+attribute :type, :kind_of => String
 attribute :details, :kind_of => Hash
 attribute :metadata, :kind_of => Hash
 attribute :target_alias
