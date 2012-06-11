@@ -21,6 +21,16 @@ action :create do
   end
 end
 
+action :delete do
+  if !@current_resource.nil? then
+    @current_resource.destroy
+    new_resource.updated_by_last_action(true)
+    clear
+  else
+    new_resource.updated_by_last_action(false)
+  end
+end
+
 
 def load_current_resource
   @current_resource = get_entity_by_id node[:cloud_monitoring][:entity_id]
