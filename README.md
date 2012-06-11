@@ -101,8 +101,25 @@ end
 ```
 
 This will create a ping check that is scoped on the `Entity` that was created above.  In this case, it makes sense,
-however sometimes you want to be specific about which node to create this check on.  If that's the case, then pass in an
-`entity_id`.
+however sometimes you want to be specific about which node to create this check on.  If that's the case, then passing in
+an `entity_id` will allow you to do that.
 
 This block will create a ping check named "ping" with 30 second interval from a single datacenter "mzord".  It will
 execute the check against the target_alias default, which is the chef flagged ipaddress above.
+
+Creating a more complex check is just as simple, take HTTP check as an example.  There are multiple options to pass in
+to run the check. This maps very closely to the API, so you have a details hash at your disposal to do that.
+
+```ruby
+cloud_monitoring_check  "http" do
+  target_alias          'default'
+  type                  'remote.http'
+  period                30
+  timeout               10
+  details               'url' => 'http://www.google.com', 'method' => 'GET'
+  monitoring_zones_poll ['mzord', 'mzdfw']
+  rackspace_username    'joe'
+  rackspace_api_key     'XXX'
+  action :create
+end
+```
