@@ -17,6 +17,15 @@
 # limitations under the License.
 #
 
+case node[:platform]
+when "ubuntu","debian"
+  package( "libxslt-dev" ).run_action( :install )
+  package( "libxml2-dev" ).run_action( :install )
+when "redhat","centos","fedora","scientific"
+  package( "libxslt-devel" ).run_action( :install )
+  package( "libxml2-devel" ).run_action( :install )
+end
+
 r = gem_package "rackspace-monitoring" do
   version node['cloud_monitoring']['version']
   action :nothing
@@ -27,3 +36,4 @@ r.run_action(:install)
 require 'rubygems'
 Gem.clear_paths
 require 'rackspace-monitoring'
+
