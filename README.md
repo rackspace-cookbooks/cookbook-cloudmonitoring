@@ -123,3 +123,9 @@ cloud_monitoring_check  "http" do
   action :create
 end
 ```
+
+## Alarm
+
+The `Alarm` is the way to specify a threshold in Cloud Monitoring and connect
+that to sending an alert to a customer.  Without an `Alarm` you could never get
+an email even if the check was in a failing state. 
