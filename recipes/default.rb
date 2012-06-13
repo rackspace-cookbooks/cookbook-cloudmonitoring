@@ -36,5 +36,3 @@ r.run_action(:install)
 require 'rubygems'
 Gem.clear_paths
 require 'rackspace-monitoring'
-
-include_recipe "cloud_monitoring::raxmon"
