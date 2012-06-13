@@ -38,8 +38,8 @@ knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cl
 * Make the json file opened look like the following, then save and exit your editor:
 {
   "id": "cloud",
-  "raxusername": "<YOUR CLOUD SERVER USERNAME",
-  "raxapikey": "<YOUR CLOUD SERVER API KEY"
+  "raxusername": "<YOUR CLOUD SERVER USERNAME>",
+  "raxapikey": "<YOUR CLOUD SERVER API KEY>"
 }
 
 ####If you are not currently using an encrypted_data_bag_secret file
