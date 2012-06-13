@@ -9,6 +9,9 @@ Specifically this recipe will focus on main atom's in the system.
 * Agents (soon)
 * Agent Tokens (soon)
 
+The cookbook also installs the python-pip package in Debian and RedHat based systems, and then uses pip to install the Rackspace Cloud Monitoring client, raxmon-cli, via pip
+
+The raxmon-cli recipe in this cookbook is not automatically added by default.  To install raxmon-cli, add the cloud_monitoring::raxmon recipe to the run_list. 
 
 # Requirements
 
@@ -24,10 +27,46 @@ authenticate into your account.
 
 You can get one here [sign-up](https://cart.rackspace.com/cloud/?cp_id=cloud_monitoring).
 
+python and python-pip (installed by this cookbook) for the raxmon-cli install
+
+* If you want automatic credentials added to the raxmon-cli commands for the root user, an encrypted data_bag named rackspace must be created with an item called cloud.
+  * If you do not want to use the /root/.raxrc file to manage the credentials for root, skip the following section
+
+###Setting up the .raxrc file for automatic cloud login credentials for root
+####If you already have an encrypted_data_bag_secret file created and pushed out to your chef nodes
+* Create the new encrypted data_bag
+knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cloud
+
+* Make the json file opened look like the following, then save and exit your editor:
+{
+  "id": "cloud",
+  "raxusername": "<YOUR CLOUD SERVER USERNAME>",
+  "raxapikey": "<YOUR CLOUD SERVER API KEY>"
+}
+
+####If you are not currently using an encrypted_data_bag_secret file
+* Create a new secret file
+openssl rand -base64 512 | tr -d '\r\n' > /tmp/my_data_bag_key
+
+* The /tmp/my_data_bag_key (or whatever you called it in the above step) needs to be pushed out to your chef nodes to /etc/chef/encrypted_data_bag_secret
+
+* Create the new encrypted data_bag
+knife data bag create --secret-file /tmp/my_data_bag_key rackspace cloud
+
+* Make the json file opened look like the following, then save and exit your editor:
+{
+  "id": "cloud",
+  "raxusername": "<YOUR CLOUD SERVER USERNAME",
+  "raxapikey": "<YOUR CLOUD SERVER API KEY"
+}
 
 # Attributes
 
 All attributes are namespaced under the `node[:cloud_monitoring]` namespace.  This keeps everything clean and organized.
+
+For raxmon-cli /root/.raxrc, From encrypted data bag rackspace with item cloud:
+* ['raxusername']
+* ['raxapikey']
 
 # Usage
 
@@ -129,3 +168,16 @@ end
 The `Alarm` is the way to specify a threshold in Cloud Monitoring and connect
 that to sending an alert to a customer.  Without an `Alarm` you could never get
 an email even if the check was in a failing state. 
+
+
+
+## Raxmon-CLI
+
+###Using the .raxrc file
+*Follow the steps under the Requirements section above to create the encrypted data bag for the .raxrc file
+* As root user you can manage your Rackspace Cloud Monitoring settings via the raxmon-cli tools, see the description above for links to the documentation
+  * If you do not set the .raxrc credentials, or you want to use raxmon-cli from a non-root user, you can still access the Rackspace Cloud Monitoring API by using the --username and --api-key options on your raxmon commands
+
+### Not using the .raxrc file
+* Do not create the rackspace cloud encrypted databag item
+* Access the Rackspace Cloud Monitoring API by using the --username and --api-key options on your raxmon commands

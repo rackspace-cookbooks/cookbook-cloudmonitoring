@@ -8,8 +8,16 @@ module Rackspace
   module CloudMonitoring
 
     def cm
-      apikey = new_resource.rackspace_api_key || dbag[:rackspace_api_key]
-      username = new_resource.rackspace_username || dbag[:rackspace_username]
+
+      if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").include?("cloud")
+        #Access the Rackspace Cloud encrypted data_bag
+        creds = Chef::EncryptedDataBagItem.load("rackspace", "cloud")
+      else
+        creds = {'raxusername' => nil, 'raxapikey' => nil }
+      end
+
+      apikey = new_resource.rackspace_api_key || creds['raxapikey']
+      username = new_resource.rackspace_username || creds['raxusername']
       @@cm ||= Fog::Monitoring::Rackspace.new(:rackspace_api_key => apikey, :rackspace_username => username)
       @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
       @@cm
