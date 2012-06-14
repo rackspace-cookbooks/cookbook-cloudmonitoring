@@ -50,7 +50,8 @@ knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cl
 {
   "id": "cloud",
   "raxusername": "<YOUR CLOUD SERVER USERNAME>",
-  "raxapikey": "<YOUR CLOUD SERVER API KEY>"
+  "raxapikey": "<YOUR CLOUD SERVER API KEY>",
+  "raxregion": "<YOUR ACCOUNT REGION (us OR uk)>"
 }
 
 ####I don't use an encrypted_data_bag_secret file
@@ -65,8 +66,9 @@ knife data bag create --secret-file /tmp/my_data_bag_key rackspace cloud
 * Make the json file opened look like the following, then save and exit your editor:
 {
   "id": "cloud",
-  "raxusername": "<YOUR CLOUD SERVER USERNAME",
-  "raxapikey": "<YOUR CLOUD SERVER API KEY"
+  "raxusername": "<YOUR CLOUD SERVER USERNAME>",
+  "raxapikey": "<YOUR CLOUD SERVER API KEY>",
+  "raxregion": "<YOUR ACCOUNT REGION (us OR uk)>"
 }
 
 # Attributes
@@ -74,8 +76,10 @@ knife data bag create --secret-file /tmp/my_data_bag_key rackspace cloud
 All attributes are namespaced under the `node[:cloud_monitoring]` namespace.  This keeps everything clean and organized.
 
 For raxmon-cli /root/.raxrc, From encrypted data bag rackspace with item cloud:
+
 * ['raxusername']
 * ['raxapikey']
+* ['raxregion']
 
 # Usage
 
