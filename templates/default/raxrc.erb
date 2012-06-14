@@ -7,4 +7,6 @@ api_key=<%= @raxapikey %>
 url=https://identity.api.rackspacecloud.com/v2.0
 <% elsif @raxregion == 'uk' %>
 url=https://lon.identity.api.rackspacecloud.com/v2.0
+<% else %>
+url=https://identity.api.rackspacecloud.com/v2.0
 <% end %>
