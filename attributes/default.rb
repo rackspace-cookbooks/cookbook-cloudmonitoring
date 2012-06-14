@@ -16,6 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-default['cloud_monitoring']['rackspace-monitoring-version'] = '0.1.3'
+default['cloud_monitoring']['rackspace-monitoring-version'] = '0.1.4'
 default['cloud_monitoring']['checks'] = {}
 default['cloud_monitoring']['alarms'] = {}
