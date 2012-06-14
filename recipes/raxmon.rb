@@ -45,7 +45,7 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
     variables(
       :raxusername => raxusername,
       :raxapikey => raxapikey,
-      :auth_url => raxregion
+      :auth_url => auth_url 
     )
   end
 else
