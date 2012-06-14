@@ -26,6 +26,15 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
   raxusername = raxcloud['raxusername']
   raxapikey = raxcloud['raxapikey']
   raxregion = raxcloud['raxregion'] || 'us'
+  raxregion = raxregion.downcase
+
+  if raxregion == 'us'
+    auth_url = 'https://identity.api.rackspacecloud.com/v2.0'
+  elsif raxregion == 'uk'
+    auth_url = 'https://lon.identity.api.rackspacecloud.com/v2.0'
+  else
+    auth_url = 'https://identity.api.rackspacecloud.com/v2.0'
+  end
 
   #Create the .raxrc with credentials in /root
   template "/root/.raxrc" do
@@ -36,7 +45,7 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
     variables(
       :raxusername => raxusername,
       :raxapikey => raxapikey,
-      :raxregion => raxregion
+      :auth_url => raxregion
     )
   end
 else
