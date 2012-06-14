@@ -174,18 +174,15 @@ end
 
 ## Alarm
 
-The `Alarm` is the way to specify a threshold in Cloud Monitoring and connect
-that to sending an alert to a customer.  Without an `Alarm` a user would never
-receive an alert based on a failure, warning or success.  An `Alarm` is scoped
-on an entity and points to a check id or a check type.
+The `Alarm` is the way to specify a threshold in Cloud Monitoring and connect that to sending an alert to a customer.
+Without an `Alarm` a user would never receive an alert based on a failure, warning or success.  An `Alarm` is scoped on
+an entity and points to a check id or a check type.
 
-An Alarm state is the combination of a Check + Alarm + Dimension.  Dimensions
-are additional complexity which I won't go into here but they allow you
-arbitrarily nest information from the edge.
+An Alarm state is the combination of a Check + Alarm + Dimension.  Dimensions are additional complexity which I won't go
+into here but they allow you arbitrarily nest information from the edge.
 
-Alarms in the public API take a couple critical fields.  A notification plan id
-and a "criteria".  The notification plan id points at a notification plan to
-execute upon a state transitioning.  The criteria describes the conditions to
+Alarms in the public API take a couple critical fields.  A notification plan id and a "criteria".  The notification plan
+id points at a notification plan to execute upon a state transitioning.  The criteria describes the conditions to
 generate an alert.
 
 There are some guides describing how to best threshold for certain events, and there is also a built in alarm examples
