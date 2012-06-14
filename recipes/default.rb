@@ -17,11 +17,11 @@
 # limitations under the License.
 #
 
-case node[:platform]
+case node['platform']
 when "ubuntu","debian"
   package( "libxslt-dev" ).run_action( :install )
   package( "libxml2-dev" ).run_action( :install )
-when "redhat","centos","fedora","scientific"
+when "redhat","centos","fedora", "amazon","scientific"
   package( "libxslt-devel" ).run_action( :install )
   package( "libxml2-devel" ).run_action( :install )
 end

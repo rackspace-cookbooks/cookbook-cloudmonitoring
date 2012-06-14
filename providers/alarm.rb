@@ -39,10 +39,10 @@ end
 
 
 def load_current_resource
-  @entity = get_entity_by_id @new_resource.entity_id || node[:cloud_monitoring][:entity_id]
-  @current_resource = get_alarm_by_id @entity.id, node[:cloud_monitoring][:alarms][@new_resource.name]
+  @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
+  @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.name]
   if @current_resource == nil then
     @current_resource = get_alarm_by_name @entity.id, @new_resource.name
-    node.set[:cloud_monitoring][:alarms][@new_resource.name] = @current_resource.identity unless @current_resource.nil?
+    node.set['cloud_monitoring']['alarms'][@new_resource.name] = @current_resource.identity unless @current_resource.nil?
   end
 end
