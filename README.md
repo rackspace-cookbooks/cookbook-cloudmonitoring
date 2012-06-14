@@ -189,8 +189,9 @@ execute upon a state transitioning.  The criteria describes the conditions to
 generate an alert.
 
 There are some guides describing how to best threshold for certain events, and there is also a built in alarm examples
-API that is very powerful.  This [Alarm Examples API](http://docs.rackspacecloud.com/cm/api/v1.0/cm-devguide/content/service-alarm-examples.html) is exposed in this recipe indirectly through
-the alarm `cloud_monitoring_alarm` stanza.  Look at an example below:
+API that is very powerful.  This [Alarm Examples
+API](http://docs.rackspacecloud.com/cm/api/v1.0/cm-devguide/content/service-alarm-examples.html) is exposed in this
+recipe indirectly through the alarm `cloud_monitoring_alarm` stanza.  Look at an example below:
 
 ```ruby
 cloud_monitoring_alarm  "ping alarm" do
