@@ -18,6 +18,8 @@ The raxmon-cli recipe in this cookbook is not automatically added by default.  T
 Requires Chef 0.7.10 or higher for Lightweight Resource and Provider support. Chef 0.8+ is recommended. While this
 cookbook can be used in chef-solo mode, to gain the most flexibility, we recommend using chef-client with a Chef Server.
 
+## Library Requirements
+
 The inner workings of the library depend on [fog](https://github.com/fog/fog) which is used by the Ruby command line
 client called [rackspace-monitoring-rb](https://github.com/racker/rackspace-monitoring-rb).  These are handled in the
 instantiation and use of the Cookbook.
@@ -27,13 +29,20 @@ authenticate into your account.
 
 You can get one here [sign-up](https://cart.rackspace.com/cloud/?cp_id=cloud_monitoring).
 
+## Raxmon Requirements
+
 python and python-pip (installed by this cookbook) for the raxmon-cli install
 
 * If you want automatic credentials added to the raxmon-cli commands for the root user, an encrypted data_bag named rackspace must be created with an item called cloud.
   * If you do not want to use the /root/.raxrc file to manage the credentials for root, skip the following section
 
-###Setting up the .raxrc file for automatic cloud login credentials for root
-####If you already have an encrypted_data_bag_secret file created and pushed out to your chef nodes
+***Note: This recipe sets up the .raxrc file for automatic cloud login credentials for root***
+
+### Setup
+
+Take either step depending on your databag setup.
+
+#### I already have an encrypted_data_bag_secret file created and pushed out to your chef nodes
 * Create the new encrypted data_bag
 knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cloud
 
@@ -44,7 +53,7 @@ knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cl
   "raxapikey": "<YOUR CLOUD SERVER API KEY>"
 }
 
-####If you are not currently using an encrypted_data_bag_secret file
+####I don't use an encrypted_data_bag_secret file
 * Create a new secret file
 openssl rand -base64 512 | tr -d '\r\n' > /tmp/my_data_bag_key
 
@@ -274,16 +283,17 @@ cloud_monitoring_alarm  "ping alarm" do
 end
 ```
 
-
-
-
 ## Raxmon-CLI
 
-###Using the .raxrc file
+### Using the .raxrc file
+
 *Follow the steps under the Requirements section above to create the encrypted data bag for the .raxrc file
-* As root user you can manage your Rackspace Cloud Monitoring settings via the raxmon-cli tools, see the description above for links to the documentation
-  * If you do not set the .raxrc credentials, or you want to use raxmon-cli from a non-root user, you can still access the Rackspace Cloud Monitoring API by using the --username and --api-key options on your raxmon commands
+* As root user you can manage your Rackspace Cloud Monitoring settings via the raxmon-cli tools, see the description
+  above for links to the documentation
+  * If you do not set the .raxrc credentials, or you want to use raxmon-cli from a non-root user, you can still access
+    the Rackspace Cloud Monitoring API by using the --username and --api-key options on your raxmon commands
 
 ### Not using the .raxrc file
+
 * Do not create the rackspace cloud encrypted databag item
 * Access the Rackspace Cloud Monitoring API by using the --username and --api-key options on your raxmon commands
