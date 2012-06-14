@@ -25,6 +25,7 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
   #Create variables for the Rackspace Cloud username and apikey
   raxusername = raxcloud['raxusername']
   raxapikey = raxcloud['raxapikey']
+  raxregion = raxcloud['raxregion'] || 'us'
 
   #Create the .raxrc with credentials in /root
   template "/root/.raxrc" do
@@ -34,11 +35,12 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
     mode 0600
     variables(
       :raxusername => raxusername,
-      :raxapikey => raxapikey
+      :raxapikey => raxapikey,
+      :raxregion => raxregion
     )
   end
 else
-	Chef::Log.info "rackspace data bag with item cloud does not exist, skipping .raxrc creation"
+    Chef::Log.info "rackspace data bag with item cloud does not exist, skipping .raxrc creation"
 end
 
 #Install the raxmon-cli

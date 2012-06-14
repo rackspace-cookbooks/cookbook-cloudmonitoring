@@ -1,3 +1,10 @@
 [credentials]
-username=<%= @raxusername %> 
+username=<%= @raxusername %>
 api_key=<%= @raxapikey %>
+
+[auth_api]
+<% if @raxregion == 'us' %>
+url=https://identity.api.rackspacecloud.com/v2.0
+<% elsif @raxregion == 'uk' %>
+url=https://lon.identity.api.rackspacecloud.com/v2.0
+<% end %>
