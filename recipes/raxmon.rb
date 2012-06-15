@@ -18,38 +18,17 @@
 #
 include_recipe "python"
 
-if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").include?("cloud")
-  #Access the Rackspace Cloud encrypted data_bag
-  raxcloud = Chef::EncryptedDataBagItem.load("rackspace","cloud")
-
-  #Create variables for the Rackspace Cloud username and apikey
-  raxusername = raxcloud['raxusername']
-  raxapikey = raxcloud['raxapikey']
-  raxregion = raxcloud['raxregion'] || 'us'
-  raxregion = raxregion.downcase
-
-  if raxregion == 'us'
-    auth_url = 'https://identity.api.rackspacecloud.com/v2.0'
-  elsif raxregion == 'uk'
-    auth_url = 'https://lon.identity.api.rackspacecloud.com/v2.0'
-  else
-    auth_url = 'https://identity.api.rackspacecloud.com/v2.0'
-  end
-
-  #Create the .raxrc with credentials in /root
-  template "/root/.raxrc" do
-    source "raxrc.erb"
-    owner "root"
-    group "root"
-    mode 0600
-    variables(
-      :raxusername => raxusername,
-      :raxapikey => raxapikey,
-      :auth_url => auth_url 
-    )
-  end
-else
-    Chef::Log.info "rackspace data bag with item cloud does not exist, skipping .raxrc creation"
+#Create the .raxrc with credentials in /root
+template "/root/.raxrc" do
+  source "raxrc.erb"
+  owner "root"
+  group "root"
+  mode 0600
+  variables(
+    :raxusername => node['cloud_monitoring']['rackspace_username'],
+    :raxapikey => node['cloud_monitoring']['rackspace_api_key'],
+    :raxauthurl => node['cloud_monitoring']['rackspace_auth_url'] 
+  )
 end
 
 #Install the raxmon-cli

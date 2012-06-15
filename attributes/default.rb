@@ -19,3 +19,6 @@
 default['cloud_monitoring']['rackspace-monitoring-version'] = '0.1.4'
 default['cloud_monitoring']['checks'] = {}
 default['cloud_monitoring']['alarms'] = {}
+default['cloud_monitoring']['rackspace_username'] = 'your_rackspace_username'
+default['cloud_monitoring']['rackspace_api_key'] = 'your_rackspace_api_key'
+default['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'

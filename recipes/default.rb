@@ -36,3 +36,22 @@ r.run_action(:install)
 require 'rubygems'
 Gem.clear_paths
 require 'rackspace-monitoring'
+
+if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").include?("cloud")
+  #Access the Rackspace Cloud encrypted data_bag
+  raxcloud = Chef::EncryptedDataBagItem.load("rackspace","cloud")
+
+  #Create variables for the Rackspace Cloud username and apikey
+  node['cloud_monitoring']['rackspace_username'] = raxcloud['raxusername']
+  node['cloud_monitoring']['rackspace_api_key'] = raxcloud['raxapikey']
+  node['cloud_monitoring']['raxregion'] = raxcloud['raxregion'] || 'us'
+  node['cloud_monitoring']['raxregion'] = node['cloud_monitoring']['raxregion'].downcase
+
+  if node['cloud_monitoring']['raxregion'] == 'us'
+    node['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
+  elsif   node['cloud_monitoring']['raxregion']  == 'uk'
+    node['cloud_monitoring']['rackspace_auth_url'] = 'https://lon.identity.api.rackspacecloud.com/v2.0'
+  else
+    node['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
+  end
+end
