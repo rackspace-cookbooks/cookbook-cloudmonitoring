@@ -4,7 +4,8 @@ action :create do
   check = @entity.checks.new(:label => new_resource.label, :type => new_resource.type, :details => new_resource.details,
                              :metadata => new_resource.metadata, :monitoring_zones_poll => new_resource.monitoring_zones_poll,
                              :target_alias => new_resource.target_alias, :target_hostname => new_resource.target_hostname,
-                             :target_resolver => new_resource.target_resolver)
+                             :target_resolver => new_resource.target_resolver, :timeout => new_resource.timeout,
+                             :period => new_resource.period)
   if @current_resource.nil? then
     check.save
     new_resource.updated_by_last_action(true)
@@ -26,9 +27,9 @@ end
 
 def load_current_resource
   @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
-  @current_resource = get_check_by_id @entity.id, node['cloud_monitoring']['checks'][@new_resource.name]
+  @current_resource = get_check_by_id @entity.id, node['cloud_monitoring']['checks'][@new_resource.label]
   if @current_resource == nil then
-    @current_resource = get_check_by_name @entity.id, @new_resource.name
-    node.set['cloud_monitoring']['checks'][@new_resource.name] = @current_resource.identity unless @current_resource.nil?
+    @current_resource = get_check_by_label @entity.id, @new_resource.label
+    node.set['cloud_monitoring']['checks'][@new_resource.label] = @current_resource.identity unless @current_resource.nil?
   end
 end

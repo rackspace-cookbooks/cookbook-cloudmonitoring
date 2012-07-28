@@ -21,13 +21,14 @@ case node['platform']
 when "ubuntu","debian"
   package( "libxslt-dev" ).run_action( :install )
   package( "libxml2-dev" ).run_action( :install )
+  package( "ruby-dev" ).run_action( :install )
 when "redhat","centos","fedora", "amazon","scientific"
   package( "libxslt-devel" ).run_action( :install )
   package( "libxml2-devel" ).run_action( :install )
 end
 
 r = gem_package "rackspace-monitoring" do
-  version node['cloud_monitoring']['version']
+  version node['cloud_monitoring']['rackspace-monitoring-version']
   action :nothing
 end
 
@@ -44,14 +45,19 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
   #Create variables for the Rackspace Cloud username and apikey
   node['cloud_monitoring']['rackspace_username'] = raxcloud['raxusername']
   node['cloud_monitoring']['rackspace_api_key'] = raxcloud['raxapikey']
-  node['cloud_monitoring']['raxregion'] = raxcloud['raxregion'] || 'us'
-  node['cloud_monitoring']['raxregion'] = node['cloud_monitoring']['raxregion'].downcase
+  node['cloud_monitoring']['rackspace_auth_region'] = raxcloud['raxregion'] || 'notset'
+  node['cloud_monitoring']['rackspace_auth_region'] = node['cloud_monitoring']['rackspace_auth_region'].downcase
 
-  if node['cloud_monitoring']['raxregion'] == 'us'
+  if node['cloud_monitoring']['rackspace_auth_region'] == 'us'
     node['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
-  elsif   node['cloud_monitoring']['raxregion']  == 'uk'
+  elsif node['cloud_monitoring']['rackspace_auth_region']  == 'uk'
     node['cloud_monitoring']['rackspace_auth_url'] = 'https://lon.identity.api.rackspacecloud.com/v2.0'
   else
+    Chef::Log.info "Using the encrypted data bag for rackspace cloud but no raxregion attribute was set (or it was set to something other then 'us' or 'uk'). Assuming 'us'. If you have a 'uk' account make sure to set the raxregion in your data bag"
     node['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
   end
+end
+
+if node[:cloud_monitoring][:rackspace_username] == 'your_rackspace_username' || node['cloud_monitoring']['rackspace_api_key'] == 'your_rackspace_api_key'
+  Chef::Log.info "Rackspace username or api key has not been set. For this to work, either set the default attributes or create an encrypted databag of rackspace cloud per the cookbook README"
 end

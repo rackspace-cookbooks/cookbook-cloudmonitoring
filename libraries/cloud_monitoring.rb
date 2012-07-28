@@ -8,7 +8,6 @@ module Rackspace
   module CloudMonitoring
 
     def cm
-
       if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").include?("cloud")
         #Access the Rackspace Cloud encrypted data_bag
         creds = Chef::EncryptedDataBagItem.load("rackspace", "cloud")
@@ -18,7 +17,8 @@ module Rackspace
 
       apikey = new_resource.rackspace_api_key || creds['raxapikey']
       username = new_resource.rackspace_username || creds['raxusername']
-      @@cm ||= Fog::Monitoring::Rackspace.new(:rackspace_api_key => apikey, :rackspace_username => username)
+      @@cm ||= Fog::Monitoring::Rackspace.new(:rackspace_api_key => apikey, :rackspace_username => username,
+                                              :raise_errors => node['cloud_monitoring']['abort_on_failure'])
       @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
       @@cm
     end
@@ -61,9 +61,9 @@ module Rackspace
 
     end
 
-    def get_child_by_name(entity_id, name, type)
+    def get_child_by_label(entity_id, label, type)
       objs = get_type entity_id, type
-      obj = objs.select {|x| x.label === name}
+      obj = objs.select {|x| x.label === label}
       if !obj.empty? then
         obj.first
       else
@@ -77,8 +77,10 @@ module Rackspace
       view[id]
     end
 
-    def get_entity_by_name(name)
-      possible = view.select {|key, value| value.label === name}
+    def get_entity_by_label(label)
+      possible = view.select {|key, value| value.label === label}
+      possible = Hash[*possible.flatten(1)]
+
       if !possible.empty? then
         possible.values.first
       else
@@ -90,24 +92,26 @@ module Rackspace
       get_child_by_id entity_id, id, 'checks'
     end
 
-    def get_check_by_name(entity_id, name)
-      get_child_by_name entity_id, name, 'checks'
+    def get_check_by_label(entity_id, label)
+      get_child_by_label entity_id, label, 'checks'
     end
 
     def get_alarm_by_id(entity_id, id)
       get_child_by_id entity_id, id, 'alarms'
     end
 
-    def get_alarm_by_name(entity_id, name)
-      get_child_by_name entity_id, name, 'alarms'
+    def get_alarm_by_label(entity_id, label)
+      get_child_by_label entity_id, label, 'alarms'
     end
 
     def get_token_by_id(token)
       tokens[token]
     end
 
-    def get_token_by_name(name)
-      possible = tokens.select {|key, value| value.label === name}
+    def get_token_by_label(label)
+      possible = tokens.select {|key, value| value.label === label}
+      possible = Hash[*possible.flatten(1)]
+
       if !possible.empty? then
         possible.values.first
       else

@@ -33,10 +33,8 @@ You can get one here [sign-up](https://cart.rackspace.com/cloud/?cp_id=cloud_mon
 
 python and python-pip (installed by this cookbook) for the raxmon-cli install
 
-* If you want automatic credentials added to the raxmon-cli commands for the root user, an encrypted data_bag named rackspace must be created with an item called cloud.
-  * If you do not want to use the /root/.raxrc file to manage the credentials for root, skip the following section
-
-***Note: This recipe sets up the .raxrc file for automatic cloud login credentials for root***
+## General Requirements
+* You need to either set the attributes for your Rackspace username and api key in attributes/default.rb or create an encrypted data bag per the following setup steps:
 
 ### Setup
 
@@ -75,11 +73,12 @@ knife data bag create --secret-file /tmp/my_data_bag_key rackspace cloud
 
 All attributes are namespaced under the `node[:cloud_monitoring]` namespace.  This keeps everything clean and organized.
 
-For raxmon-cli /root/.raxrc, From encrypted data bag rackspace with item cloud:
+The following attributes are required, either in attributes/default.rb or an encrypted data bag called rackspace with an item of cloud:
 
-* ['raxusername']
-* ['raxapikey']
-* ['raxregion']
+* ['cloud_monitoring']['rackspace_username']
+* ['cloud_monitoring']['rackspace_api_key']
+* ['cloud_monitoring']['rackspace_auth_region']
+** This must be set to either 'us' or 'uk', depending on where your account was created
 
 # Usage
 
@@ -196,7 +195,7 @@ recipe indirectly through the alarm `cloud_monitoring_alarm` stanza.  Look at an
 
 ```ruby
 cloud_monitoring_alarm  "ping alarm" do
-  check_name            'ping'
+  check_label           'ping'
   example_id            'remote.ping_packet_loss'
   notification_plan_id  'npBLAH'
   action :create
@@ -262,7 +261,7 @@ And the alarm, notice the example_values hash.
 
 ```ruby
 cloud_monitoring_alarm  "ssh alarm" do
-  check_name            'ssh check name'
+  check_label           'ssh check name'
   example_id            'remote.ssh_fingerprint_match'
   example_values        "fingerprint" => node[:ssh][:fingerprint]
   notification_plan_id  'npBLAH'
@@ -278,24 +277,10 @@ If you wanted to use your own threshold then you could specify criteria in the a
 
 ```ruby
 cloud_monitoring_alarm  "ping alarm" do
-  check_name            'ping'
+  check_label           'ping'
   criteria              "if (metric['available'] < 100) { return CRITICAL, 'Availability is at ${available}' }"
   notification_plan_id  'npBLAH'
-  action :create
+  action                :create
 end
 ```
 
-## Raxmon-CLI
-
-### Using the .raxrc file
-
-*Follow the steps under the Requirements section above to create the encrypted data bag for the .raxrc file
-* As root user you can manage your Rackspace Cloud Monitoring settings via the raxmon-cli tools, see the description
-  above for links to the documentation
-  * If you do not set the .raxrc credentials, or you want to use raxmon-cli from a non-root user, you can still access
-    the Rackspace Cloud Monitoring API by using the --username and --api-key options on your raxmon commands
-
-### Not using the .raxrc file
-
-* Do not create the rackspace cloud encrypted databag item
-* Access the Rackspace Cloud Monitoring API by using the --username and --api-key options on your raxmon commands

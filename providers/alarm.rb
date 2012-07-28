@@ -11,9 +11,9 @@ action :create do
     criteria = ae.bound_criteria
   end
 
-  if new_resource.check_name then
-    raise Exception, "Cannot specify check_name and check_id" unless new_resource.check_id.nil?
-    check_id = get_check_by_name(@entity.id, new_resource.check_name).identity
+  if new_resource.check_label then
+    raise Exception, "Cannot specify check_label and check_id" unless new_resource.check_id.nil?
+    check_id = get_check_by_label(@entity.id, new_resource.check_label).identity
   end
 
   check = @entity.alarms.new(:label => new_resource.label, :check_type => new_resource.check_type, :check_id => check_id,
@@ -40,9 +40,9 @@ end
 
 def load_current_resource
   @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
-  @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.name]
+  @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.label]
   if @current_resource == nil then
-    @current_resource = get_alarm_by_name @entity.id, @new_resource.name
-    node.set['cloud_monitoring']['alarms'][@new_resource.name] = @current_resource.identity unless @current_resource.nil?
+    @current_resource = get_alarm_by_label @entity.id, @new_resource.label
+    node.set['cloud_monitoring']['alarms'][@new_resource.label] = @current_resource.identity unless @current_resource.nil?
   end
 end
