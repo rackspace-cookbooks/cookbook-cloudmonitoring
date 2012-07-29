@@ -28,7 +28,7 @@ when "redhat","centos","fedora", "amazon","scientific"
 end
 
 r = gem_package "rackspace-monitoring" do
-  version node['cloud_monitoring']['rackspace-monitoring-version']
+  version node['cloud_monitoring']['rackspace_monitoring_version']
   action :nothing
 end
 
