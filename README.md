@@ -75,10 +75,10 @@ All attributes are namespaced under the `node[:cloud_monitoring]` namespace.  Th
 
 The following attributes are required, either in attributes/default.rb or an encrypted data bag called rackspace with an item of cloud:
 
-* ['cloud_monitoring']['rackspace_username']
-* ['cloud_monitoring']['rackspace_api_key']
-* ['cloud_monitoring']['rackspace_auth_region']
-** This must be set to either 'us' or 'uk', depending on where your account was created
+* `node['cloud_monitoring']['rackspace_username']`
+* `node['cloud_monitoring']['rackspace_api_key']`
+* `node['cloud_monitoring']['rackspace_auth_region']`
+  * This must be set to either 'us' or 'uk', depending on where your account was created
 
 # Usage
 
