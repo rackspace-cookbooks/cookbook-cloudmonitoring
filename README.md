@@ -29,49 +29,54 @@ authenticate into your account.
 
 You can get one here [sign-up](https://cart.rackspace.com/cloud/?cp_id=cloud_monitoring).
 
-## Raxmon Requirements
+### Raxmon Requirements
 
 python and python-pip (installed by this cookbook) for the raxmon-cli install
 
-## General Requirements
+### General Requirements
 * You need to either set the attributes for your Rackspace username and api key in attributes/default.rb or create an encrypted data bag per the following setup steps:
 
-### Setup
+## Setup
 
 Take either step depending on your databag setup.
 
-#### I already have an encrypted_data_bag_secret file created and pushed out to your chef nodes
+### I already have an encrypted_data_bag_secret file created and pushed out to your chef nodes
+
 * Create the new encrypted data_bag
 knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cloud
 
 * Make the json file opened look like the following, then save and exit your editor:
+```
 {
   "id": "cloud",
   "raxusername": "<YOUR CLOUD SERVER USERNAME>",
   "raxapikey": "<YOUR CLOUD SERVER API KEY>",
   "raxregion": "<YOUR ACCOUNT REGION (us OR uk)>"
 }
+```
 
-####I don't use an encrypted_data_bag_secret file
+### I don't use an encrypted_data_bag_secret file
 * Create a new secret file
-openssl rand -base64 512 | tr -d '\r\n' > /tmp/my_data_bag_key
+`$ openssl rand -base64 512 | tr -d '\r\n' > /tmp/my_data_bag_key`
 
-* The /tmp/my_data_bag_key (or whatever you called it in the above step) needs to be pushed out to your chef nodes to /etc/chef/encrypted_data_bag_secret
+* The `/tmp/my_data_bag_key` (or whatever you called it in the above step) needs to be pushed out to your chef nodes to `/etc/chef/encrypted_data_bag_secret`
 
 * Create the new encrypted data_bag
-knife data bag create --secret-file /tmp/my_data_bag_key rackspace cloud
+`$ knife data bag create --secret-file /tmp/my_data_bag_key rackspace cloud`
 
 * Make the json file opened look like the following, then save and exit your editor:
+```
 {
   "id": "cloud",
   "raxusername": "<YOUR CLOUD SERVER USERNAME>",
   "raxapikey": "<YOUR CLOUD SERVER API KEY>",
   "raxregion": "<YOUR ACCOUNT REGION (us OR uk)>"
 }
+```
 
 # Attributes
 
-All attributes are namespaced under the `node[:cloud_monitoring]` namespace.  This keeps everything clean and organized.
+All attributes are namespaced under the `node['cloud_monitoring']` namespace.  This keeps everything clean and organized.
 
 The following attributes are required, either in attributes/default.rb or an encrypted data bag called rackspace with an item of cloud:
 
@@ -83,14 +88,12 @@ The following attributes are required, either in attributes/default.rb or an enc
 # Usage
 
 This cookbook exposes many different elements of the Cloud Monitoring product. We'll go over some examples and best
-practices for using this cookbook. The most interesting pieces are the three core Resources in the system `Entity`,
-`Check` and `Alarm`. So we'll cover those first and tackle The other primitives towards the end.
+practices for using this cookbook. The most widely used parts of the system are the three core Resources in the system `Entity`, `Check` and `Alarm`. So we'll cover those first and tackle The other primitives towards the end.
 
 ## Entity
 
 The first element is the `Entity`.  The `Entity` maps to the target of what you're monitoring.  This in most cases
-represents a server, loadbalancer or website.  However, there is some advanced flexibility but that is only used in rare
-cases. The first use case we will show is populating your chef nodes in Cloud Monitoring...
+represents a server, loadbalancer or website.  However, there is some advanced flexibility but that is only used in rare cases. The first use case we will show is populating your chef nodes in Cloud Monitoring...
 
 Learn more about all these concepts in the docs and specifically the
 [Concepts](http://docs.rackspacecloud.com/cm/api/v1.0/cm-devguide/content/concepts-key-terms.html) section of the
@@ -105,8 +108,7 @@ cloud_monitoring_entity "#{node.hostname}" do
   action :create
 end
 ```
-If you looked in the Rackspace Cloud Monitoring API /entities on your account you'd see an `Entity` labeled whatever the
-hostname of the machine which executed this chef code.
+Upon execution of this code, if you viewed the `/entities` API call you would see an `Entity` labeled whatever the hostname of the machine.
 
 Most of the fields are optional, you can even specify something as minimal as:
 
