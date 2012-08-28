@@ -43,9 +43,9 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
   raxcloud = Chef::EncryptedDataBagItem.load("rackspace","cloud")
 
   #Create variables for the Rackspace Cloud username and apikey
-  node['cloud_monitoring']['rackspace_username'] = raxcloud['raxusername']
-  node['cloud_monitoring']['rackspace_api_key'] = raxcloud['raxapikey']
-  node['cloud_monitoring']['rackspace_auth_region'] = raxcloud['raxregion'] || 'notset'
+  node['cloud_monitoring']['rackspace_username'] = raxcloud['username']
+  node['cloud_monitoring']['rackspace_api_key'] = raxcloud['apikey']
+  node['cloud_monitoring']['rackspace_auth_region'] = raxcloud['region'] || 'notset'
   node['cloud_monitoring']['rackspace_auth_region'] = node['cloud_monitoring']['rackspace_auth_region'].downcase
 
   if node['cloud_monitoring']['rackspace_auth_region'] == 'us'
