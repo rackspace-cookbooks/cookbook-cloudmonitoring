@@ -38,8 +38,8 @@ require 'rubygems'
 Gem.clear_paths
 require 'rackspace-monitoring'
 
-if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").include?("cloud")
-  #Access the Rackspace Cloud encrypted data_bag
+begin
+  # Access the Rackspace Cloud encrypted data_bag
   raxcloud = Chef::EncryptedDataBagItem.load("rackspace","cloud")
 
   #Create variables for the Rackspace Cloud username and apikey
@@ -56,6 +56,8 @@ if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").includ
     Chef::Log.info "Using the encrypted data bag for rackspace cloud but no raxregion attribute was set (or it was set to something other then 'us' or 'uk'). Assuming 'us'. If you have a 'uk' account make sure to set the raxregion in your data bag"
     node['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
   end
+rescue Exception => e
+  Chef::Log.error "Failed to load rackspace cloud data bag: " + e.to_s
 end
 
 if node[:cloud_monitoring][:rackspace_username] == 'your_rackspace_username' || node['cloud_monitoring']['rackspace_api_key'] == 'your_rackspace_api_key'

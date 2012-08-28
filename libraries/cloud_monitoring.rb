@@ -8,10 +8,10 @@ module Rackspace
   module CloudMonitoring
 
     def cm
-      if Chef::DataBag.list.keys.include?("rackspace") && data_bag("rackspace").include?("cloud")
-        #Access the Rackspace Cloud encrypted data_bag
+      begin
+        # Access the Rackspace Cloud encrypted data_bag
         creds = Chef::EncryptedDataBagItem.load("rackspace", "cloud")
-      else
+      rescue Exception => e
         creds = {'raxusername' => nil, 'raxapikey' => nil }
       end
 
