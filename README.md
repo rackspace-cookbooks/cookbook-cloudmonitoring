@@ -49,9 +49,9 @@ knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cl
 ```
 {
   "id": "cloud",
-  "raxusername": "<YOUR CLOUD SERVER USERNAME>",
-  "raxapikey": "<YOUR CLOUD SERVER API KEY>",
-  "raxregion": "<YOUR ACCOUNT REGION (us OR uk)>"
+  "username": "<YOUR CLOUD SERVER USERNAME>",
+  "apikey": "<YOUR CLOUD SERVER API KEY>",
+  "region": "<YOUR ACCOUNT REGION (us OR uk)>"
 }
 ```
 
