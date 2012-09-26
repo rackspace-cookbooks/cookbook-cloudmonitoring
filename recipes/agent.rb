@@ -1,4 +1,3 @@
-
 cookbook_file "#{Chef::Config[:file_cache_path]}/signing-key.asc" do
   source "signing-key.asc"
   mode 0755
@@ -6,28 +5,29 @@ cookbook_file "#{Chef::Config[:file_cache_path]}/signing-key.asc" do
   group "root"
 end
 
-# Repo doesn't currently update atomically, leading to random failures
-# We're going to stop using nightly builds until this is fixed.
 apt_repository "cloud-monitoring" do
-  uri "http://packages-master.cloudmonitoring.rackspace.com/ubuntu-10.04"
+  uri "http://master.packages.cloudmonitoring.rackspace.com/linux-x86_64-ubuntu-10.04"
   distribution "cloudmonitoring"
   components ["main"]
   key "signing-key.asc"
   action :remove
 end
 
-apt_repository "cloud-monitoring-release" do
-  uri "http://packages.cloudmonitoring.rackspace.com/ubuntu-10.04"
-  distribution "cloudmonitoring"
-  components ["main"]
-  key "signing-key.asc"
-  action :add
-end
+# TODO: Enable once we set it up
+# apt_repository "cloud-monitoring-release" do
+#  uri "http://stable.packages.cloudmonitoring.rackspace.com/linux-x86_64-ubuntu-10.04"
+#  distribution "cloudmonitoring"
+#  components ["main"]
+#  key "signing-key.asc"
+#  action :add
+#end
 
-if Chef::DataBag.list.keys.include?('rackspace') && data_bag('rackspace').include?('cloud')
+begin
   values = Chef::EncryptedDataBagItem.load('rackspace', 'cloud')
 
   node['cloud_monitoring']['agent']['token'] = values['agent_token'] || nil
+rescue Exception => e
+  Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
 
 if not node['cloud_monitoring']['agent']['token']
