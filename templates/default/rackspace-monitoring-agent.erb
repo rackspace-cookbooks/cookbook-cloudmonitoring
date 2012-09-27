@@ -2,3 +2,6 @@
 monitoring_id <%= @monitoring_id %>
 <% end %>
 monitoring_token <%= @monitoring_token %>
+<% if not node['cloud_monitoring']['monitoring_endpoints'].empty? %>
+monitoring_endpoints <%= node['cloud_monitoring']['monitoring_endpoints'].join(",") %>
+<% end %>
