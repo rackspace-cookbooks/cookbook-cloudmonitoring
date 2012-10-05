@@ -12,11 +12,11 @@ module Rackspace
         # Access the Rackspace Cloud encrypted data_bag
         creds = Chef::EncryptedDataBagItem.load("rackspace", "cloud")
       rescue Exception => e
-        creds = {'raxusername' => nil, 'raxapikey' => nil }
+        creds = {'username' => nil, 'apikey' => nil }
       end
 
-      apikey = new_resource.rackspace_api_key || creds['raxapikey']
-      username = new_resource.rackspace_username || creds['raxusername']
+      apikey = new_resource.rackspace_api_key || creds['apikey']
+      username = new_resource.rackspace_username || creds['username']
       @@cm ||= Fog::Monitoring::Rackspace.new(:rackspace_api_key => apikey, :rackspace_username => username,
                                               :raise_errors => node['cloud_monitoring']['abort_on_failure'])
       @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
