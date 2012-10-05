@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-default['cloud_monitoring']['rackspace_monitoring_version'] = '0.2.11'
+default['cloud_monitoring']['rackspace_monitoring_version'] = '0.2.13'
 default['cloud_monitoring']['checks'] = {}
 default['cloud_monitoring']['alarms'] = {}
 default['cloud_monitoring']['rackspace_username'] = 'your_rackspace_username'
@@ -29,3 +29,4 @@ default['cloud_monitoring']['agent']['id'] = nil
 default['cloud_monitoring']['agent']['channel'] = nil
 default['cloud_monitoring']['agent']['version'] = 'latest'
 default['cloud_monitoring']['agent']['token'] = nil
+default['cloud_monitoring']['monitoring_endpoints'] = [] # This should be a list of strings like 'x.x.x.x:port'

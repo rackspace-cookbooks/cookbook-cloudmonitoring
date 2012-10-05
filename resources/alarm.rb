@@ -11,7 +11,7 @@ attribute :entity_id, :kind_of => String
 attribute :example_id, :kind_of => String
 attribute :example_values, :kind_of => Hash
 
-attribute :check_name, :kind_of => String
+attribute :check_label, :kind_of => String
 
 attribute :rackspace_api_key, :kind_of => String
 attribute :rackspace_username, :kind_of => String

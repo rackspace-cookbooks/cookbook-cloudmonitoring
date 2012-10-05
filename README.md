@@ -271,7 +271,7 @@ cloud_monitoring_alarm  "ssh alarm" do
 end
 ```
 
-You'll also notice the check_name reference doesn't exist in the API, but the cookbook makes this much easier to
+You'll also notice the check_label reference doesn't exist in the API, but the cookbook makes this much easier to
 connect to other related objects.
 
 
