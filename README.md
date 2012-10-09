@@ -100,7 +100,7 @@ Learn more about all these concepts in the docs and specifically the
 developer guide.
 
 ```ruby
-cloud_monitoring_entity "#{node.hostname}" do
+cloud_monitoring_entity "#{node.hostname}-manual" do
   ip_addresses        'default' => node[:ipaddress]
   metadata            'environment' => 'dev', :more => 'meta data'
   rackspace_username  'joe'
