@@ -24,7 +24,7 @@ The inner workings of the library depend on [fog](https://github.com/fog/fog) wh
 client called [rackspace-monitoring-rb](https://github.com/racker/rackspace-monitoring-rb).  These are handled in the
 instantiation and use of the Cookbook.
 
-A Rackspace Cloud Hosting account is required to use this tool.  And a valid `username` and `api_key` are required to
+A Rackspace Cloud Hosting account is required to use this tool.  And a valid `rackspace_username` and `rackspace_api_key` are required to
 authenticate into your account.
 
 You can get one here [sign-up](https://cart.rackspace.com/cloud/?cp_id=cloud_monitoring).
@@ -49,8 +49,8 @@ knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cl
 ```
 {
   "id": "cloud",
-  "username": "<YOUR CLOUD SERVER USERNAME>",
-  "apikey": "<YOUR CLOUD SERVER API KEY>",
+  "rackspace_username": "<YOUR CLOUD SERVER USERNAME>",
+  "rackspace_api_key": "<YOUR CLOUD SERVER API KEY>",
   "region": "<YOUR ACCOUNT REGION (us OR uk)>"
 }
 ```
@@ -68,8 +68,8 @@ knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cl
 ```
 {
   "id": "cloud",
-  "username": "<YOUR CLOUD SERVER USERNAME>",
-  "apikey": "<YOUR CLOUD SERVER API KEY>",
+  "rackspace_username": "<YOUR CLOUD SERVER USERNAME>",
+  "rackspace_api_key": "<YOUR CLOUD SERVER API KEY>",
   "region": "<YOUR ACCOUNT REGION (us OR uk)>"
 }
 ```

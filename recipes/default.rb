@@ -42,9 +42,9 @@ begin
   # Access the Rackspace Cloud encrypted data_bag
   raxcloud = Chef::EncryptedDataBagItem.load("rackspace","cloud")
 
-  #Create variables for the Rackspace Cloud username and apikey
-  node['cloud_monitoring']['rackspace_username'] = raxcloud['username']
-  node['cloud_monitoring']['rackspace_api_key'] = raxcloud['apikey']
+  #Create variables for the Rackspace Cloud username and api key
+  node['cloud_monitoring']['rackspace_username'] = raxcloud['rackspace_username']
+  node['cloud_monitoring']['rackspace_api_key'] = raxcloud['rackspace_api_key']
   node['cloud_monitoring']['rackspace_auth_region'] = raxcloud['region'] || 'notset'
   node['cloud_monitoring']['rackspace_auth_region'] = node['cloud_monitoring']['rackspace_auth_region'].downcase
 
