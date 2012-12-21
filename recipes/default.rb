@@ -43,6 +43,10 @@ begin
   raxcloud = Chef::EncryptedDataBagItem.load("rackspace","cloud")
 
   #Create variables for the Rackspace Cloud username and api key
+  if not raxcloud['rackspace_username'] or raxcloud['username'] or raxcloud['apikey'] or not raxcloud['rackspace_api_key']
+    Chef::Log.error "Data bag keys for cloudmonitoring cookbook were changed to be more consistent. Please use 'rackspace_username' instead of 'username' and 'rackspace_api_key' instead of 'apikey'."
+    raise Chef::Exceptions::InvalidDataBagItemID
+  end
   node['cloud_monitoring']['rackspace_username'] = raxcloud['rackspace_username']
   node['cloud_monitoring']['rackspace_api_key'] = raxcloud['rackspace_api_key']
   node['cloud_monitoring']['rackspace_auth_region'] = raxcloud['region'] || 'notset'
