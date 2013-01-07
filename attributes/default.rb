@@ -30,3 +30,5 @@ default['cloud_monitoring']['agent']['channel'] = nil
 default['cloud_monitoring']['agent']['version'] = 'latest'
 default['cloud_monitoring']['agent']['token'] = nil
 default['cloud_monitoring']['monitoring_endpoints'] = [] # This should be a list of strings like 'x.x.x.x:port'
+
+default['cloud_monitoring']['custom_check_dir'] = '/usr/lib/rackspace-monitoring/plugins/'
