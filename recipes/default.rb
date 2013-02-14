@@ -27,15 +27,25 @@ when "redhat","centos","fedora", "amazon","scientific"
   package( "libxml2-devel" ).run_action( :install )
 end
 
-r = gem_package "rackspace-monitoring" do
-  version node['cloud_monitoring']['rackspace_monitoring_version']
-  action :nothing
+begin
+  # chef_gem doesn't exist prior to 0.10.9
+  chef_gem "rackspace-monitoring" do
+    version node['cloud_monitoring']['rackspace_monitoring_version']
+    action :install
+  end
+rescue NameError => e
+  Chef::Log.warn "chef_gem resource doesn't exist, falling back to system ruby install"
+  r = gem_package "rackspace-monitoring" do
+    version node['cloud_monitoring']['rackspace_monitoring_version']
+    action :nothing
+  end
+
+  r.run_action(:install)
+
+  require 'rubygems'
+  Gem.clear_paths
 end
 
-r.run_action(:install)
-
-require 'rubygems'
-Gem.clear_paths
 require 'rackspace-monitoring'
 
 begin
