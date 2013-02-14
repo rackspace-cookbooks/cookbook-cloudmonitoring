@@ -21,7 +21,6 @@ case node['platform']
 when "ubuntu","debian"
   package( "libxslt-dev" ).run_action( :install )
   package( "libxml2-dev" ).run_action( :install )
-  package( "ruby-dev" ).run_action( :install )
 when "redhat","centos","fedora", "amazon","scientific"
   package( "libxslt-devel" ).run_action( :install )
   package( "libxml2-devel" ).run_action( :install )
@@ -35,6 +34,10 @@ begin
   end
 rescue NameError => e
   Chef::Log.warn "chef_gem resource doesn't exist, falling back to system ruby install"
+
+  if node['platform_family'] == 'debian'
+    package( "ruby-dev" ).run_action( :install )
+  end
   r = gem_package "rackspace-monitoring" do
     version node['cloud_monitoring']['rackspace_monitoring_version']
     action :nothing
