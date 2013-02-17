@@ -286,3 +286,30 @@ cloud_monitoring_alarm  "ping alarm" do
 end
 ```
 
+## Agent Plugins
+
+The [Cloud Monitoring agent][1] supports using custom plugins for checks not supported out of the box by the
+agent. This cookbook contains a `plugins` recipe to help you install those plugins in the correct directory so
+they can be used. It copies the style of Opscode's [ohai cookbook][2] which allows you to specify additional cookbooks
+containing plugins. This means you can keep the cloudmonitoring cookbook pristine but still have your own custom plugins.
+
+Create a role in the following style:
+
+```javascript
+{
+  "name": "plugins_role",
+  "default_attributes": {
+    "cloud_monitoring": {
+      "plugins": {
+        "my_plugin_cookbook": "plugin_dir"
+      }
+    }
+  }
+}
+```
+
+This would mean you created a `my_plugin_cookbook` cookbook and placed all your plugins in `files/default/plugins`.
+
+[1]: http://docs.rackspace.com/cm/preview/api/v1.0/cm-devguide/content/appendix-check-types-agent.html
+[2]: https://github.com/opscode-cookbooks/ohai
+
