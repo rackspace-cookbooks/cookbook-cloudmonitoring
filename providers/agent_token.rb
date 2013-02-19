@@ -3,10 +3,12 @@ include Rackspace::CloudMonitoring
 action :create do
   agent_token = cm.agent_tokens.new(:label => new_resource.label)
   if @current_resource.nil? then
+    Chef::Log.info("Creating #{new_resource}")
     agent_token.save
     new_resource.updated_by_last_action(true)
     clear_tokens
   else
+    Chef::Log.debug("#{new_resource} exists, skipping create")
     new_resource.updated_by_last_action(false)
   end
 end
@@ -14,10 +16,12 @@ end
 
 action :delete do
   if !@current_resource.nil? then
+    Chef::Log.info("Deleting #{new_resource}")
     @current_resource.destroy
     new_resource.updated_by_last_action(true)
     clear_tokens
   else
+    Chef::Log.debug("#{new_resource} doesn't exist, skipping delete")
     new_resource.updated_by_last_action(false)
   end
 end

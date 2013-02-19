@@ -7,6 +7,7 @@ action :create do
                              :target_resolver => new_resource.target_resolver, :timeout => new_resource.timeout,
                              :period => new_resource.period)
   if @current_resource.nil? then
+    Chef::Log.info("Creating #{new_resource}")
     check.save
     new_resource.updated_by_last_action(true)
     clear
@@ -14,11 +15,13 @@ action :create do
     # Compare attributes
     if !check.compare? @current_resource then
       # It's different issue and update
+      Chef::Log.info("Updating #{new_resource}")
       check.id = @current_resource.id
       check.save
       new_resource.updated_by_last_action(true)
       clear
     else
+      Chef::Log.debug("#{new_resource} matches, skipping")
       new_resource.updated_by_last_action(false)
     end
   end
