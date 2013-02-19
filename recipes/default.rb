@@ -30,7 +30,6 @@ begin
   # chef_gem doesn't exist prior to 0.10.9
   chef_gem "rackspace-monitoring" do
     version node['cloud_monitoring']['rackspace_monitoring_version']
-    options "--no-ri --no-rdoc"
     action :install
   end
 rescue NameError => e
@@ -41,7 +40,6 @@ rescue NameError => e
   end
   r = gem_package "rackspace-monitoring" do
     version node['cloud_monitoring']['rackspace_monitoring_version']
-    options "--no-ri --no-rdoc"
     action :nothing
   end
 
