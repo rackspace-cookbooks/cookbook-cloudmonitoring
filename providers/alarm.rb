@@ -2,6 +2,7 @@ include Rackspace::CloudMonitoring
 
 action :create do
   criteria = new_resource.criteria
+  Chef::Log.debug("Setting #{new_resource} criteria:\n#{criteria}")
   check_id = new_resource.check_id
 
   if new_resource.example_id then

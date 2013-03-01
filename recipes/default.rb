@@ -32,6 +32,9 @@ begin
     version node['cloud_monitoring']['rackspace_monitoring_version']
     action :install
   end
+  chef_gem "docile" do
+    action :install
+  end
 rescue NameError => e
   Chef::Log.warn "chef_gem resource doesn't exist, falling back to system ruby install"
 
@@ -42,7 +45,11 @@ rescue NameError => e
     version node['cloud_monitoring']['rackspace_monitoring_version']
     action :nothing
   end
+  rr = gem_package "docile" do
+    action :nothing
+  end
 
+  rr.run_action(:install)
   r.run_action(:install)
 
   require 'rubygems'
