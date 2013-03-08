@@ -23,7 +23,10 @@ end
 #end
 
 begin
-  values = Chef::EncryptedDataBagItem.load('rackspace', 'cloud')
+  databag_dir = node["cloud_monitoring"]["credentials"]["dir"] || "rackspace"
+  databag_filename = node["cloud_monitoring"]["credentials"]["filename"] || "cloud"
+
+  values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
   node.set['cloud_monitoring']['agent']['token'] = values['agent_token'] || nil
 rescue Exception => e

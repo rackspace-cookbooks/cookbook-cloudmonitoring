@@ -54,7 +54,10 @@ require 'rackspace-monitoring'
 
 begin
   # Access the Rackspace Cloud encrypted data_bag
-  raxcloud = Chef::EncryptedDataBagItem.load("rackspace","cloud")
+  databag_dir = node["cloud_monitoring"]["credentials"]["dir"] || "rackspace"
+  databag_filename = node["cloud_monitoring"]["credentials"]["filename"] || "cloud"
+
+  raxcloud = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
   #Create variables for the Rackspace Cloud username and apikey
   node.set['cloud_monitoring']['rackspace_username'] = raxcloud['username']
