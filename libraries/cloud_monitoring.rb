@@ -10,8 +10,8 @@ module Rackspace
     def cm
       begin
         # Access the Rackspace Cloud encrypted data_bag
-        databag_dir = node["cloud_monitoring"]["credentials"]["dir"] || "rackspace"
-        databag_filename = node["cloud_monitoring"]["credentials"]["filename"] || "cloud"
+        databag_dir = node["cloud_monitoring"]["credentials"]["databag_name"]
+        databag_filename = node["cloud_monitoring"]["credentials"]["databag_item"]
 
         creds = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
       rescue Exception => e

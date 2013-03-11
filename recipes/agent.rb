@@ -23,8 +23,8 @@ end
 #end
 
 begin
-  databag_dir = node["cloud_monitoring"]["credentials"]["dir"] || "rackspace"
-  databag_filename = node["cloud_monitoring"]["credentials"]["filename"] || "cloud"
+  databag_dir = node["cloud_monitoring"]["credentials"]["databag_name"]
+  databag_filename = node["cloud_monitoring"]["credentials"]["databag_item"]
 
   values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
