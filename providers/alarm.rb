@@ -47,7 +47,13 @@ end
 
 
 def load_current_resource
-  @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
+  if @new_resource.entity_label then
+    raise Exception, "Cannot specify entity_label and entity_id" unless @new_resource.entity_id.nil?
+    @entity = get_entity_by_label @new_resource.entity_label
+  else
+    @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
+  end
+
   @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.label]
   if @current_resource == nil then
     @current_resource = get_alarm_by_label @entity.id, @new_resource.label
