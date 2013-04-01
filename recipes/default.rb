@@ -21,6 +21,7 @@ case node['platform']
 when "ubuntu","debian"
   package( "libxslt-dev" ).run_action( :install )
   package( "libxml2-dev" ).run_action( :install )
+  package( "build-essential" ).run_action( :install )
 when "redhat","centos","fedora", "amazon","scientific"
   package( "libxslt-devel" ).run_action( :install )
   package( "libxml2-devel" ).run_action( :install )
