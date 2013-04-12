@@ -37,4 +37,3 @@ default['cloud_monitoring']['plugin_path'] = '/usr/lib/rackspace-monitoring-agen
 # plugins directory always gets included in the list of plugins and won't get overwriten by
 # a role or node attribute.
 default['cloud_monitoring']['plugins']['cloud_monitoring'] = 'plugins'
-
