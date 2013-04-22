@@ -33,8 +33,8 @@ begin
     version node['cloud_monitoring']['rackspace_monitoring_version']
     action :install
   end
-rescue
-  Chef::Log.warn "Error using chef_gem, falling back to system ruby install"
+rescue NameError => e
+  Chef::Log.warn "chef_gem resource doesn't exist, falling back to system ruby install"
 
   if node['platform_family'] == 'debian'
     package( "ruby-dev" ).run_action( :install )
