@@ -19,6 +19,15 @@
 
 case node['platform']
 when "ubuntu","debian"
+
+  apt = execute "apt-get update" do
+    action :nothing
+  end
+
+  if File.mtime('/var/lib/apt/periodic/update-success-stamp') < Time.now - 86400
+    apt.run_action(:run)
+  end
+
   package( "libxslt-dev" ).run_action( :install )
   package( "libxml2-dev" ).run_action( :install )
   package( "build-essential" ).run_action( :install )
