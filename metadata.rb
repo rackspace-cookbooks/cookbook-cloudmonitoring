@@ -1,3 +1,4 @@
+name             "cloud_monitoring"
 maintainer       "Rackspace"
 maintainer_email "daniel.dispaltro@rackspace.com"
 license          "Apache 2.0"
