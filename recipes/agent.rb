@@ -39,14 +39,21 @@ if not node['cloud_monitoring']['agent']['token']
   raise RuntimeError, "agent_token variable must be set on the node."
 end
 
+# Don't install a newer version if upgrade_via_distro is False
+# The agent will autoupdate itself if installed at all so this is preferred
+# To force installing a specific version or "latest" set this to True and
+# indicate desired version in node['cloud_monitoring']['agent']['version']
 package "rackspace-monitoring-agent" do
-  if node['cloud_monitoring']['agent']['version'] == 'latest'
-    action :upgrade
+  if node['cloud_monitoring']['agent']['upgrade_via_distro']
+    if node['cloud_monitoring']['agent']['version'] == 'latest'
+      action :upgrade
+    else
+      version node['cloud_monitoring']['agent']['version']
+      action :install
+    end
   else
-    version node['cloud_monitoring']['agent']['version']
     action :install
   end
-
   notifies :restart, "service[rackspace-monitoring-agent]"
 end
 
