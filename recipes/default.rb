@@ -34,6 +34,9 @@ when "ubuntu","debian"
 when "redhat","centos","fedora", "amazon","scientific"
   package( "libxslt-devel" ).run_action( :install )
   package( "libxml2-devel" ).run_action( :install )
+  package( "make" ).run_action( :install )
+  package( "gcc" ).run_action( :install )
+  package( "ruby-devel" ).run_action( :install )
 end
 
 begin
@@ -60,6 +63,7 @@ rescue NameError => e
 end
 
 require 'rackspace-monitoring'
+
 
 begin
   # Access the Rackspace Cloud encrypted data_bag
