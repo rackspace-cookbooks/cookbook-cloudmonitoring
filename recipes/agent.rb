@@ -36,7 +36,13 @@ rescue Exception => e
 end
 
 if not node['cloud_monitoring']['agent']['token']
-  raise RuntimeError, "agent_token variable must be set on the node."
+  cloud_monitoring_agent_token "#{node.hostname}" do
+    rackspace_username  node['cloud_monitoring']['rackspace_username']
+    rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
+    action :create
+  end
+
+  node.set['cloud_monitoring']['agent']['token'] = :token
 end
 
 package "rackspace-monitoring-agent" do
