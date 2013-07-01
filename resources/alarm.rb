@@ -16,3 +16,4 @@ attribute :check_label, :kind_of => String
 
 attribute :rackspace_api_key, :kind_of => String
 attribute :rackspace_username, :kind_of => String
+attribute :rackspace_auth_url, :kind_of => String
