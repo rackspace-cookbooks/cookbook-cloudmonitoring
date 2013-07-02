@@ -1,4 +1,3 @@
-
 case node['platform']
 when "ubuntu","debian"
 
@@ -36,7 +35,21 @@ rescue Exception => e
 end
 
 if not node['cloud_monitoring']['agent']['token']
-  raise RuntimeError, "agent_token variable must be set on the node."
+
+  if not node['cloud_monitoring']['rackspace_username'] or not node['cloud_monitoring']['rackspace_api_key']
+    raise RuntimeError, "agent_token variable or rackspace credentials must be set on the node."
+
+  #This runs at compile time as it needs to finish before the template for the config file fires off.
+  else
+    e = cloud_monitoring_agent_token "#{node.hostname}" do
+      rackspace_username  node['cloud_monitoring']['rackspace_username']
+      rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
+      action :nothing
+    end
+    e.run_action(:create)
+
+  end
+
 end
 
 package "rackspace-monitoring-agent" do
