@@ -6,8 +6,8 @@ Specifically this recipe will focus on main atom's in the system.
 * Entities
 * Checks
 * Alarms
-* Agents (soon)
-* Agent Tokens (soon)
+* Agents (Ubuntu only currently)
+* Agent Tokens
 
 The cookbook also installs the python-pip package in Debian and RedHat based systems, and then uses pip to install the Rackspace Cloud Monitoring client, raxmon-cli, via pip
 
@@ -285,6 +285,16 @@ cloud_monitoring_alarm  "ping alarm" do
   action                :create
 end
 ```
+
+# Agent and Agent Tokens
+The Agent recipe will install the cloud monitoring agent on your node and either register it with a provided agent_token
+or if none is provided it will call the cloud_monitoring_agent_token provider to generate a new one for this node.
+
+The Agent token can either be provided through the following attribute.
+node['cloud_monitoring']['agent']['token']
+or through an entry in the rackspace cloud data bag like so.
+"token": "<Your Agent Token>"
+
 
 ## Agent Plugins
 
