@@ -1,4 +1,3 @@
-
 case node['platform']
 when "ubuntu","debian"
 
@@ -47,7 +46,7 @@ if not node['cloud_monitoring']['agent']['token']
       rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
       action :nothing
     end
-  e.run_action(:create)
+    e.run_action(:create)
 
   end
 
