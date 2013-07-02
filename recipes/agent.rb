@@ -1,13 +1,12 @@
-cookbook_file "#{Chef::Config[:file_cache_path]}/signing-key.asc" do
-  source "signing-key.asc"
-  mode 0755
-  owner "root"
-  group "root"
-end
-
-
 case node['platform']
 when "ubuntu", "debian"
+
+  cookbook_file "#{Chef::Config[:file_cache_path]}/signing-key.asc" do
+    source "signing-key.asc"
+    mode 0755
+    owner "root"
+    group "root"
+  end
 
   apt_repository "cloud-monitoring" do
 
@@ -23,8 +22,38 @@ when "ubuntu", "debian"
     action :add
   end
 
-end
 
+when "redhat","centos","fedora", "amazon","scientific"
+
+  #Grab the major release for cent and rhel servers as this is what the repos use.
+  releaseVersion = node['platform_version'].split('.').first
+
+  #We need to figure out which signing key to use, cent5 and rhel5 have their own.
+  if (node['platform'] == 'centos') && (releaseVersion == '5')
+    signingKey = 'centos-5.asc' 
+  elsif (node['platform'] == 'redhat') && (releaseVersion == '5')
+    signingKey = 'redhat-5.asc'
+  else
+    signingKey = 'linux.asc'
+  end
+  
+
+  cookbook_file "/etc/pki/rpm-gpg/#{signingKey}" do 
+    source signingKey
+    mode 0755
+    owner "root"
+    group "root"
+  end
+
+
+  yum_repository "cloud-monitoring" do
+    description "Rackspace Monitoring"
+    url "http://stable.packages.cloudmonitoring.rackspace.com/#{node['platform']}-#{releaseVersion}-#{node['kernel']['machine']}"
+    key signingKey
+    action :add
+  end
+
+end
 
 begin
   values = Chef::EncryptedDataBagItem.load('rackspace', 'cloud')

@@ -6,7 +6,7 @@ Specifically this recipe will focus on main atom's in the system.
 * Entities
 * Checks
 * Alarms
-* Agents (Ubuntu only currently)
+* Agents
 * Agent Tokens
 
 The cookbook also installs the python-pip package in Debian and RedHat based systems, and then uses pip to install the Rackspace Cloud Monitoring client, raxmon-cli, via pip
