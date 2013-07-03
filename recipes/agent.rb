@@ -3,7 +3,7 @@ when "ubuntu", "debian"
 
   cookbook_file "#{Chef::Config[:file_cache_path]}/signing-key.asc" do
     source "signing-key.asc"
-    mode 0755
+    mode 0644
     owner "root"
     group "root"
   end
