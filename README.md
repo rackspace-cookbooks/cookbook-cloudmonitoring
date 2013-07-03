@@ -295,6 +295,18 @@ node['cloud_monitoring']['agent']['token']
 or through an entry in the rackspace cloud data bag like so.
 "token": "<Your Agent Token>"
 
+Example Agent check
+
+```ruby
+cloud_monitoring_check  "cpu" do
+  type                  'agent.cpu'
+  period                30
+  timeout               10
+  rackspace_username  node['cloud_monitoring']['rackspace_username']
+  rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
+  action :create
+end
+```
 
 ## Agent Plugins
 
