@@ -291,9 +291,10 @@ The Agent recipe will install the cloud monitoring agent on your node and either
 or if none is provided it will call the cloud_monitoring_agent_token provider to generate a new one for this node.
 
 The Agent token can either be provided through the following attribute.
-node['cloud_monitoring']['agent']['token']
+* `node['cloud_monitoring']['agent']['token']`
 or through an entry in the rackspace cloud data bag like so.
-"token": "<Your Agent Token>"
+* `"token": "<Your Agent Token>"`
+
 
 Example Agent check
 
