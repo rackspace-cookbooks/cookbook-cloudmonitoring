@@ -63,12 +63,24 @@ rescue Exception => e
   Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
 
+t = template "/etc/rackspace-monitoring-agent.cfg" do
+  source "rackspace-monitoring-agent.erb"
+  owner "root"
+  group "root"
+  mode 0600
+  variables(
+    :monitoring_id => node['cloud_monitoring']['agent']['id'],
+    :monitoring_token => node['cloud_monitoring']['agent']['token']
+  )
+  action :nothing
+end
+
+
 if not node['cloud_monitoring']['agent']['token']
 
   if not node['cloud_monitoring']['rackspace_username'] or not node['cloud_monitoring']['rackspace_api_key']
     raise RuntimeError, "agent_token variable or rackspace credentials must be set on the node."
 
-  #This runs at compile time as it needs to finish before the template for the config file fires off.
   else
     e = cloud_monitoring_agent_token "#{node.hostname}" do
       rackspace_username  node['cloud_monitoring']['rackspace_username']
@@ -76,6 +88,7 @@ if not node['cloud_monitoring']['agent']['token']
       action :nothing
     end
     e.run_action(:create)
+    t.run_action(:create)
 
   end
 
@@ -92,16 +105,7 @@ package "rackspace-monitoring-agent" do
   notifies :restart, "service[rackspace-monitoring-agent]"
 end
 
-template "/etc/rackspace-monitoring-agent.cfg" do
-  source "rackspace-monitoring-agent.erb"
-  owner "root"
-  group "root"
-  mode 0600
-  variables(
-    :monitoring_id => node['cloud_monitoring']['agent']['id'],
-    :monitoring_token => node['cloud_monitoring']['agent']['token']
-  )
-end
+t.run_action(:create)
 
 node['cloud_monitoring']['plugins'].each_pair do |source_cookbook, path|
   remote_directory "cloud_monitoring_plugins_#{source_cookbook}" do
