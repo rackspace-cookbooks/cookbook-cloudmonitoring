@@ -27,7 +27,7 @@ when "ubuntu","debian"
 
   if !File.exists?('/var/lib/apt/periodic/update-success-stamp')
     apt.run_action(:run)
-  elsif File.mtime('/var/lib/apt/periodic/update-success-stamp')
+  elsif File.mtime('/var/lib/apt/periodic/update-success-stamp') < Time.now - 86400
     apt.run_action(:run)
   end
 
