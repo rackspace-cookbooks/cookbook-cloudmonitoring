@@ -1,13 +1,6 @@
 case node['platform']
 when "ubuntu", "debian"
 
-  cookbook_file "#{Chef::Config[:file_cache_path]}/signing-key.asc" do
-    source "signing-key.asc"
-    mode 0644
-    owner "root"
-    group "root"
-  end
-
   apt_repository "cloud-monitoring" do
 
     if node['platform'] == 'ubuntu'
@@ -18,7 +11,7 @@ when "ubuntu", "debian"
 
     distribution "cloudmonitoring"
     components ["main"]
-    key "signing-key.asc"
+    key "https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc" 
     action :add
   end
 
