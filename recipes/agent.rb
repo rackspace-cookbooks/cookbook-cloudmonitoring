@@ -23,26 +23,21 @@ when "redhat","centos","fedora", "amazon","scientific"
 
   #We need to figure out which signing key to use, cent5 and rhel5 have their own.
   if (node['platform'] == 'centos') && (releaseVersion == '5')
-    signingKey = 'centos-5.asc' 
+    signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/centos-5.asc' 
   elsif (node['platform'] == 'redhat') && (releaseVersion == '5')
-    signingKey = 'redhat-5.asc'
+    signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/redhat-5.asc'
   else
-    signingKey = 'linux.asc'
+    signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc'
+  end
+
+  yum_key "Rackspace-Monitoring" do
+    url signingKey
+    action :add
   end
   
-
-  cookbook_file "/etc/pki/rpm-gpg/#{signingKey}" do 
-    source signingKey
-    mode 0755
-    owner "root"
-    group "root"
-  end
-
-
   yum_repository "cloud-monitoring" do
     description "Rackspace Monitoring"
     url "http://stable.packages.cloudmonitoring.rackspace.com/#{node['platform']}-#{releaseVersion}-#{node['kernel']['machine']}"
-    key signingKey
     action :add
   end
 
