@@ -5,7 +5,7 @@ attribute :check_type, :kind_of => String
 attribute :check_id, :kind_of => String
 attribute :metadata, :kind_of => Hash
 attribute :criteria, :kind_of => String
-attribute :notification_plan_id, :kind_of => String
+attribute :notification_plan_id, :kind_of => String, :required => true
 attribute :entity_id, :kind_of => String
 attribute :entity_label, :kind_of => String
 
