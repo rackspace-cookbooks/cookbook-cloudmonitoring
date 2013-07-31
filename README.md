@@ -96,7 +96,7 @@ The first element is the `Entity`.  The `Entity` maps to the target of what you'
 represents a server, loadbalancer or website.  However, there is some advanced flexibility but that is only used in rare cases. The first use case we will show is populating your chef nodes in Cloud Monitoring...
 
 Learn more about all these concepts in the docs and specifically the
-[Concepts](http://docs.rackspacecloud.com/cm/api/v1.0/cm-devguide/content/concepts-key-terms.html) section of the
+[Concepts](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/Concepts.html#concepts-key-terms) section of the
 developer guide.
 
 ```ruby
@@ -192,7 +192,7 @@ generate an alert.
 
 There are some guides describing how to best threshold for certain events, and there is also a built in alarm examples
 API that is very powerful.  This [Alarm Examples
-API](http://docs.rackspacecloud.com/cm/api/v1.0/cm-devguide/content/service-alarm-examples.html) is exposed in this
+API](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-alarm-examples.html) is exposed in this
 recipe indirectly through the alarm `cloud_monitoring_alarm` stanza.  Look at an example below:
 
 ```ruby
