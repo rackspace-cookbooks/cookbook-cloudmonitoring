@@ -75,7 +75,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
 
     #Pull just the token itself into a variable named token
     label = "#{node.hostname}"
-    monitoring = Fog::Monitoring::Rackspace.new(:rackspace_api_key => node['cloud_monitoring']['rackspace_api_key'], :rackspace_username => node['cloud_monitoring']['rackspace_username'])
+    monitoring = Fog::Rackspace::Monitoring.new(:rackspace_api_key => node['cloud_monitoring']['rackspace_api_key'], :rackspace_username => node['cloud_monitoring']['rackspace_username'])
     tokens = Hash[monitoring.agent_tokens.all.map  {|x| [x.label, x]}]
     possible = tokens.select {|key, value| value.label === label}
     possible = Hash[*possible.flatten(1)]
