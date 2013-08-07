@@ -18,7 +18,7 @@ action :create do
     clear
   else
     # Compare attributes
-    if !entity.identity.eql? @current_resource.identity then
+    if !entity.compare? @current_resource then
       # It's different
       Chef::Log.info("Updating #{new_resource}")
       entity.id = @current_resource.id
