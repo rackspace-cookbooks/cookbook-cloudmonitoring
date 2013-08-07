@@ -4,9 +4,8 @@ maintainer_email "daniel.dispaltro@rackspace.com"
 license          "Apache 2.0"
 description      "Installs/Configures Rackspace Cloud Monitoring"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "0.3.0"
+version          "1.0.0"
 
 depends "apt", ">= 1.4.2"
 depends "python"
 depends "yum"
-
