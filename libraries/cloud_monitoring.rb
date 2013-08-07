@@ -1,8 +1,3 @@
-begin
-  require 'rackspace-monitoring'
-rescue LoadError
-  Chef::Log.warn("Missing gem 'rackspace-monitoring'")
-end
 
 module Rackspace
   module CloudMonitoring
