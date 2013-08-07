@@ -1,4 +1,3 @@
-
 module Rackspace
   module CloudMonitoring
 
@@ -13,9 +12,9 @@ module Rackspace
       apikey = new_resource.rackspace_api_key || creds['apikey']
       username = new_resource.rackspace_username || creds['username']
       auth_url = new_resource.rackspace_auth_url || creds['auth_url']
-      @@cm ||= Fog::Monitoring::Rackspace.new(:rackspace_api_key => apikey, :rackspace_username => username,
-                                              :rackspace_auth_url => auth_url,
-                                              :raise_errors => node['cloud_monitoring']['abort_on_failure'])
+#      @@cm ||= Fog::Monitoring::Rackspace.new(:rackspace_api_key => apikey, :rackspace_username => username,
+      @@cm ||= Fog::Rackspace::Monitoring.new(:rackspace_api_key => apikey, :rackspace_username => username,
+                                              :rackspace_auth_url => auth_url)
       @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
       @@cm
     end
