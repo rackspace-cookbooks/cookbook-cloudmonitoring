@@ -18,17 +18,9 @@
 #
 include_recipe 'xml::ruby' unless platform_family?("windows")
 
-e = cookbook_file "/tmp/fog-1.14.1-monitoring.gem" do
-  backup false
-  action :nothing 
-end
-
-e.run_action(:create_if_missing)
-
 
 chef_gem "fog" do
-#  version node['cloud_monitoring']['fog_version']
-  source "/tmp/fog-1.14.1-monitoring.gem"
+  version '>= 1.15.0'
   action :install
 end
 
