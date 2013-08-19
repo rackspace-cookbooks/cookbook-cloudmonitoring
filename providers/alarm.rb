@@ -25,7 +25,8 @@ action :create do
     :label => new_resource.label,
     :check_type => new_resource.check_type,
     :check_id => check_id,
-    :metadata => new_resource.metadata, :criteria => criteria,
+    :metadata => new_resource.metadata,
+    :criteria => criteria,
     :notification_plan_id => notification_plan_id
   )
   if @current_resource.nil? then
