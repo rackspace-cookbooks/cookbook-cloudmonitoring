@@ -24,8 +24,7 @@ action :create do
   check = @entity.alarms.new(
     :label => new_resource.label,
     :check_type => new_resource.check_type,
-    :check_id => check_id,
-    :metadata => new_resource.metadata,
+    :check => check_id,
     :criteria => criteria,
     :notification_plan_id => notification_plan_id
   )
