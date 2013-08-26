@@ -1,4 +1,4 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
 
 action :create do
   criteria = new_resource.criteria
@@ -29,6 +29,7 @@ action :create do
     :criteria => criteria,
     :notification_plan_id => notification_plan_id
   )
+
   if @current_resource.nil? then
     Chef::Log.info("Creating #{new_resource}")
     check.save
