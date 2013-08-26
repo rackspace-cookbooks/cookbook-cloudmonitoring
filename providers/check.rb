@@ -1,4 +1,4 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
 
 action :create do
   check = @entity.checks.new(

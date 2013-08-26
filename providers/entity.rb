@@ -1,4 +1,4 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
 
 require 'ipaddr'
 
