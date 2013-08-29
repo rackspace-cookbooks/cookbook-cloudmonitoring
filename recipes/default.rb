@@ -18,7 +18,7 @@
 #
 
 chef_gem "fog" do
-  version '>= 1.15.0'
+  version ">= #{node['cloud_monitoring']['fog_version']}"
   action :install
 end
 
