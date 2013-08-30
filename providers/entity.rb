@@ -1,4 +1,4 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
 
 require 'ipaddr'
 
@@ -9,8 +9,12 @@ action :create do
     new_resource.ip_addresses.each {|k, v| new_ips[k] = IPAddr.new(v).to_string }
     new_resource.ip_addresses.update new_ips
   end
-  entity = cm.entities.new(:label => new_resource.label, :ip_addresses => new_resource.ip_addresses,
-                           :metadata => new_resource.metadata, :agent_id => new_resource.agent_id)
+  entity = cm.entities.new(
+    :label => new_resource.label,
+    :ip_addresses => new_resource.ip_addresses,
+    :metadata => new_resource.metadata,
+    :agent_id => new_resource.agent_id
+  )
   if @current_resource.nil? then
     Chef::Log.info("Creating #{new_resource}")
     entity.save

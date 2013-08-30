@@ -1,11 +1,18 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
 
 action :create do
-  check = @entity.checks.new(:label => new_resource.label, :type => new_resource.type, :details => new_resource.details,
-                             :metadata => new_resource.metadata, :monitoring_zones_poll => new_resource.monitoring_zones_poll,
-                             :target_alias => new_resource.target_alias, :target_hostname => new_resource.target_hostname,
-                             :target_resolver => new_resource.target_resolver, :timeout => new_resource.timeout,
-                             :period => new_resource.period)
+  check = @entity.checks.new(
+    :label => new_resource.label,
+    :type => new_resource.type,
+    :details => new_resource.details,
+    :metadata => new_resource.metadata, 
+    :monitoring_zones_poll => new_resource.monitoring_zones_poll,
+    :target_alias => new_resource.target_alias,
+    :target_hostname => new_resource.target_hostname,
+    :target_resolver => new_resource.target_resolver,
+    :timeout => new_resource.timeout,
+    :period => new_resource.period
+  )
   if @current_resource.nil? then
     Chef::Log.info("Creating #{new_resource}")
     check.save

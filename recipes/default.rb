@@ -16,57 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-case node['platform']
-when "ubuntu","debian"
-
-  apt = execute "apt-get update" do
-    action :nothing
-  end
+include_recipe 'xml::ruby' unless platform_family?("windows")
 
 
-  if !File.exists?('/var/lib/apt/periodic/update-success-stamp')
-    apt.run_action(:run)
-  elsif File.mtime('/var/lib/apt/periodic/update-success-stamp') < Time.now - 86400
-    apt.run_action(:run)
-  end
-
-  package( "libxslt-dev" ).run_action( :install )
-  package( "libxml2-dev" ).run_action( :install )
-  package( "build-essential" ).run_action( :install )
-when "redhat","centos","fedora", "amazon","scientific"
-  package( "libxslt-devel" ).run_action( :install )
-  package( "libxml2-devel" ).run_action( :install )
-  package( "make" ).run_action( :install )
-  package( "gcc" ).run_action( :install )
-  package( "ruby-devel" ).run_action( :install )
+chef_gem "fog" do
+  version '>= 1.15.0'
+  action :install
 end
 
-begin
-  # chef_gem doesn't exist prior to 0.10.9
-  chef_gem "rackspace-monitoring" do
-    version node['cloud_monitoring']['rackspace_monitoring_version']
-    action :install
-  end
-rescue NameError => e
-  Chef::Log.warn "chef_gem resource doesn't exist, falling back to system ruby install"
-
-  if node['platform_family'] == 'debian'
-    package( "ruby-dev" ).run_action( :install )
-  end
-  r = gem_package "rackspace-monitoring" do
-    version node['cloud_monitoring']['rackspace_monitoring_version']
-    action :nothing
-  end
-
-  r.run_action(:install)
-
-  require 'rubygems'
-  Gem.clear_paths
-end
-
-require 'rackspace-monitoring'
-
+require 'fog'
 
 begin
   # Access the Rackspace Cloud encrypted data_bag
