@@ -20,7 +20,7 @@ The raxmon-cli recipe in this cookbook is not automatically added by default.  T
 **New in version v1.0.1 and higher**
 Requires Chef `0.10.12` or higher for the chef_gem resource. Chef 11 is recommended.
 
-For Chef versions less than `0.10.12`, inlcude the [chef_gem](https://github.com/hw-cookbooks/chef_gem) cookbook which will provide the chef_gem resource without upgrading chef entirely.
+For Chef versions less than `0.10.12`, include the [chef_gem](https://github.com/hw-cookbooks/chef_gem) cookbook which will provide the chef_gem resource without upgrading chef entirely.
 
 While this cookbook can be used in chef-solo mode, to gain the most flexibility, we recommend using chef-client with a Chef Server.
 
