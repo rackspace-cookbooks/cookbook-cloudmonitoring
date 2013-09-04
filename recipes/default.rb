@@ -76,18 +76,18 @@ begin
   raxcloud = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
   #Create variables for the Rackspace Cloud username and apikey
-  node.set['cloud_monitoring']['rackspace_username'] = raxcloud['username']
-  node.set['cloud_monitoring']['rackspace_api_key'] = raxcloud['apikey']
-  node.set['cloud_monitoring']['rackspace_auth_region'] = raxcloud['region'] || 'notset'
-  node.set['cloud_monitoring']['rackspace_auth_region'] = node['cloud_monitoring']['rackspace_auth_region'].downcase
+  node.default['cloud_monitoring']['rackspace_username'] = raxcloud['username']
+  node.default['cloud_monitoring']['rackspace_api_key'] = raxcloud['apikey']
+  node.default['cloud_monitoring']['rackspace_auth_region'] = raxcloud['region'] || 'notset'
+  node.default['cloud_monitoring']['rackspace_auth_region'] = node['cloud_monitoring']['rackspace_auth_region'].downcase
 
   if node['cloud_monitoring']['rackspace_auth_region'] == 'us'
-    node.set['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
+    node.default['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
   elsif node['cloud_monitoring']['rackspace_auth_region']  == 'uk'
-    node.set['cloud_monitoring']['rackspace_auth_url'] = 'https://lon.identity.api.rackspacecloud.com/v2.0'
+    node.default['cloud_monitoring']['rackspace_auth_url'] = 'https://lon.identity.api.rackspacecloud.com/v2.0'
   else
     Chef::Log.info "Using the encrypted data bag for rackspace cloud but no raxregion attribute was set (or it was set to something other then 'us' or 'uk'). Assuming 'us'. If you have a 'uk' account make sure to set the raxregion in your data bag"
-    node.set['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
+    node.default['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
   end
 rescue Exception => e
   Chef::Log.error "Failed to load rackspace cloud data bag: " + e.to_s
