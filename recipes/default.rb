@@ -89,6 +89,17 @@ begin
     Chef::Log.info "Using the encrypted data bag for rackspace cloud but no raxregion attribute was set (or it was set to something other then 'us' or 'uk'). Assuming 'us'. If you have a 'uk' account make sure to set the raxregion in your data bag"
     node.default['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
   end
+
+  %w{rackspace_username
+     rackspace_api_key
+  }.each do |var|
+    if node['cloud_monitoring'][var].instance_variable_defined?("@current_normal")
+      Chef::Log.warn("You have #{var} defined as a normal attribute. This means t"
+                     + "hat it may be stored on your chef server (if you use one)."
+                     + "The cookbook has been changed to set it as a default attri"
+                     + "bute, which will not automatically store on the chef server.")
+    end
+  end
 rescue Exception => e
   Chef::Log.error "Failed to load rackspace cloud data bag: " + e.to_s
 end
