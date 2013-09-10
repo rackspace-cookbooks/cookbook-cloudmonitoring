@@ -94,10 +94,7 @@ begin
      rackspace_api_key
   }.each do |var|
     if node['cloud_monitoring'][var].instance_variable_defined?("@current_normal")
-      Chef::Log.warn("You have #{var} defined as a normal attribute. This means t"
-                     + "hat it may be stored on your chef server (if you use one)."
-                     + "The cookbook has been changed to set it as a default attri"
-                     + "bute, which will not automatically store on the chef server.")
+      Chef::Log.warn "You have #{var} defined as a normal attribute. This means that it may be stored on your chef server (if you use one). The cookbook has been changed to set it as a default attribute, which will not automatically store on the chef server."
     end
   end
 rescue Exception => e
