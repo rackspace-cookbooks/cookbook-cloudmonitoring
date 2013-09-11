@@ -9,7 +9,6 @@ version          "1.0.2"
 depends "apt", ">= 1.4.2"
 depends "python"
 depends "yum"
-depends "xml"
 
 #chef_gem cookbook/library required for chef versions <= 10.12.0
 recommends "chef_gem"
