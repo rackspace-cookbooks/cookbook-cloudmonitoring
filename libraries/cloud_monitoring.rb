@@ -5,7 +5,10 @@ module Opscode
       def cm
         begin
           # Access the Rackspace Cloud encrypted data_bag
-          creds = Chef::EncryptedDataBagItem.load("rackspace", "cloud")
+          creds = Chef::EncryptedDataBagItem.load(
+            node["cloud_monitoring"]["credentials"]["databag_name"],
+            node["cloud_monitoring"]["credentials"]["databag_item"]
+          )
         rescue Exception => e
           creds = {'username' => nil, 'apikey' => nil, 'auth_url' => nil }
         end
