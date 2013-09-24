@@ -1,18 +1,11 @@
-include Opscode::Rackspace::Monitoring
+include Rackspace::CloudMonitoring
 
 action :create do
-  check = @entity.checks.new(
-    :label => new_resource.label,
-    :type => new_resource.type,
-    :details => new_resource.details,
-    :metadata => new_resource.metadata, 
-    :monitoring_zones_poll => new_resource.monitoring_zones_poll,
-    :target_alias => new_resource.target_alias,
-    :target_hostname => new_resource.target_hostname,
-    :target_resolver => new_resource.target_resolver,
-    :timeout => new_resource.timeout,
-    :period => new_resource.period
-  )
+  check = @entity.checks.new(:label => new_resource.label, :type => new_resource.type, :details => new_resource.details,
+                             :metadata => new_resource.metadata, :monitoring_zones_poll => new_resource.monitoring_zones_poll,
+                             :target_alias => new_resource.target_alias, :target_hostname => new_resource.target_hostname,
+                             :target_resolver => new_resource.target_resolver, :timeout => new_resource.timeout,
+                             :period => new_resource.period)
   if @current_resource.nil? then
     Chef::Log.info("Creating #{new_resource}")
     check.save
@@ -41,6 +34,10 @@ def load_current_resource
     @entity = get_entity_by_label @new_resource.entity_label
   else
     @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
+  end
+
+  if @entity == nil
+    @entity = get_entity_by_ip node['cloud']['public_ipv4']
   end
 
   @current_resource = get_check_by_id @entity.id, node['cloud_monitoring']['checks'][@new_resource.label]
