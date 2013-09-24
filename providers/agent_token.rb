@@ -1,4 +1,5 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
+
 
 action :create do
   agent_token = cm.agent_tokens.new(:label => new_resource.label)

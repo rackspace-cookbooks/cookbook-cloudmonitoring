@@ -1,6 +1,14 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
 
 action :create do
+  # run load_current_resource so that on the first run of the cookbook
+  # the @entity methods do not throw errors
+  if @entity.nil?
+    # clear the view that keeps returning nil
+    clear
+    # reload the resource
+    load_current_resource
+  end
   criteria = new_resource.criteria
   check_id = new_resource.check_id
 
@@ -16,21 +24,33 @@ action :create do
     check_id = get_check_by_label(@entity.id, new_resource.check_label).identity
   end
 
-  check = @entity.alarms.new(:label => new_resource.label, :check_type => new_resource.check_type, :check_id => check_id,
-                             :metadata => new_resource.metadata, :criteria => criteria,
-                             :notification_plan_id => new_resource.notification_plan_id)
+  notification_plan_id = new_resource.notification_plan_id || node['cloud_monitoring']['notification_plan_id']
+  if notification_plan_id.nil? then
+    raise ValueError, "Must specify 'notification_plan_id' in alarm resource or in node['cloud_monitoring']['notification_plan_id']"
+  end
+
+  alarm = @entity.alarms.new(
+    :label => new_resource.label,
+    :check_type => new_resource.check_type,
+    :metadata => new_resource.metadata,
+    :check => check_id,
+    :criteria => criteria,
+    :notification_plan_id => notification_plan_id
+  )
+
   if @current_resource.nil? then
     Chef::Log.info("Creating #{new_resource}")
-    check.save
+    alarm.save
     new_resource.updated_by_last_action(true)
+    update_node_alarm(@new_resource.label,alarm.id)
     clear
   else
     # Compare attributes
-    if !check.compare? @current_resource then
+    if !alarm.compare? @current_resource then
       # It's different issue and update
       Chef::Log.info("Updating #{new_resource}")
-      check.id = @current_resource.id
-      check.save
+      alarm.id = @current_resource.id
+      alarm.save
       new_resource.updated_by_last_action(true)
       clear
     else
@@ -52,6 +72,6 @@ def load_current_resource
   @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.label]
   if @current_resource == nil then
     @current_resource = get_alarm_by_label @entity.id, @new_resource.label
-    node.set['cloud_monitoring']['alarms'][@new_resource.label] = @current_resource.identity unless @current_resource.nil?
+    update_node_alarm(@new_resource.label,@current_resource.identity) unless @current_resource.nil?
   end
 end

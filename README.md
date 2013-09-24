@@ -1,3 +1,6 @@
+**NOTE, there have been many changes in v1.0.0 series of this cookbook. Some of which are possibly breaking for older installations. Please see the changelog.**
+ Older versions can be found on the [release page](https://github.com/rackspace-cookbooks/cookbook-cloudmonitoring/releases)
+
 # Description
 
 This cookbook provides automated way to manage the various resources using the Rackspace Cloud Monitoring API.
@@ -14,9 +17,12 @@ The cookbook also installs the python-pip package in Debian and RedHat based sys
 The raxmon-cli recipe in this cookbook is not automatically added by default.  To install raxmon-cli, add the cloud_monitoring::raxmon recipe to the run_list. 
 
 # Requirements
+**New in version v1.0.1 and higher**
+Requires Chef `0.10.12` or higher for the chef_gem resource. Chef 11 is recommended.
 
-Requires Chef 0.7.10 or higher for Lightweight Resource and Provider support. Chef 0.8+ is recommended. While this
-cookbook can be used in chef-solo mode, to gain the most flexibility, we recommend using chef-client with a Chef Server.
+For Chef versions less than `0.10.12`, include the [chef_gem](https://github.com/hw-cookbooks/chef_gem) cookbook which will provide the chef_gem resource without upgrading chef entirely.
+
+While this cookbook can be used in chef-solo mode, to gain the most flexibility, we recommend using chef-client with a Chef Server.
 
 ## Library Requirements
 
