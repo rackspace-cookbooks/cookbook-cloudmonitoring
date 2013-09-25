@@ -320,7 +320,7 @@ end
 ## Agent Plugins
 
 The [Cloud Monitoring agent][1] supports using custom plugins for checks not supported out of the box by the
-agent. This cookbook contains a `plugins` recipe to help you install those plugins in the correct directory so
+agent. The `agent` recipe in this cookbook contains a block to help you install those plugins in the correct directory so
 they can be used. It copies the style of Opscode's [ohai cookbook][2] which allows you to specify additional cookbooks
 containing plugins. This means you can keep the cloudmonitoring cookbook pristine but still have your own custom plugins.
 
@@ -332,7 +332,7 @@ Create a role in the following style:
   "default_attributes": {
     "cloud_monitoring": {
       "plugins": {
-        "my_plugin_cookbook": "plugin_dir"
+        "my_plugin_cookbook": "plugins"
       }
     }
   }
