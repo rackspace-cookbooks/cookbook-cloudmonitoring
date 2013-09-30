@@ -1,4 +1,4 @@
-include Rackspace::CloudMonitoring
+include Opscode::Rackspace::Monitoring
 
 action :create do
   criteria = new_resource.criteria
@@ -16,9 +16,20 @@ action :create do
     check_id = get_check_by_label(@entity.id, new_resource.check_label).identity
   end
 
-  check = @entity.alarms.new(:label => new_resource.label, :check_type => new_resource.check_type, :check_id => check_id,
-                             :metadata => new_resource.metadata, :criteria => criteria,
-                             :notification_plan_id => new_resource.notification_plan_id)
+  notification_plan_id = new_resource.notification_plan_id || node['cloud_monitoring']['notification_plan_id']
+  if notification_plan_id.nil? then
+    raise ValueError, "Must specify 'notification_plan_id' in alarm resource or in node['cloud_monitoring']['notification_plan_id']"
+  end
+
+  check = @entity.alarms.new(
+    :label => new_resource.label,
+    :check_type => new_resource.check_type,
+    :metadata => new_resource.metadata,
+    :check => check_id,
+    :criteria => criteria,
+    :notification_plan_id => notification_plan_id
+  )
+
   if @current_resource.nil? then
     Chef::Log.info("Creating #{new_resource}")
     check.save
@@ -48,7 +59,7 @@ def load_current_resource
   else
     @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
   end
-  
+
   if @entity == nil
     @entity = get_entity_by_ip node['cloud']['public_ipv4']
   end
