@@ -2,6 +2,7 @@ include Opscode::Rackspace::Monitoring
 
 
 action :create do
+  Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   agent_token = cm.agent_tokens.new(:label => new_resource.label)
   if @current_resource.nil? then
     Chef::Log.info("Creating #{new_resource}")
@@ -16,6 +17,7 @@ end
 
 
 action :delete do
+  Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
   if !@current_resource.nil? then
     Chef::Log.info("Deleting #{new_resource}")
     @current_resource.destroy
