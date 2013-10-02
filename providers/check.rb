@@ -1,6 +1,7 @@
 include Opscode::Rackspace::Monitoring
 
 action :create do
+  Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   # run load_current_resource so that on the first run of the cookbook
   # the @entity methods do not throw errors
   if @entity.nil?
