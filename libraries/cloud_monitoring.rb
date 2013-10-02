@@ -16,20 +16,20 @@ module Opscode
         apikey = new_resource.rackspace_api_key || creds['apikey']
         username = new_resource.rackspace_username || creds['username']
         auth_url = new_resource.rackspace_auth_url || creds['auth_url']
-        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: creating new Fog connection") if @@cm.nil?
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: creating new Fog connection") if(!defined?(@@cm) || @@cm.nil?)
         @@cm ||= Fog::Rackspace::Monitoring.new(
           :rackspace_api_key => apikey,
           :rackspace_username => username,
           :rackspace_auth_url => auth_url
         )
 
-        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if @@view.nil?
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if(!defined?(@@cm) || @@view.nil?)
         @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
         @@cm
       end
 
       def tokens
-        Chef::Log.debug("Opscode::Rackspace::Monitoring.tokens: Loading tokens") if @@tokens.nil?
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.tokens: Loading tokens") if(!defined?(@@tokens) || @@tokens.nil?)
         @@tokens ||= Hash[cm.agent_tokens.all.map {|x| [x.identity, x]}]
       end
 
