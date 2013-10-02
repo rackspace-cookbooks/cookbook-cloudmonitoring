@@ -3,6 +3,7 @@ include Opscode::Rackspace::Monitoring
 require 'ipaddr'
 
 action :create do
+  Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   # normalize the ip's
   if new_resource.ip_addresses then
     new_ips = {}
@@ -39,6 +40,7 @@ action :create do
 end
 
 action :delete do
+  Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
   if !@current_resource.nil? then
     @current_resource.destroy
     new_resource.updated_by_last_action(true)

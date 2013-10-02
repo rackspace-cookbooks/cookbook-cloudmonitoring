@@ -16,25 +16,30 @@ module Opscode
         apikey = new_resource.rackspace_api_key || creds['apikey']
         username = new_resource.rackspace_username || creds['username']
         auth_url = new_resource.rackspace_auth_url || creds['auth_url']
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: creating new Fog connection") if @@cm.nil?
         @@cm ||= Fog::Rackspace::Monitoring.new(
           :rackspace_api_key => apikey,
           :rackspace_username => username,
           :rackspace_auth_url => auth_url
         )
 
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if @@view.nil?
         @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
         @@cm
       end
 
       def tokens
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.tokens: Loading tokens") if @@tokens.nil?
         @@tokens ||= Hash[cm.agent_tokens.all.map {|x| [x.identity, x]}]
       end
 
       def clear
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.clear called; clearing view")
         @@view = nil
       end
 
       def clear_tokens
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.clear_tokens called; clearing tokens")
         @@tokens = nil
       end
 
@@ -144,6 +149,7 @@ module Opscode
       end
 
       def get_token_by_label(label)
+        Chef::Log.debug("Opscode::Rackspace::Monitoring: Attempting to find tokens for #{label}")
         possible = tokens.select {|key, value| value.label === label}
         possible = Hash[*possible.flatten(1)]
 
