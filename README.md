@@ -349,7 +349,7 @@ Create a role in the following style:
   "default_attributes": {
     "cloud_monitoring": {
       "plugins": {
-        "my_plugin_cookbook": "plugin_dir"
+        "my_plugin_cookbook": "plugins"
       }
     }
   }
