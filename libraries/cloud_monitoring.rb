@@ -5,7 +5,10 @@ module Opscode
       def cm
         begin
           # Access the Rackspace Cloud encrypted data_bag
-          creds = Chef::EncryptedDataBagItem.load("rackspace", "cloud")
+          creds = Chef::EncryptedDataBagItem.load(
+            node["cloud_monitoring"]["credentials"]["databag_name"],
+            node["cloud_monitoring"]["credentials"]["databag_item"]
+          )
         rescue Exception => e
           creds = {'username' => nil, 'apikey' => nil, 'auth_url' => nil }
         end
@@ -13,25 +16,30 @@ module Opscode
         apikey = new_resource.rackspace_api_key || creds['apikey']
         username = new_resource.rackspace_username || creds['username']
         auth_url = new_resource.rackspace_auth_url || creds['auth_url']
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: creating new Fog connection") if(!defined?(@@cm) || @@cm.nil?)
         @@cm ||= Fog::Rackspace::Monitoring.new(
           :rackspace_api_key => apikey,
           :rackspace_username => username,
           :rackspace_auth_url => auth_url
         )
 
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if(!defined?(@@view) || @@view.nil?)
         @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
         @@cm
       end
 
       def tokens
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.tokens: Loading tokens") if(!defined?(@@tokens) || @@tokens.nil?)
         @@tokens ||= Hash[cm.agent_tokens.all.map {|x| [x.identity, x]}]
       end
 
       def clear
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.clear called; clearing view")
         @@view = nil
       end
 
       def clear_tokens
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.clear_tokens called; clearing tokens")
         @@tokens = nil
       end
 
@@ -40,7 +48,28 @@ module Opscode
         @@view
       end
 
+      def update_node_entity_id(entity_id)
+        node.set['cloud_monitoring']['entity_id'] = entity_id
+        Chef::Log.info("Updating node entity id to #{entity_id}")
+      end
+
+      def update_node_agent_id(agent_id)
+        node.set['cloud_monitoring']['agent']['id'] = agent_id
+        Chef::Log.info("updating node agent id to #{agent_id}")
+      end
+
+      def update_node_check(label,check_id)
+        node.set['cloud_monitoring']['check_id'][label] = check_id
+        Chef::Log.info("updating check #{label} to #{check_id}")
+      end
+
+      def update_node_alarm(label, alarm_id)
+        node.set['cloud_monitoring']['alarm_id'][label] = alarm_id
+        Chef::Log.info("updating alarm #{label} to #{alarm_id}")
+      end
+
       def get_type(entity_id, type)
+        return {} if view[entity_id].nil?
         if type == 'checks' then
           view[entity_id].checks
         elsif type == 'alarms' then
@@ -126,6 +155,7 @@ module Opscode
       end
 
       def get_token_by_label(label)
+        Chef::Log.debug("Opscode::Rackspace::Monitoring: Attempting to find tokens for #{label}")
         possible = tokens.select {|key, value| value.label === label}
         possible = Hash[*possible.flatten(1)]
 

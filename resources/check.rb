@@ -14,7 +14,6 @@ attribute :monitoring_zones_poll, :kind_of => Array
 attribute :entity_id, :kind_of => String
 attribute :entity_label, :kind_of => String
 
-
 attribute :rackspace_api_key, :kind_of => String
 attribute :rackspace_username, :kind_of => String
 attribute :rackspace_auth_url, :kind_of => String

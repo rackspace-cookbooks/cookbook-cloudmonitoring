@@ -34,7 +34,7 @@ when "redhat","centos","fedora", "amazon","scientific"
     url signingKey
     action :add
   end
-  
+
   yum_repository "cloud-monitoring" do
     description "Rackspace Monitoring"
     url "http://stable.packages.cloudmonitoring.rackspace.com/#{node['platform']}-#{releaseVersion}-#{node['kernel']['machine']}"
@@ -44,7 +44,10 @@ when "redhat","centos","fedora", "amazon","scientific"
 end
 
 begin
-  values = Chef::EncryptedDataBagItem.load('rackspace', 'cloud')
+  databag_dir = node["cloud_monitoring"]["credentials"]["databag_name"]
+  databag_filename = node["cloud_monitoring"]["credentials"]["databag_item"]
+
+  values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
   node.set['cloud_monitoring']['agent']['token'] = values['agent_token'] || nil
 rescue Exception => e
@@ -87,6 +90,12 @@ if node['cloud_monitoring']['agent']['token'].nil?
     end
 
     token = possible[label].token
+
+    if Chef::Config[:solo]
+      Chef::Log.warn("Under chef-solo, you must persist the agent token to " +
+                     "node['cloud_monitoring']['agent']['token'] or you will " +
+                     "regenerate the token every time. TOKEN: #{token}")
+    end
 
     #Fire off a template run using the token pulled out of fog. This should only ever run on a new node, or if your node attributes get lost.
     config_template = template "/etc/rackspace-monitoring-agent.cfg" do

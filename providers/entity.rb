@@ -3,6 +3,7 @@ include Opscode::Rackspace::Monitoring
 require 'ipaddr'
 
 action :create do
+  Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   # normalize the ip's
   if new_resource.ip_addresses then
     new_ips = {}
@@ -19,6 +20,8 @@ action :create do
     Chef::Log.info("Creating #{new_resource}")
     entity.save
     new_resource.updated_by_last_action(true)
+    update_node_entity_id(entity.id)
+    update_node_agent_id((new_resource.agent_id || new_resource.label))
     clear
   else
     # Compare attributes
@@ -37,6 +40,7 @@ action :create do
 end
 
 action :delete do
+  Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
   if !@current_resource.nil? then
     @current_resource.destroy
     new_resource.updated_by_last_action(true)
@@ -51,7 +55,7 @@ def load_current_resource
   @current_resource = get_entity_by_id node['cloud_monitoring']['entity_id']
   if @current_resource == nil then
     @current_resource = get_entity_by_label @new_resource.label
-    node.set['cloud_monitoring']['entity_id'] = @current_resource.identity unless @current_resource.nil?
-    node.set['cloud_monitoring']['agent']['id'] = @current_resource.label unless @current_resource.nil?
+    update_node_entity_id(@current_resource.identity) unless @current_resource.nil?
+    update_node_agent_id((@current_resource.agent_id || @current_resource.label)) unless @current_resource.nil?
   end
 end
