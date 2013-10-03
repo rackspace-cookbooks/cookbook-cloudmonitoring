@@ -23,7 +23,7 @@ module Opscode
           :rackspace_auth_url => auth_url
         )
 
-        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if(!defined?(@@cm) || @@view.nil?)
+        Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if(!defined?(@@view) || @@view.nil?)
         @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
         @@cm
       end
