@@ -71,10 +71,6 @@ def load_current_resource
     @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
   end
 
-  if @entity == nil
-    @entity = get_entity_by_ip node['cloud']['public_ipv4']
-  end
-
   @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.label]
   if @current_resource == nil then
     @current_resource = get_alarm_by_label @entity.id, @new_resource.label
