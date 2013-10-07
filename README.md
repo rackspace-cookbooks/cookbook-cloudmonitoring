@@ -319,8 +319,21 @@ end
 
 ## Agent Plugins
 
+There are 2 ways to install plugins currently:
+
+1. Reference remote plugin files:
+By leveraging the built-in `remote_file` resource from chef, we can link to plugins that may be remote. This requires no changes to the cloud-monitoring cookbook assuming you are calling the LWRPs from another recipe. Here is an example from a longer recipe that sets up all of our checks for a given role:
+
+```ruby
+remote_file "/usr/lib/rackspace-monitoring-agent/plugins/plugin_name" do
+  owner "root"
+  group "root"
+  mode 00755
+  source "https://raw.github.com/racker/rackspace-monitoring-agent-plugins-contrib/master/plugin_name"
+```
+2. Add plugins as files in the cookbook:
 The [Cloud Monitoring agent][1] supports using custom plugins for checks not supported out of the box by the
-agent. The `agent` recipe in this cookbook contains a block to help you install those plugins in the correct directory so
+agent. The agent recipe will help you install the plugins in the correct directory so
 they can be used. It copies the style of Opscode's [ohai cookbook][2] which allows you to specify additional cookbooks
 containing plugins. This means you can keep the cloudmonitoring cookbook pristine but still have your own custom plugins.
 
@@ -331,9 +344,7 @@ Create a role in the following style:
   "name": "plugins_role",
   "default_attributes": {
     "cloud_monitoring": {
-      "plugins": {
-        "my_plugin_cookbook": "plugins"
-      }
+      "plugin_path": "/usr/lib/rackspace-monitoring-agent/plugins"
     }
   }
 }
@@ -344,3 +355,17 @@ This would mean you created a `my_plugin_cookbook` cookbook and placed all your 
 [1]: http://docs.rackspace.com/cm/preview/api/v1.0/cm-devguide/content/appendix-check-types-agent.html
 [2]: https://github.com/opscode-cookbooks/ohai
 
+### Agent Plugin Checks
+ Once your plugins are in the correct directory, you'll need to enable checks and alarms. Here is sample syntax to create a basic check:
+
+ ```ruby
+cloud_monitoring_check  "ubuntu_updates_check.sh" do
+    type                  'agent.plugin'
+    period                120
+    timeout               10
+    details               'file' => 'ubuntu_updates_check.sh'
+    rackspace_username    node['cloud_monitoring']['rackspace_username']
+    rackspace_api_key     node['cloud_monitoring']['rackspace_api_key']
+    action :create
+end
+ ```

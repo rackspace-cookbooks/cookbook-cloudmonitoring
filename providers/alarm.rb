@@ -30,6 +30,7 @@ action :create do
     raise ValueError, "Must specify 'notification_plan_id' in alarm resource or in node['cloud_monitoring']['notification_plan_id']"
   end
 
+
   alarm = @entity.alarms.new(
     :label => new_resource.label,
     :check_type => new_resource.check_type,

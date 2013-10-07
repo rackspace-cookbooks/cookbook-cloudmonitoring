@@ -118,11 +118,17 @@ module Opscode
       end
 
       def get_entity_by_ip(ip_address)
-        possible = view.select {|key, value| value.ip_addresses.has_value?(ip_address) }
-        possible = Hash[*possible.flatten(1)]
+        possible = {}
+        view.each do | x |
+          unless x[1].ip_addresses.nil?
+            if x[1].ip_addresses.has_value?(ip_address)
+              possible = x[1]
+            end
+          end
+        end
 
-        if !possible.empty? then
-          possible.values.first
+        unless possible == {} then
+          possible
         else
           nil
         end
