@@ -1,5 +1,22 @@
 module Opscode
   module Rackspace
+    module Utilities
+
+      def in_rackspace_cloud?
+	return @@in_rackspace_cloud if defined?(@@in_rackspace_cloud)
+	if node["cloud_monitoring"]["in_rackspace_cloud"].is_a?(Trueclass) or node["cloud_monitoring"]["in_rackspace_cloud"].is_a?(FalseClass)
+	  Chef::Log.debug("Opscode::Rackspace.in_rackspace_cloud?: in_rackspace_cloud attribute set, skipping detection")
+	  @@in_rackspace_cloud ||= node["cloud_monitoring"]["in_rackspace_cloud"]
+	elsif node.has_key?("rackspace")
+	  @@in_rackspace_cloud ||= true
+	else
+	  @@in_rackspace_cloud ||= false
+	end
+	@@in_rackspace_cloud
+      end
+
+    end
+
     module Monitoring
 
       def cm

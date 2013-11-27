@@ -1,3 +1,7 @@
+class Chef::Recipe
+  include OpsCode::Rackspace::Utilities
+end
+
 case node['platform']
 when "ubuntu", "debian"
 
@@ -43,28 +47,35 @@ when "redhat","centos","fedora", "amazon","scientific"
 
 end
 
-begin
-  databag_dir = node["cloud_monitoring"]["credentials"]["databag_name"]
-  databag_filename = node["cloud_monitoring"]["credentials"]["databag_item"]
+if node["cloud_monitoring"]["agent"]["token"].nil?
+  begin
+    databag_dir = node["cloud_monitoring"]["credentials"]["databag_name"]
+    databag_filename = node["cloud_monitoring"]["credentials"]["databag_item"]
 
-  values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
+    values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
-  node.set['cloud_monitoring']['agent']['token'] = values['agent_token'] || nil
-rescue Exception => e
-  Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
+    token = values['agent_token'] || nil
+  rescue Exception => e
+    Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
+    token = nil
+  end
+else
+  token = node["cloud_monitoring"]["agent"]["token"]
 end
-
 
 #The first time this recipe runs on the node it is unable to pull token from the node attributes, unless they were put there by hand or in the data bag.
 #There's also no simple way to get data directly back from a provider.
 #So we're creating the auth_token with the LWRP, then using fog to pull it back out of the API. If you can find a better way to handle this, please rewrite it.
-if node['cloud_monitoring']['agent']['token'].nil?
+if token.nil?
 
   if node['cloud_monitoring']['rackspace_username'] == "your_rackspace_username" or  node['cloud_monitoring']['rackspace_api_key'] == "your_rackspace_api_key"
-    raise RuntimeError, "No Rackspace credentials found"
+    raise RuntimeError, "No Rackspace credentials or valid agent token found"
 
   #Create the token within the api, I'm using run_action to make sure everything happens in the proper order.
   else
+    # Include the default recipe; we need to initialize CM + install fog
+    include_recipe "cloud_monitoring::default"
+
     create_token = cloud_monitoring_agent_token "#{node.hostname}" do
       rackspace_username  node['cloud_monitoring']['rackspace_username']
       rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
@@ -97,27 +108,35 @@ if node['cloud_monitoring']['agent']['token'].nil?
                      "regenerate the token every time. TOKEN: #{token}")
     end
 
-    #Fire off a template run using the token pulled out of fog. This should only ever run on a new node, or if your node attributes get lost.
-    config_template = template "/etc/rackspace-monitoring-agent.cfg" do
-      source "rackspace-monitoring-agent.erb"
-      owner "root"
-      group "root"
-      mode 0600
-      variables(
-        :monitoring_id => "#{node.hostname}",
-        :monitoring_token =>  token
-      )
-      action :nothing
-    end
-
-    config_template.run_action(:create)
-
   end
-
 end
 
+raise ValueError "Was not able to find or create a valid agent token" if token.nil?
 
+#Fire off a template run using the token pulled out of fog or data bag.
+#This should only ever run on a new node, or if your node attributes get lost. 
+agent_vars = {}
+agent_vars[:monitoring_token] = token
 
+if in_rackspace_cloud?
+  # If we're in the cloud, don't set the monitoring ID as the agent figures it out
+  agent_vars[:monitoring_id] => nil
+else
+  agent_vars[:monitoring_id] => "#{node.hostname}"
+end
+
+config_template = template "/etc/rackspace-monitoring-agent.cfg" do
+  source "rackspace-monitoring-agent.erb"
+  owner "root"
+  group "root"
+  mode 0600
+    variables(agent_vars)
+    action :nothing
+  end
+
+  config_template.run_action(node["cloud_monitoring"]["agent"]["config_file_action"])
+
+end
 
 package "rackspace-monitoring-agent" do
   if node['cloud_monitoring']['agent']['version'] == 'latest'
@@ -128,19 +147,6 @@ package "rackspace-monitoring-agent" do
   end
 
   notifies :restart, "service[rackspace-monitoring-agent]"
-end
-
-unless node['cloud_monitoring']['agent']['token'].nil?
-  template "/etc/rackspace-monitoring-agent.cfg" do
-    source "rackspace-monitoring-agent.erb"
-    owner "root"
-    group "root"
-    mode 0600
-    variables(
-      :monitoring_id => node['cloud_monitoring']['agent']['id'],
-      :monitoring_token => node['cloud_monitoring']['agent']['token']
-    )
-  end
 end
 
 node['cloud_monitoring']['plugins'].each_pair do |source_cookbook, path|
