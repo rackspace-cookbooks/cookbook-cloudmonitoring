@@ -120,9 +120,9 @@ agent_vars[:monitoring_token] = token
 
 if in_rackspace_cloud?
   # If we're in the cloud, don't set the monitoring ID as the agent figures it out
-  agent_vars[:monitoring_id] => nil
+  agent_vars[:monitoring_id] = nil
 else
-  agent_vars[:monitoring_id] => "#{node.hostname}"
+  agent_vars[:monitoring_id] = "#{node.hostname}"
 end
 
 config_template = template "/etc/rackspace-monitoring-agent.cfg" do
@@ -132,11 +132,9 @@ config_template = template "/etc/rackspace-monitoring-agent.cfg" do
   mode 0600
     variables(agent_vars)
     action :nothing
-  end
-
-  config_template.run_action(node["cloud_monitoring"]["agent"]["config_file_action"])
-
 end
+
+config_template.run_action(node["cloud_monitoring"]["agent"]["config_file_action"])
 
 package "rackspace-monitoring-agent" do
   if node['cloud_monitoring']['agent']['version'] == 'latest'
