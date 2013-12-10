@@ -24,13 +24,13 @@ module Opscode
         )
 
         Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if(!defined?(@@view) || @@view.nil?)
-        @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
+        @@view ||= Hash[@@cm.entities.overview(:limit => 500).map {|x| [x.identity, x]}]
         @@cm
       end
 
       def tokens
         Chef::Log.debug("Opscode::Rackspace::Monitoring.tokens: Loading tokens") if(!defined?(@@tokens) || @@tokens.nil?)
-        @@tokens ||= Hash[cm.agent_tokens.all.map {|x| [x.identity, x]}]
+        @@tokens ||= Hash[cm.agent_tokens.all(:limit => 500).map {|x| [x.identity, x]}]
       end
 
       def clear
