@@ -24,7 +24,6 @@ require 'fog'
 service = Fog::Rackspace::Monitoring.new({
     :rackspace_username  => node['cloud_monitoring']['rackspace_username'],
     :rackspace_api_key   => node['cloud_monitoring']['rackspace_api_key'],
-    :rackspace_region    => node['rackspace']['region']
                                          })
 
 response = service.list_entities.body
