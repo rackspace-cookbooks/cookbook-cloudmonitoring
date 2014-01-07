@@ -19,14 +19,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-require 'fog'
 
-service = Fog::Rackspace::Monitoring.new({
-    :rackspace_username  => node['cloud_monitoring']['rackspace_username'],
-    :rackspace_api_key   => node['cloud_monitoring']['rackspace_api_key'],
-                                         })
+# cm is defined in libraries/cloud_monitoring.rb
+class Chef::Recipe
+  include Opscode::Rackspace::Monitoring
+end
 
-response = service.list_entities.body
+cm(defined?(node['cloud_monitoring']['rackspace_api_key']) ? node['cloud_monitoring']['rackspace_api_key'] : nil,
+   defined?(node['cloud_monitoring']['rackspace_username']) ? node['cloud_monitoring']['rackspace_username'] : nil,
+   defined?(node['cloud_monitoring']['rackspace_auth_url']) ? node['cloud_monitoring']['rackspace_auth_url'] : nil)
+
+response = cm.list_entities.body
+
 
 response["values"].each do |value|
   unless value["ip_addresses"].nil?
