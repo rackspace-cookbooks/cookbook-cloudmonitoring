@@ -18,6 +18,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# Include dependency recipes
+include_recipe "cloud_monitoring"
+include_recipe "cloud_monitoring::agent"
 include_recipe "cloud_monitoring::entity"
 
 node['cloud_monitoring']['monitors'].each do |key, value|
