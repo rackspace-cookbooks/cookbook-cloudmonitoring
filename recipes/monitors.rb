@@ -20,30 +20,30 @@
 #
 include_recipe "cloud_monitoring::entity"
 
-node['cloud_monitoring']['monitors'].keys.sort.each do |key|
+node['cloud_monitoring']['monitors'].each do |key, value|
   cloud_monitoring_check key do
-    type                  "agent.#{monitors[key]['type']}"
-    period                monitors[key].has_key?('period') ? monitors[key]['period'] : node['cloud_monitoring']['check_default']['period']
-    timeout               monitors[key].has_key?('timeout') ? monitors[key]['timeout'] : node['cloud_monitoring']['check_default']['timeout']
+    type                  "agent.#{value['type']}"
+    period                monitors[key].has_key?('period') ? value['period'] : node['cloud_monitoring']['check_default']['period']
+    timeout               monitors[key].has_key?('timeout') ? value['timeout'] : node['cloud_monitoring']['check_default']['timeout']
     rackspace_username    node['cloud_monitoring']['rackspace_username']
     rackspace_api_key     node['cloud_monitoring']['rackspace_api_key']
     retries               2
-    details               monitors[key].has_key?('details') ? monitors[key]['details'] : nil
+    details               value.has_key?('details') ? value['details'] : nil
     action :create
   end
   
-  if monitors[key].has_key?('alarm')
-    monitors[key]["alarm"].keys.each do |alarm|
+  if value.has_key?('alarm')
+    value["alarm"].each do |alarm, alarm_value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
-      criteria = "if (#{monitors[key]["alarm"][alarm]["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
+      criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
       
-      cloud_monitoring_alarm  "#{monitors[key]['type']} #{alarm} alarm" do
+      cloud_monitoring_alarm  "#{value['type']} #{alarm} alarm" do
         check_label           key
         criteria              criteria
         notification_plan_id  node['cloud_monitoring']['notification_plan_id']
         action                :create
       end
 
-    end # monitors[key]["alarm"] loop
-  end # if monitors[key].has_key?('alarm')
-end # monitors.keys loop
+    end # alarm loop
+  end # has_key?('alarm')
+end # monitors loop
