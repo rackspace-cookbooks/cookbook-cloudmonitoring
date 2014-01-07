@@ -46,9 +46,6 @@ default['cloud_monitoring']['check_default']['period'] = 30
 default['cloud_monitoring']['check_default']['timeout'] = 10
 
 # Default main configuration hash for monitors.rb
-# No checks are defined by default as there is an account-wide limit
+# No checks are defined by default as there is an account-wide limit and each check incurrs billing
 # http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-rsource-limits.html
 default['cloud_monitoring']['monitors'] = {}
-
-# TODO: Determine if there is a default notification plan and assign to it.
-# default['cloud_monitoring']['notification_plan_id'] = ???
