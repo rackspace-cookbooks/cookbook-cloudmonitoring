@@ -2,7 +2,7 @@
 # Cookbook Name:: cloud_monitoring
 # Recipe:: default
 #
-# Copyright 2012, Rackspace
+# Copyright 2014, Rackspace
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,3 +41,25 @@ default['cloud_monitoring']['plugins']['cloud_monitoring'] = 'plugins'
 default['cloud_monitoring']['credentials']['databag_name'] = 'rackspace'
 default['cloud_monitoring']['credentials']['databag_item'] = 'cloud'
 
+# Check default values
+default['cloud_monitoring']['check_default']['period'] = 30
+default['cloud_monitoring']['check_default']['timeout'] = 10
+
+# Default main configuration hash for monitors.rb
+default['cloud_monitoring']['monitors'] = {
+  'cpu' =>  { 'type' => 'cpu', },
+  'load' => { 'type'  => 'load_average', },
+}
+# Dynamically add interface monitors
+node['network']['interfaces'].keys.each do |iface|
+  if iface != "lo"
+    default['cloud_monitoring']['monitors']["network_#{iface}"] = {
+      'type' => 'network',
+      'details' => { 'target' => iface},
+    }
+  end
+end
+# TODO: Dynamically add disks from the fstab (NOT MTAB)
+
+# TODO: Determine if there is a default notification plan and assign to it.
+# default['cloud_monitoring']['notification_plan_id'] = ???
