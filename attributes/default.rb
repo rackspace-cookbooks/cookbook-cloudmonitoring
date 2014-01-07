@@ -46,20 +46,9 @@ default['cloud_monitoring']['check_default']['period'] = 30
 default['cloud_monitoring']['check_default']['timeout'] = 10
 
 # Default main configuration hash for monitors.rb
-default['cloud_monitoring']['monitors'] = {
-  'cpu' =>  { 'type' => 'cpu', },
-  'load' => { 'type'  => 'load_average', },
-}
-# Dynamically add interface monitors
-node['network']['interfaces'].keys.each do |iface|
-  if iface != "lo"
-    default['cloud_monitoring']['monitors']["network_#{iface}"] = {
-      'type' => 'network',
-      'details' => { 'target' => iface},
-    }
-  end
-end
-# TODO: Dynamically add disks from the fstab (NOT MTAB)
+# No checks are defined by default as there is an account-wide limit
+# http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-rsource-limits.html
+default['cloud_monitoring']['monitors'] = {}
 
 # TODO: Determine if there is a default notification plan and assign to it.
 # default['cloud_monitoring']['notification_plan_id'] = ???
