@@ -23,8 +23,8 @@ include_recipe "cloud_monitoring::entity"
 node['cloud_monitoring']['monitors'].each do |key, value|
   cloud_monitoring_check key do
     type                  "agent.#{value['type']}"
-    period                monitors[key].has_key?('period') ? value['period'] : node['cloud_monitoring']['check_default']['period']
-    timeout               monitors[key].has_key?('timeout') ? value['timeout'] : node['cloud_monitoring']['check_default']['timeout']
+    period                value.has_key?('period') ? value['period'] : node['cloud_monitoring']['check_default']['period']
+    timeout               value.has_key?('timeout') ? value['timeout'] : node['cloud_monitoring']['check_default']['timeout']
     rackspace_username    node['cloud_monitoring']['rackspace_username']
     rackspace_api_key     node['cloud_monitoring']['rackspace_api_key']
     retries               2
