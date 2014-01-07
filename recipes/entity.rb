@@ -33,7 +33,7 @@ response = cm.list_entities.body
 
 
 response["values"].each do |value|
-  unless value["ip_addresses"].nil?
+  unless value["ip_addresses"].nil? || node["cloud"].nil?
     if value["ip_addresses"]["private0_v4"].eql? node["cloud"]["local_ipv4"]
       node.set['cloud_monitoring']['label'] = value["label"]
     end
