@@ -44,7 +44,16 @@ python and python-pip (installed by this cookbook) for the raxmon-cli install
 
 ### Yum cookbook requirements
 
-* Due to a breaking upstream change opscode-cookbooks/yum must be below version 3.0.0.  Berkshelf version 3 will honor this, Berkshelf 2 may install the wrong version due to solver issues.
+Due to a breaking upstream change opscode-cookbooks/yum must be below version 3.0.0.
+Berkshelf version 3 will honor this, Berkshelf 2 may install the wrong version due to solver issues related to dependency cookbooks.
+To work around this on Berkshelf 2 specify
+
+```
+cookbook "yum", "~> 2.0"
+```
+
+in the Berksfile of the cookbook you're running Berkshelf against.
+
 
 ## Setup
 
