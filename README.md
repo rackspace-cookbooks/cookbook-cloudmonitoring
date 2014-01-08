@@ -109,7 +109,7 @@ The following attributes are required, either in attributes/default.rb or an enc
 This cookbook contains a "monitors" recipe that abstracts the LWRPs away behind a configuration hash.
 This recipe will handle generation of the entity, checks, and alarms.
 It will search for existing entites by IP and use them via the entity recipe.
-Please note that this recipe will always install the agent.
+Please note that the cloud_monitoring::monitors recipe used in this example will always install the agent.
 
 The following example configures CPU, load, disk, and filesystem monitors, with alarms enabled on the 5 minute load average:
 
