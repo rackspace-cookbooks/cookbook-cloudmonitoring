@@ -20,12 +20,12 @@
 #
 
 # Include dependency recipes
-include_recipe "cloud_monitoring"
-include_recipe "cloud_monitoring::agent"
-include_recipe "cloud_monitoring::entity"
+include_recipe "rackspace_cloudmonitoring"
+include_recipe "rackspace_cloudmonitoring::agent"
+include_recipe "rackspace_cloudmonitoring::entity"
 
 node[:rackspace_cloudmonitoring]['monitors'].each do |key, value|
-  cloud_monitoring_check key do
+  rackspace_cloudmonitoring_check key do
     type                  "agent.#{value['type']}"
     period                value.has_key?('period') ? value['period'] : node[:rackspace_cloudmonitoring]['check_default']['period']
     timeout               value.has_key?('timeout') ? value['timeout'] : node[:rackspace_cloudmonitoring]['check_default']['timeout']
@@ -41,7 +41,7 @@ node[:rackspace_cloudmonitoring]['monitors'].each do |key, value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
       
-      cloud_monitoring_alarm  "#{value['type']} #{alarm} alarm" do
+      rackspace_cloudmonitoring_alarm  "#{value['type']} #{alarm} alarm" do
         check_label           key
         criteria              criteria
         notification_plan_id  node[:rackspace_cloudmonitoring]['notification_plan_id']

@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cloud_monitoring
+# Cookbook Name:: rackspace_cloudmonitoring
 # Recipe:: default
 #
 # Copyright 2012, Rackspace
@@ -36,7 +36,7 @@ begin
   node.default[:rackspace_cloudmonitoring]['rackspace_username'] = raxcloud['username']
   node.default[:rackspace_cloudmonitoring]['rackspace_api_key'] = raxcloud['apikey']
   node.default[:rackspace_cloudmonitoring]['rackspace_auth_region'] = raxcloud['region'] || 'notset'
-  node.default[:rackspace_cloudmonitoring]['rackspace_auth_region'] = node['cloud_monitoring']['rackspace_auth_region'].downcase
+  node.default[:rackspace_cloudmonitoring]['rackspace_auth_region'] = node[:rackspace_cloudmonitoring]['rackspace_auth_region'].downcase
 
   if node[:rackspace_cloudmonitoring]['rackspace_auth_region'] == 'us'
     node.default[:rackspace_cloudmonitoring]['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
@@ -58,6 +58,6 @@ rescue Exception => e
   Chef::Log.error "Failed to load rackspace cloud data bag: " + e.to_s
 end
 
-if node[:cloud_monitoring][:rackspace_username] == 'your_rackspace_username' || node[:rackspace_cloudmonitoring]['rackspace_api_key'] == 'your_rackspace_api_key'
+if node[:rackspace_cloudmonitoring][:rackspace_username] == 'your_rackspace_username' || node[:rackspace_cloudmonitoring]['rackspace_api_key'] == 'your_rackspace_api_key'
   Chef::Log.info "Rackspace username or api key has not been set. For this to work, either set the default attributes or create an encrypted databag of rackspace cloud per the cookbook README"
 end

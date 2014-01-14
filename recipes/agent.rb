@@ -60,12 +60,12 @@ end
 #So we're creating the auth_token with the LWRP, then using fog to pull it back out of the API. If you can find a better way to handle this, please rewrite it.
 if node[:rackspace_cloudmonitoring]['agent']['token'].nil?
 
-  if node[:rackspace_cloudmonitoring]['rackspace_username'] == "your_rackspace_username" or  node['cloud_monitoring']['rackspace_api_key'] == "your_rackspace_api_key"
+  if node[:rackspace_cloudmonitoring]['rackspace_username'] == "your_rackspace_username" or  node[:rackspace_cloudmonitoring]['rackspace_api_key'] == "your_rackspace_api_key"
     raise RuntimeError, "No Rackspace credentials found"
 
   #Create the token within the api, I'm using run_action to make sure everything happens in the proper order.
   else
-    create_token = cloud_monitoring_agent_token "#{node.hostname}" do
+    create_token = rackspace_cloudmonitoring_agent_token "#{node.hostname}" do
       rackspace_username  node[:rackspace_cloudmonitoring]['rackspace_username']
       rackspace_api_key   node[:rackspace_cloudmonitoring]['rackspace_api_key']
       action :nothing
@@ -144,7 +144,7 @@ unless node[:rackspace_cloudmonitoring]['agent']['token'].nil?
 end
 
 node[:rackspace_cloudmonitoring]['plugins'].each_pair do |source_cookbook, path|
-  remote_directory "cloud_monitoring_plugins_#{source_cookbook}" do
+  remote_directory "rackspace_cloudmonitoring_plugins_#{source_cookbook}" do
     path node[:rackspace_cloudmonitoring]['plugin_path']
     cookbook source_cookbook
     source path

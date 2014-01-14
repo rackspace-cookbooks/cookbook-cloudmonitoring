@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cloud_monitoring
+# Cookbook Name:: rackspace_cloudmonitoring
 # Recipe:: entity
 #
 # Configure the cloud_monitoring_entity LWRP to use the existing entity
@@ -25,9 +25,9 @@ class Chef::Recipe
   include Opscode::Rackspace::Monitoring
 end
 
-cm(defined?(node[:rackspace_cloudmonitoring]['rackspace_api_key']) ? node['cloud_monitoring']['rackspace_api_key'] : nil,
-   defined?(node[:rackspace_cloudmonitoring]['rackspace_username']) ? node['cloud_monitoring']['rackspace_username'] : nil,
-   defined?(node[:rackspace_cloudmonitoring]['rackspace_auth_url']) ? node['cloud_monitoring']['rackspace_auth_url'] : nil)
+cm(defined?(node[:rackspace_cloudmonitoring]['rackspace_api_key']) ? node[:rackspace_cloudmonitoring]['rackspace_api_key'] : nil,
+   defined?(node[:rackspace_cloudmonitoring]['rackspace_username']) ? node[:rackspace_cloudmonitoring]['rackspace_username'] : nil,
+   defined?(node[:rackspace_cloudmonitoring]['rackspace_auth_url']) ? node[:rackspace_cloudmonitoring]['rackspace_auth_url'] : nil)
 
 response = cm.list_entities.body
 
@@ -44,7 +44,7 @@ if node[:rackspace_cloudmonitoring]['label'].nil?
   node.set[:rackspace_cloudmonitoring]['label'] = node.hostname
 end
 
-cloud_monitoring_entity node[:rackspace_cloudmonitoring]['label'] do
+rackspace_cloudmonitoring_entity node[:rackspace_cloudmonitoring]['label'] do
   label                 node[:rackspace_cloudmonitoring]['label']
   agent_id              node[:rackspace_cloudmonitoring]['agent']['id']
   rackspace_username    node[:rackspace_cloudmonitoring]['rackspace_username']
