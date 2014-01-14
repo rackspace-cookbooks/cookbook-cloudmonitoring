@@ -51,10 +51,10 @@ def load_current_resource
     raise Exception, "Cannot specify entity_label and entity_id" unless @new_resource.entity_id.nil?
     @entity = get_entity_by_label @new_resource.entity_label
   else
-    @entity = get_entity_by_id((@new_resource.entity_id || node['cloud_monitoring']['entity_id']))
+    @entity = get_entity_by_id((@new_resource.entity_id || node[:rackspace_cloudmonitoring]['entity_id']))
   end
 
-  @current_resource = get_check_by_id @entity.id, node['cloud_monitoring']['checks'][@new_resource.label]
+  @current_resource = get_check_by_id @entity.id, node[:rackspace_cloudmonitoring]['checks'][@new_resource.label]
   if @current_resource == nil then
     @current_resource = get_check_by_label @entity.id, @new_resource.label
     update_node_check(@new_resource.label, @current_resource.identity) unless @current_resource.nil?

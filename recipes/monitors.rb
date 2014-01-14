@@ -24,13 +24,13 @@ include_recipe "cloud_monitoring"
 include_recipe "cloud_monitoring::agent"
 include_recipe "cloud_monitoring::entity"
 
-node['cloud_monitoring']['monitors'].each do |key, value|
+node[:rackspace_cloudmonitoring]['monitors'].each do |key, value|
   cloud_monitoring_check key do
     type                  "agent.#{value['type']}"
-    period                value.has_key?('period') ? value['period'] : node['cloud_monitoring']['check_default']['period']
-    timeout               value.has_key?('timeout') ? value['timeout'] : node['cloud_monitoring']['check_default']['timeout']
-    rackspace_username    node['cloud_monitoring']['rackspace_username']
-    rackspace_api_key     node['cloud_monitoring']['rackspace_api_key']
+    period                value.has_key?('period') ? value['period'] : node[:rackspace_cloudmonitoring]['check_default']['period']
+    timeout               value.has_key?('timeout') ? value['timeout'] : node[:rackspace_cloudmonitoring]['check_default']['timeout']
+    rackspace_username    node[:rackspace_cloudmonitoring]['rackspace_username']
+    rackspace_api_key     node[:rackspace_cloudmonitoring]['rackspace_api_key']
     retries               2
     details               value.has_key?('details') ? value['details'] : nil
     action :create
@@ -44,7 +44,7 @@ node['cloud_monitoring']['monitors'].each do |key, value|
       cloud_monitoring_alarm  "#{value['type']} #{alarm} alarm" do
         check_label           key
         criteria              criteria
-        notification_plan_id  node['cloud_monitoring']['notification_plan_id']
+        notification_plan_id  node[:rackspace_cloudmonitoring]['notification_plan_id']
         action                :create
       end
 

@@ -44,12 +44,12 @@ when "redhat","centos","fedora", "amazon","scientific"
 end
 
 begin
-  databag_dir = node["cloud_monitoring"]["credentials"]["databag_name"]
-  databag_filename = node["cloud_monitoring"]["credentials"]["databag_item"]
+  databag_dir = node[:rackspace_cloudmonitoring]["credentials"]["databag_name"]
+  databag_filename = node[:rackspace_cloudmonitoring]["credentials"]["databag_item"]
 
   values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
-  node.set['cloud_monitoring']['agent']['token'] = values['agent_token'] || nil
+  node.set[:rackspace_cloudmonitoring]['agent']['token'] = values['agent_token'] || nil
 rescue Exception => e
   Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
@@ -58,16 +58,16 @@ end
 #The first time this recipe runs on the node it is unable to pull token from the node attributes, unless they were put there by hand or in the data bag.
 #There's also no simple way to get data directly back from a provider.
 #So we're creating the auth_token with the LWRP, then using fog to pull it back out of the API. If you can find a better way to handle this, please rewrite it.
-if node['cloud_monitoring']['agent']['token'].nil?
+if node[:rackspace_cloudmonitoring]['agent']['token'].nil?
 
-  if node['cloud_monitoring']['rackspace_username'] == "your_rackspace_username" or  node['cloud_monitoring']['rackspace_api_key'] == "your_rackspace_api_key"
+  if node[:rackspace_cloudmonitoring]['rackspace_username'] == "your_rackspace_username" or  node['cloud_monitoring']['rackspace_api_key'] == "your_rackspace_api_key"
     raise RuntimeError, "No Rackspace credentials found"
 
   #Create the token within the api, I'm using run_action to make sure everything happens in the proper order.
   else
     create_token = cloud_monitoring_agent_token "#{node.hostname}" do
-      rackspace_username  node['cloud_monitoring']['rackspace_username']
-      rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
+      rackspace_username  node[:rackspace_cloudmonitoring]['rackspace_username']
+      rackspace_api_key   node[:rackspace_cloudmonitoring]['rackspace_api_key']
       action :nothing
     end
 
@@ -76,8 +76,8 @@ if node['cloud_monitoring']['agent']['token'].nil?
     #Pull just the token itself into a variable named token
     label = "#{node.hostname}"
     monitoring = Fog::Rackspace::Monitoring.new(
-      :rackspace_api_key => node['cloud_monitoring']['rackspace_api_key'],
-      :rackspace_username => node['cloud_monitoring']['rackspace_username']
+      :rackspace_api_key => node[:rackspace_cloudmonitoring]['rackspace_api_key'],
+      :rackspace_username => node[:rackspace_cloudmonitoring]['rackspace_username']
     )
     tokens = Hash[monitoring.agent_tokens.all.map  {|x| [x.label, x]}]
     possible = tokens.select {|key, value| value.label === label}
@@ -93,7 +93,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
 
     if Chef::Config[:solo]
       Chef::Log.warn("Under chef-solo, you must persist the agent token to " +
-                     "node['cloud_monitoring']['agent']['token'] or you will " +
+                     "node[:rackspace_cloudmonitoring]['agent']['token'] or you will " +
                      "regenerate the token every time. TOKEN: #{token}")
     end
 
@@ -120,32 +120,32 @@ end
 
 
 package "rackspace-monitoring-agent" do
-  if node['cloud_monitoring']['agent']['version'] == 'latest'
+  if node[:rackspace_cloudmonitoring]['agent']['version'] == 'latest'
     action :upgrade
   else
-    version node['cloud_monitoring']['agent']['version']
+    version node[:rackspace_cloudmonitoring]['agent']['version']
     action :install
   end
 
   notifies :restart, "service[rackspace-monitoring-agent]"
 end
 
-unless node['cloud_monitoring']['agent']['token'].nil?
+unless node[:rackspace_cloudmonitoring]['agent']['token'].nil?
   template "/etc/rackspace-monitoring-agent.cfg" do
     source "rackspace-monitoring-agent.erb"
     owner "root"
     group "root"
     mode 0600
     variables(
-      :monitoring_id => node['cloud_monitoring']['agent']['id'],
-      :monitoring_token => node['cloud_monitoring']['agent']['token']
+      :monitoring_id => node[:rackspace_cloudmonitoring]['agent']['id'],
+      :monitoring_token => node[:rackspace_cloudmonitoring]['agent']['token']
     )
   end
 end
 
-node['cloud_monitoring']['plugins'].each_pair do |source_cookbook, path|
+node[:rackspace_cloudmonitoring]['plugins'].each_pair do |source_cookbook, path|
   remote_directory "cloud_monitoring_plugins_#{source_cookbook}" do
-    path node['cloud_monitoring']['plugin_path']
+    path node[:rackspace_cloudmonitoring]['plugin_path']
     cookbook source_cookbook
     source path
     files_mode 0755

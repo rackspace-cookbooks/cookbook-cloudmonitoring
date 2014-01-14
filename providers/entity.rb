@@ -52,7 +52,7 @@ end
 
 
 def load_current_resource
-  @current_resource = get_entity_by_id node['cloud_monitoring']['entity_id']
+  @current_resource = get_entity_by_id node[:rackspace_cloudmonitoring]['entity_id']
   if @current_resource == nil then
     @current_resource = get_entity_by_label @new_resource.label
     update_node_entity_id(@current_resource.identity) unless @current_resource.nil?

@@ -25,9 +25,9 @@ action :create do
     check_id = get_check_by_label(@entity.id, new_resource.check_label).identity
   end
 
-  notification_plan_id = new_resource.notification_plan_id || node['cloud_monitoring']['notification_plan_id']
+  notification_plan_id = new_resource.notification_plan_id || node[:rackspace_cloudmonitoring]['notification_plan_id']
   if notification_plan_id.nil? then
-    raise ValueError, "Must specify 'notification_plan_id' in alarm resource or in node['cloud_monitoring']['notification_plan_id']"
+    raise ValueError, "Must specify 'notification_plan_id' in alarm resource or in node[:rackspace_cloudmonitoring]['notification_plan_id']"
   end
 
 
@@ -68,10 +68,10 @@ def load_current_resource
     raise Exception, "Cannot specify entity_label and entity_id" unless @new_resource.entity_id.nil?
     @entity = get_entity_by_label @new_resource.entity_label
   else
-    @entity = get_entity_by_id @new_resource.entity_id || node['cloud_monitoring']['entity_id']
+    @entity = get_entity_by_id @new_resource.entity_id || node[:rackspace_cloudmonitoring]['entity_id']
   end
 
-  @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.label]
+  @current_resource = get_alarm_by_id @entity.id, node[:rackspace_cloudmonitoring]['alarms'][@new_resource.label]
   if @current_resource == nil then
     @current_resource = get_alarm_by_label @entity.id, @new_resource.label
     update_node_alarm(@new_resource.label,@current_resource.identity) unless @current_resource.nil?

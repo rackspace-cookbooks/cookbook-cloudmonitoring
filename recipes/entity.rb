@@ -25,9 +25,9 @@ class Chef::Recipe
   include Opscode::Rackspace::Monitoring
 end
 
-cm(defined?(node['cloud_monitoring']['rackspace_api_key']) ? node['cloud_monitoring']['rackspace_api_key'] : nil,
-   defined?(node['cloud_monitoring']['rackspace_username']) ? node['cloud_monitoring']['rackspace_username'] : nil,
-   defined?(node['cloud_monitoring']['rackspace_auth_url']) ? node['cloud_monitoring']['rackspace_auth_url'] : nil)
+cm(defined?(node[:rackspace_cloudmonitoring]['rackspace_api_key']) ? node['cloud_monitoring']['rackspace_api_key'] : nil,
+   defined?(node[:rackspace_cloudmonitoring]['rackspace_username']) ? node['cloud_monitoring']['rackspace_username'] : nil,
+   defined?(node[:rackspace_cloudmonitoring]['rackspace_auth_url']) ? node['cloud_monitoring']['rackspace_auth_url'] : nil)
 
 response = cm.list_entities.body
 
@@ -35,19 +35,19 @@ response = cm.list_entities.body
 response["values"].each do |value|
   unless value["ip_addresses"].nil? || node["cloud"].nil?
     if value["ip_addresses"]["private0_v4"].eql? node["cloud"]["local_ipv4"]
-      node.set['cloud_monitoring']['label'] = value["label"]
+      node.set[:rackspace_cloudmonitoring]['label'] = value["label"]
     end
   end
 end
 
-if node['cloud_monitoring']['label'].nil?
-  node.set['cloud_monitoring']['label'] = node.hostname
+if node[:rackspace_cloudmonitoring]['label'].nil?
+  node.set[:rackspace_cloudmonitoring]['label'] = node.hostname
 end
 
-cloud_monitoring_entity node['cloud_monitoring']['label'] do
-  label                 node['cloud_monitoring']['label']
-  agent_id              node['cloud_monitoring']['agent']['id']
-  rackspace_username    node['cloud_monitoring']['rackspace_username']
-  rackspace_api_key     node['cloud_monitoring']['rackspace_api_key']
+cloud_monitoring_entity node[:rackspace_cloudmonitoring]['label'] do
+  label                 node[:rackspace_cloudmonitoring]['label']
+  agent_id              node[:rackspace_cloudmonitoring]['agent']['id']
+  rackspace_username    node[:rackspace_cloudmonitoring]['rackspace_username']
+  rackspace_api_key     node[:rackspace_cloudmonitoring]['rackspace_api_key']
   action :create                                 
 end                                              

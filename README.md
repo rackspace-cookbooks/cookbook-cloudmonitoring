@@ -95,13 +95,13 @@ knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cl
 
 # Attributes
 
-All attributes are namespaced under the `node['cloud_monitoring']` namespace.  This keeps everything clean and organized.
+All attributes are namespaced under the `node[:rackspace_cloudmonitoring]` namespace.  This keeps everything clean and organized.
 
 The following attributes are required, either in attributes/default.rb or an encrypted data bag called rackspace with an item of cloud:
 
-* `node['cloud_monitoring']['rackspace_username']`
-* `node['cloud_monitoring']['rackspace_api_key']`
-* `node['cloud_monitoring']['rackspace_auth_region']`
+* `node[:rackspace_cloudmonitoring]['rackspace_username']`
+* `node[:rackspace_cloudmonitoring]['rackspace_api_key']`
+* `node[:rackspace_cloudmonitoring]['rackspace_auth_region']`
   * This must be set to either 'us' or 'uk', depending on where your account was created
 
 # Monitors Configuration Hash Usage
@@ -125,7 +125,7 @@ cpu_critical_threshold = (node["cpu"]["total"] * 4)
 cpu_warning_threshold = (node["cpu"]["total"] * 2)
  
 # Define our monitors
-node.default['cloud_monitoring']['monitors'] = { 
+node.default[:rackspace_cloudmonitoring]['monitors'] = { 
   'cpu' =>  { 'type' => 'cpu', },
   'load' => { 'type'  => 'load_average',
     'alarm' => { 
@@ -361,7 +361,7 @@ The Agent recipe will install the cloud monitoring agent on your node and either
 or if none is provided it will call the cloud_monitoring_agent_token provider to generate a new one for this node.
 
 The Agent token can either be provided through the following attribute.
-* `node['cloud_monitoring']['agent']['token']`  
+* `node[:rackspace_cloudmonitoring]['agent']['token']`  
 
 or through an entry in the rackspace cloud data bag like so.
 
@@ -375,8 +375,8 @@ cloud_monitoring_check  "cpu" do
   type                  'agent.cpu'
   period                30
   timeout               10
-  rackspace_username  node['cloud_monitoring']['rackspace_username']
-  rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
+  rackspace_username  node[:rackspace_cloudmonitoring]['rackspace_username']
+  rackspace_api_key   node[:rackspace_cloudmonitoring]['rackspace_api_key']
   action :create
 end
 ```
@@ -428,8 +428,8 @@ cloud_monitoring_check  "ubuntu_updates_check.sh" do
     period                120
     timeout               10
     details               'file' => 'ubuntu_updates_check.sh'
-    rackspace_username    node['cloud_monitoring']['rackspace_username']
-    rackspace_api_key     node['cloud_monitoring']['rackspace_api_key']
+    rackspace_username    node[:rackspace_cloudmonitoring]['rackspace_username']
+    rackspace_api_key     node[:rackspace_cloudmonitoring]['rackspace_api_key']
     action :create
 end
  ```

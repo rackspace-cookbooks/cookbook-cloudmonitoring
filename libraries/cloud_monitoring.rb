@@ -21,8 +21,8 @@ module Opscode
         begin
           # Access the Rackspace Cloud encrypted data_bag
           creds = Chef::EncryptedDataBagItem.load(
-            node["cloud_monitoring"]["credentials"]["databag_name"],
-            node["cloud_monitoring"]["credentials"]["databag_item"]
+            node[:rackspace_cloudmonitoring]["credentials"]["databag_name"],
+            node[:rackspace_cloudmonitoring]["credentials"]["databag_item"]
           )
         rescue Exception => e
           creds = {'username' => nil, 'apikey' => nil, 'auth_url' => nil }
@@ -65,22 +65,22 @@ module Opscode
       end
 
       def update_node_entity_id(entity_id)
-        node.set['cloud_monitoring']['entity_id'] = entity_id
+        node.set[:rackspace_cloudmonitoring]['entity_id'] = entity_id
         Chef::Log.info("Updating node entity id to #{entity_id}")
       end
 
       def update_node_agent_id(agent_id)
-        node.set['cloud_monitoring']['agent']['id'] = agent_id
+        node.set[:rackspace_cloudmonitoring]['agent']['id'] = agent_id
         Chef::Log.info("updating node agent id to #{agent_id}")
       end
 
       def update_node_check(label,check_id)
-        node.set['cloud_monitoring']['check_id'][label] = check_id
+        node.set[:rackspace_cloudmonitoring]['check_id'][label] = check_id
         Chef::Log.info("updating check #{label} to #{check_id}")
       end
 
       def update_node_alarm(label, alarm_id)
-        node.set['cloud_monitoring']['alarm_id'][label] = alarm_id
+        node.set[:rackspace_cloudmonitoring]['alarm_id'][label] = alarm_id
         Chef::Log.info("updating alarm #{label} to #{alarm_id}")
       end
 
