@@ -1,12 +1,13 @@
-name             "cloud_monitoring"
+name             "rackspace-cloudmonitoring"
 maintainer       "Rackspace"
-maintainer_email "daniel.dispaltro@rackspace.com"
+maintainer_email "thomas.noonan@rackspace.com"
 license          "Apache 2.0"
 description      "Installs/Configures Rackspace Cloud Monitoring"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 
-version          "1.1.0"
+version          "2.0.0"
 
+# TODO: Update these to meet our dep spec
 depends "apt", ">= 1.4.2"
 depends "python"
 depends "yum", "~> 2.0"
