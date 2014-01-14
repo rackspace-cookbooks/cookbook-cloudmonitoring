@@ -42,6 +42,19 @@ python and python-pip (installed by this cookbook) for the raxmon-cli install
 ### General Requirements
 * You need to either set the attributes for your Rackspace username and api key in attributes/default.rb or create an encrypted data bag per the following setup steps:
 
+### Yum cookbook requirements
+
+Due to a breaking upstream change opscode-cookbooks/yum must be below version 3.0.0.
+Berkshelf version 3 will honor this, Berkshelf 2 may install the wrong version due to solver issues related to dependency cookbooks.
+To work around this on Berkshelf 2 specify
+
+```
+cookbook "yum", "~> 2.0"
+```
+
+in the Berksfile of the cookbook you're running Berkshelf against.
+
+
 ## Setup
 
 Take either step depending on your databag setup.
@@ -91,7 +104,58 @@ The following attributes are required, either in attributes/default.rb or an enc
 * `node['cloud_monitoring']['rackspace_auth_region']`
   * This must be set to either 'us' or 'uk', depending on where your account was created
 
-# Usage
+# Monitors Configuration Hash Usage
+
+This cookbook contains a "monitors" recipe that abstracts the LWRPs away behind a configuration hash.
+This recipe will handle generation of the entity, checks, and alarms.
+It will search for existing entites by IP and use them via the entity recipe.
+Please note that the cloud_monitoring::monitors recipe used in this example will always install the agent.
+
+The following example configures CPU, load, disk, and filesystem monitors, with alarms enabled on the 5 minute load average:
+
+```
+#
+# Configure monitors to suit our app
+#
+ 
+# Calculate default values
+# Critical at x4 CPU count
+cpu_critical_threshold = (node["cpu"]["total"] * 4)
+# Warning at x2 CPU count
+cpu_warning_threshold = (node["cpu"]["total"] * 2)
+ 
+# Define our monitors
+node.default['cloud_monitoring']['monitors'] = { 
+  'cpu' =>  { 'type' => 'cpu', },
+  'load' => { 'type'  => 'load_average',
+    'alarm' => { 
+      'CRITICAL' => { 'conditional' => "metric['5m'] > #{cpu_critical_threshold}", },
+      'WARNING'  => { 'conditional' => "metric['5m'] > #{cpu_warning_threshold}", },
+    },
+  },
+  
+  'disk' => {
+    'type' => 'disk',
+    'details' => { 'target' => '/dev/xvda1'},
+  },
+  'root_filesystem' => {
+    'type' => 'filesystem', 
+    'details' => { 'target' => '/'},
+  },
+}
+ 
+#
+# Call the monitoring cookbook with our changes
+#
+include_recipe "cloud_monitoring::monitors"
+```
+
+The previous examples assume the following attributes are set in the role:
+- ['cloud_monitoring']['rackspace_username']: API Username
+- ['cloud_monitoring']['rackspace_api_key']: API Password
+- ['cloud_monitoring']['notification_plan_id']: Notification plan ID for the alarms
+
+# LWRP Usage
 
 This cookbook exposes many different elements of the Cloud Monitoring product. We'll go over some examples and best
 practices for using this cookbook. The most widely used parts of the system are the three core Resources in the system `Entity`, `Check` and `Alarm`. So we'll cover those first and tackle The other primitives towards the end.

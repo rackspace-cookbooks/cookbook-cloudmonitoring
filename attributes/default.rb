@@ -2,7 +2,7 @@
 # Cookbook Name:: cloud_monitoring
 # Recipe:: default
 #
-# Copyright 2012, Rackspace
+# Copyright 2014, Rackspace
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,3 +41,11 @@ default['cloud_monitoring']['plugins']['cloud_monitoring'] = 'plugins'
 default['cloud_monitoring']['credentials']['databag_name'] = 'rackspace'
 default['cloud_monitoring']['credentials']['databag_item'] = 'cloud'
 
+# Check default values
+default['cloud_monitoring']['check_default']['period'] = 30
+default['cloud_monitoring']['check_default']['timeout'] = 10
+
+# Default main configuration hash for monitors.rb
+# No checks are defined by default as there is an account-wide limit and each check incurrs billing
+# http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-rsource-limits.html
+default['cloud_monitoring']['monitors'] = {}
