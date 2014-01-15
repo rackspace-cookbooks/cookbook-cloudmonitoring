@@ -134,6 +134,8 @@ module Opscode
       # cm_entity: Class handling entity operations
       class CM_entity < CM_api
         def initialize()
+          super
+
           @id_cache = CM_cache.new('entity_id')
           cached_id = @id_cache.get
           if !cached_id.nil?
@@ -273,154 +275,88 @@ module Opscode
         end
 
       end # END CM_entity class
-      
-      class CM_check < CM_entity
-        # Note that this initializer DOES NOT LOAD ANY CHECKS!
-        # User must call a lookup function to set check-update
-        def initialize()
-          @id_cache = CM_cache.new('check_ids', true)
-          @check_obj = nil
+
+
+      # CM_Child class: This is a generic class to be inherited for checks and alarms
+      # as the two are handled amlost identically
+      class CM_child < CM_entity
+        def initialize(my_target_name)
+          super
+          @obj = nil
+          @target_name = my_target_name
         end
 
-        # get_check_obj: Returns the check object
+        # _get_target: Call send on the entity to get the target object
+        # PRE: get_entity_obj() PRE conditions met
+        # POST: None
+        # Return Value: Target Object
+        def _get_target
+          return get_entity_obj().send(@target_name)
+        end
+
+        # get_obj: Returns the check object
         # PRE: None
         # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring::Check object or nil
-        def get_check_obj
-            return @check_obj
+        def get_obj
+          return @obj
         end
         
-        # lookup_check_by_label: Lookup a check by label, utilizing the cache
+        # lookup_by_label: Lookup a check by label, utilizing the cache
         # PRE: none
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
         # THis is separate from the initializer to allow modifications to the @entity_obj
-        def lookup_check_by_label(label)
-          cached_id = @id_cache.get(label)
-          if !cached_id.nil?
-            @check_obj = get_entity_obj().checks.find{ |check| check.id==cached_id}
-            if !@check_obj.nil?
-              return
+        def lookup_by_label(label)
+          if !@obj.nil?
+            if @obj.label == label
+              return @obj
             end
           end
-
-          @check_obj = get_entity_obj().checks.find{ |check| check.label==label}
-          if !@check_obj.nil?
-            @id_cache.save(@check_obj.id, label)
-          end
-
-          return @check_obj
+              
+          @obj = _get_target().find{ |i| i.label==label}
         end
 
-        # _update_check_obj: helper function to update @check_obj, update the ID cache, and help keep the code DRY
-        # PRE: new_check is a valid Fog::Rackspace::Monitoring::Check object
-        # POST: None
-        # RETURN VALUE: new_entity
-        def _update_check_obj(new_check)
-          @check_obj = new_check
-          @id_cache.set(new_check.id, label)
-          return new_check
-        end
-
-        # update_check: Update or create a new monitoring check
-        # PRE: @cache_obj has been looked up and set for updating existing entities
+        # update: Update or create a new object
+        # PRE: @obj has been looked up and set for updating existing entities
         # POST: None
         # RETURN VALUE: Returns true if the entity was updated, false otherwise
         # Idempotent: Does not update entities unless required
-        def update_check(attributes = {})
-          new_check = get_entity_obj().checks.new(attributres)
-          if @cache_obj.nil?
-            new_check.save
-            _update_check_obj(new_check)
+        def update(attributes = {})
+          new_obj = _get_target().new(attributres)
+          if @obj.nil?
+            new_obj.save
+            @obj = new_obj
             return true
           end
 
-          new_check.id = @check_obj.id
+          new_obj.id = @obj.id
           # Compare attributes
-          if !new_check.compare? @check_obj then
+          if !new_obj.compare? @obj then
             # It's different
-            new_check.save
-            _update_check_obj(new_check)
+            new_obj.save
+            @obj = new_obj
             return true
           end
 
           return false
         end
-      end # END CM_check class
+      end # END CM_child class
+
+      class CM_check < CM_child
+        # Note that this initializer DOES NOT LOAD ANY CHECKS!
+        # User must call a lookup function before calling update
+        def initialize()
+          super(:checks)
+        end
+      end
       
-      class CM_alarm < CM_entity
-        # TODO: THis is **almost** identical to CM_check
-        # THis code should be dried out better
-        def initialize(label)
-          @id_cache = CM_cache.new('alarm_ids', true)
-          @alarm_obj = nil
+      class CM_alarm < CM_child
+        # Note that this initializer DOES NOT LOAD ANY ALARMS!
+        # User must call a lookup function before calling update
+        def initialize()
+          super(:alarms)
         end
-
-        # get_alarm_obj: Returns the alarm object
-        # PRE: None
-        # POST: None
-        # RETURN VALUE: Fog::Rackspace::Monitoring::Alarm object or nil
-        def get_alarm_obj
-            return @alarm_obj
-        end
-        
-        # lookup_alarm_by_label: Lookup a check by label, utilizing the cache
-        # PRE: none
-        # POST: None
-        # RETURN VALUE: a Fog::Rackspace::Monitoring::Alarm object
-        # THis is separate from the initializer to allow modifications to the @entity_obj
-        def lookup_alarm_by_label(label)
-           cached_id = @id_cache.get(label)
-          if !cached_id.nil?
-            @alarm_obj = get_entity_obj().alarms.find{ |alarm| alarm.id==cached_id}
-            if !@alarm_obj.nil?
-              return
-            end
-          end
-          
-          @alarm_obj = get_entity_obj().alarms.find{ |alarm| alarm.label==label}
-          if !@alarm_obj.nil?
-            @id_cache.save(@alarm_obj.id, label)
-          end
-
-          return @alarm_obj
-        end
-          
-        # _update_alarm_obj: helper function to update @alarm_obj, update the ID cache, and help keep the code DRY
-        # PRE: new_alarm is a valid Fog::Rackspace::Monitoring::Alarm object
-        # POST: None
-        # RETURN VALUE: new_entity
-        def _update_alarm_obj(new_alarm)
-          @alarm_obj = new_alarm
-          @id_cache.set(new_alarm.id, label)
-          return new_alarm
-        end
-
-        # update_alarm: Update or create a new monitoring alarm
-        # PRE: @cache_obj has been looked up and set for updating existing entities
-        # POST: None
-        # RETURN VALUE: Returns true if the entity was updated, false otherwise
-        # Idempotent: Does not update entities unless required
-        def update_alarm(attributes = {})
-          new_alarm = get_entity_obj().alarms.new(attributres)
-          if @cache_obj.nil?
-            new_alarm.save
-            _update_alarm_obj(new_alarm)
-            return true
-          end
-
-          new_alarm.id = @alarm_obj.id
-          # Compare attributes
-          if !new_alarm.compare? @alarm_obj then
-            # It's different
-            new_alarm.save
-            _update_alarm_obj(new_alarm)
-            return true
-          end
-
-          return false
-        end
-      end # END CM_alarm class
 
       
       class CM_tokens < CM_api
