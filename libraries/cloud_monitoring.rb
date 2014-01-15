@@ -45,7 +45,7 @@ module Opscode
             creds = {'username' => nil, 'apikey' => nil, 'auth_url' => nil }
           end
           
-          apikey   = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_api_key : nil,  node[:rackspace_cloudmonitoring][:api_key], creds['apikey'])
+          apikey   = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_api_key : nil,  node[:rackspace_cloudmonitoring][:api_key],  creds['apikey'])
           username = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_username : nil, node[:rackspace_cloudmonitoring][:username], creds['username'])
           auth_url = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_auth_url : nil, node[:rackspace_cloudmonitoring][:auth_url], creds['auth_url'])
           
@@ -239,6 +239,21 @@ module Opscode
           
           return false
         end
+
+        # delete_entity: does what it says on the tin
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: Returns true if the entity was deleted, false otherwise
+        def delete_entity()
+          if @entity_obj.nil?
+            return false
+          end
+
+          @entity_obj.destroy
+          _update_entity_obj(nil)
+          return true
+        end
+
       end # END CM_entity class
       
       class CM_check < CM_entity
