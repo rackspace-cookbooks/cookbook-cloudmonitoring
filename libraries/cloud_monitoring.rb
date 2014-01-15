@@ -179,6 +179,12 @@ module Opscode
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
         # Sets @entity_obj
         def lookup_entity_by_id(id)
+          if !@entity_obj.nil?
+            if @entity_obj.id == id
+              return @entity_obj
+            end
+          end
+
           return _update_entity_obj(get_cm().entities.find{ |entity| entity.id==id})
         end
         
@@ -188,6 +194,12 @@ module Opscode
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
         # Sets @entity_obj
         def lookup_entity_by_label(label)
+          if !@entity_obj.nil?
+            if @entity_obj.label == label
+              return @entity_obj
+            end
+          end
+
           return _update_entity_obj(get_cm().entities.find{ |entity| entity.label==label})
         end
         
@@ -212,6 +224,12 @@ module Opscode
             return false
           end
           
+          if !@entity_obj.nil?
+            if _lookup_entity_by_ip_checker(@entity_obj, ip)
+              return @entity_obj
+            end
+          end
+
           return _update_entity_obj(get_cm().entities.find{ |entity| _lookup_entity_by_ip_checker(entity, ip)})
         end
         
@@ -257,9 +275,27 @@ module Opscode
       end # END CM_entity class
       
       class CM_check < CM_entity
-        def initialize(label)
+        # Note that this initializer DOES NOT LOAD ANY CHECKS!
+        # User must call a lookup function to set check-update
+        def initialize()
           @id_cache = CM_cache.new('check_ids', true)
-          
+          @check_obj = nil
+        end
+
+        # get_check_obj: Returns the check object
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: Fog::Rackspace::Monitoring::Check object or nil
+        def get_check_obj
+            return @check_obj
+        end
+        
+        # lookup_chack-by_label: Lookup a check by label, utilizing the cache
+        # PRE: none
+        # POST: None
+        # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
+        # THis is separate from the initializer to allow modifications to the @entity_obj
+        def lookup_check_by_label(label)
           cached_id = @id_cache.get(label)
           if !cached_id.nil?
             @check_obj = get_entity_obj().checks.find{ |check| check.id==cached_id}
@@ -272,16 +308,10 @@ module Opscode
           if !@check_obj.nil?
             @id_cache.save(@check_obj.id, label)
           end
+
+          return @check_obj
         end
 
-        # get_check_obj: Returns the check object
-        # PRE: None
-        # POST: None
-        # RETURN VALUE: Fog::Rackspace::Monitoring::Check object or nil
-        def get_check_obj
-            return @check_obj
-        end
-        
         # _update_check_obj: helper function to update @check_obj, update the ID cache, and help keep the code DRY
         # PRE: new_check is a valid Fog::Rackspace::Monitoring::Check object
         # POST: None
@@ -297,7 +327,7 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was updated, false otherwise
         # Idempotent: Does not update entities unless required
-        def update_entity(attributes = {})
+        def update_check(attributes = {})
           new_check = get_entity_obj().checks.new(attributres)
           if @cache_obj.nil?
             new_check.save
