@@ -30,50 +30,31 @@ action :create do
     raise ValueError, "Must specify 'notification_plan_id' in alarm resource or in node[:rackspace_cloudmonitoring]['notification_plan_id']"
   end
 
-
-  alarm = @entity.alarms.new(
+  
+  new_resource.updated_by_last_action(@current_resource.update_alarm(
     :label => new_resource.label,
     :check_type => new_resource.check_type,
     :metadata => new_resource.metadata,
     :check => check_id,
     :criteria => criteria,
     :notification_plan_id => notification_plan_id
-  )
-
-  if @current_resource.nil? then
-    Chef::Log.info("Creating #{new_resource}")
-    alarm.save
-    new_resource.updated_by_last_action(true)
-    update_node_alarm(@new_resource.label,alarm.id)
-    clear
-  else
-    # Compare attributes
-    if !alarm.compare? @current_resource then
-      # It's different issue and update
-      Chef::Log.info("Updating #{new_resource}")
-      alarm.id = @current_resource.id
-      alarm.save
-      new_resource.updated_by_last_action(true)
-      clear
-    else
-      Chef::Log.debug("#{new_resource} matches, skipping")
-      new_resource.updated_by_last_action(false)
-    end
-  end
+  ))
 end
 
 
 def load_current_resource
+  @current_resource = CM_alarm.new
+
+  # Configure the entity details, if specified
   if @new_resource.entity_label then
     raise Exception, "Cannot specify entity_label and entity_id" unless @new_resource.entity_id.nil?
-    @entity = get_entity_by_label @new_resource.entity_label
+    @current_resource.lookup_entity_by_label(@new_resource.entity_label)
   else
-    @entity = get_entity_by_id @new_resource.entity_id || node[:rackspace_cloudmonitoring]['entity_id']
+    if @new_resource.entity_id
+      @current_resource.lookup_entity_by_id(@new_resource.entity_id)
+    end
   end
 
-  @current_resource = get_alarm_by_id @entity.id, node[:rackspace_cloudmonitoring]['alarms'][@new_resource.label]
-  if @current_resource == nil then
-    @current_resource = get_alarm_by_label @entity.id, @new_resource.label
-    update_node_alarm(@new_resource.label,@current_resource.identity) unless @current_resource.nil?
-  end
+  # Lookup the check
+  @current_resource.lookup_alarm_by_label(@new_resource.label)
 end
