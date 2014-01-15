@@ -106,6 +106,10 @@ template "/etc/rackspace-monitoring-agent.cfg" do
   action :create
 end
 
+# Save the token label into the node attributes for use by the entity recipe
+# Note that, like the agent, the entity API calls it ID.
+node.default[:rackspace_cloudmonitoring]['agent']['id'] = my_token.label
+
 package "rackspace-monitoring-agent" do
   if node[:rackspace_cloudmonitoring]['agent']['version'] == 'latest'
     action :upgrade
