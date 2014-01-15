@@ -31,7 +31,7 @@ action :create do
   end
 
   
-  new_resource.updated_by_last_action(@current_resource.update_alarm(
+  new_resource.updated_by_last_action(@current_resource.update(
     :label => new_resource.label,
     :check_type => new_resource.check_type,
     :metadata => new_resource.metadata,
@@ -56,5 +56,5 @@ def load_current_resource
   end
 
   # Lookup the check
-  @current_resource.lookup_alarm_by_label(@new_resource.label)
+  @current_resource.lookup_by_label(@new_resource.label)
 end

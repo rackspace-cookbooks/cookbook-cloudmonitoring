@@ -2,7 +2,7 @@ include Opscode::Rackspace::Monitoring
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.update_check(
+  new_resource.updated_by_last_action(@current_resource.update(
     :label => new_resource.label,
     :type => new_resource.type,
     :details => new_resource.details,
@@ -31,5 +31,5 @@ def load_current_resource
   end
 
   # Lookup the check
-  @current_resource.lookup_check_by_label(@new_resource.label)
+  @current_resource.lookup_by_label(@new_resource.label)
 end
