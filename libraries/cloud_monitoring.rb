@@ -15,6 +15,7 @@ module Opscode
           # Utilize a class variable to only open one Fog connection
           if defined?(@@cm)
             if !@@cm.nil?
+              Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Reusing existing Fog connection")
               return
             end
           end
@@ -59,6 +60,8 @@ module Opscode
           if @@cm.nil?
             Chef::Log.error("Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog")
           end
+          Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful")
+
         end
 
         # get_cm(): Getter for the @@cm class variable
