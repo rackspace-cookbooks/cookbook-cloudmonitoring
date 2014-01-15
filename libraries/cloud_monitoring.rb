@@ -302,11 +302,11 @@ module Opscode
           return @obj
         end
         
-        # lookup_by_label: Lookup a check by label, utilizing the cache
+        # lookup_by_label: Lookup a check by label
         # PRE: none
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
-        # THis is separate from the initializer to allow modifications to the @entity_obj
+        # This is separate from the initializer to allow modifications to the @entity_obj
         def lookup_by_label(label)
           if !@obj.nil?
             if @obj.label == label
@@ -357,37 +357,70 @@ module Opscode
         def initialize()
           super(:alarms)
         end
-
-      
-      class CM_tokens < CM_api
-        def initialize(label)
-          @id_cache = CM_cache.new('agent_id')
-          cached_id = @id_cache.get
-          if !cached_id.nil?
-            @agent_obj = get_cm().agent_tokens.find{ |agent| agent.id==cached_id}
-            if !@agent_obj.nil?
+      end
+        
+      class CM_agent_token < CM_api
+        # This does not inherit from CM_child as it doesn't use an entity.
+        # Otherwise it is very similar.
+        def initialize(token, label)
+          if not token.nil?
+            @obj = get_cm().agent_tokens.find{ |agent| agent.id==token}
+            if !@obj.nil?
               return
             end
           end
 
-          @agent_obj = get_cm().agent_tokens.find{ |agent| agent.label==label}
-          if !@agent_obj.nil?
-            @id_cache.set(@agent_obj.id)
-          end
+          @obj = get_cm().agent_tokens.find{ |agent| agent.label==label}
         end
           
-
-        # get_token_obj: Returns the token object
+        # get_obj: Returns the token object
         # PRE: None
         # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring::AgentToken object or nil
-        def get_token_obj
-          return @token_obj
+        def get_obj
+          return @obj
+        end
+
+        # update: Update or create a new token object
+        # PRE: @obj has been looked up and set for updating existing entities
+        # POST: None
+        # RETURN VALUE: Returns true if the entity was updated, false otherwise
+        # Idempotent: Does not update entities unless required
+        def update(attributes = {})
+          new_obj = get_cm().agent_tokens.new(attributres)
+          if @obj.nil?
+            new_obj.save
+            @obj = new_obj
+            return true
+          end
+
+          new_obj.id = @obj.id
+          # Compare attributes
+          if !new_obj.compare? @obj then
+            # It's different
+            new_obj.save
+            @obj = new_obj
+            return true
+          end
+          
+          return false
+        end
+
+        # delete: does what it says on the tin
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: Returns true if the entity was deleted, false otherwise
+        def delete_entity()
+          if @obj.nil?
+            return false
+          end
+
+          @obj.destroy
+          @obj = nil
+          return true
         end
       end # END CM_tokens class
 
-
-      # END Module
-    end
+    end # END MODULE
   end
 end
