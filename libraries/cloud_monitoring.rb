@@ -147,7 +147,7 @@ module Opscode
           end
         end
         
-        # get_obj: Return the entity object
+        # get_entity_obj: Return the entity object
         # PRE: None
         # POST: None
         # Returns a Fog::Rackspace::Monitoring::Entity object or nil
@@ -155,7 +155,7 @@ module Opscode
           return @entity_obj
         end
         
-        # get_obj_id: Return the entity object id
+        # get_entity_obj_id: Return the entity object id
         # PRE: None
         # POST: None
         # Returns a string or nil
@@ -365,6 +365,15 @@ module Opscode
         # User must call a lookup function before calling update
         def initialize(node)
           super(node, :alarms)
+        end
+
+        # get_example_alarm: Look up an alarm definition from the example API and return its criteria
+        # This does not modify the current alarm object, but it does require the inherited CM_api class
+        # PRE: None
+        # POST: None
+        # Return Value: bound_criteria string
+        def get_example_alarm(example_id, example_values)
+          return get_cm().alarm_examples.evaluate(example_id, example_values).bound_criteria
         end
       end
         
