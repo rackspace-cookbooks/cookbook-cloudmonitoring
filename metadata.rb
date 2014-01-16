@@ -9,5 +9,5 @@ version          "2.0.0"
 
 # TODO: Update these to rackspace-* cookbooks
 depends "apt", "~> 1.4"
-depends "yum", "~> 2.0"
+depends "rackspace_yum", "~> 4.0"
 depends "xml", "~> 1.2"
