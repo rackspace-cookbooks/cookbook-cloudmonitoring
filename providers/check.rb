@@ -18,7 +18,7 @@ end
 
 
 def load_current_resource
-  @current_resource = CM_check.new
+  @current_resource = CM_check.new(node)
   
   # Configure the entity details, if specified
   if @new_resource.entity_label then

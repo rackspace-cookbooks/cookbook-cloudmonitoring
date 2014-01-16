@@ -88,7 +88,7 @@ class Chef::Recipe
   include Opscode::Rackspace::Monitoring
 end
 
-my_token_obj = CM_agent_token.new(node[:rackspace_cloudmonitoring]['agent']['token'], "#{node.hostname}")
+my_token_obj = CM_agent_token.new(node, node[:rackspace_cloudmonitoring]['agent']['token'], "#{node.hostname}")
 my_token = my_token_obj.get_obj()
 
 # Generate the config template

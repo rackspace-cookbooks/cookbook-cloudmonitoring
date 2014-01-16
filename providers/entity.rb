@@ -26,7 +26,7 @@ end
 
 
 def load_current_resource
-  @current_resource = CM_entity.new
+  @current_resource = CM_entity.new(node)
   case new_resource.search_method
   when :ip
     @current_resource.lookup_entity_by_ip(@new_resource.search_ip)

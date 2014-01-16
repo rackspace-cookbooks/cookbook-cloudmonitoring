@@ -5,6 +5,8 @@ attribute :metadata, :kind_of => Hash
 attribute :ip_addresses, :kind_of => Hash
 attribute :agent_id, :kind_of => String
 
+attribute :search_method, :kind_of => String
+attribute :search_ip, :kind_of => String
 
 attribute :rackspace_api_key, :kind_of => String
 attribute :rackspace_username, :kind_of => String

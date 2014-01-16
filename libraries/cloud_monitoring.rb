@@ -9,7 +9,7 @@ module Opscode
         # POST: None
         # RETURN VALUE: None
         # Opens @@cm class variable
-        def initialize()
+        def initialize(node)
           # Utilize a class variable to only open one Fog connection
           if defined?(@@cm)
             if !@@cm.nil?
@@ -24,11 +24,11 @@ module Opscode
             # 1) new_resource variables (If available)
             # 2) Node data
             # 3) Data bag
-            if argument
-              return argument
-            end
             if resource
               return resource
+            end
+            if node
+              return node
             end
             return databag
           end
@@ -77,21 +77,22 @@ module Opscode
         # Initialize: Initialize our namespace
         # key is the unique key for this cache
         # enable_id enables a internal hash and enables id on the getters and setters
-        def initialize(key, enable_id = false)
+        def initialize(node, key, enable_id = false)
           @cache_key = key
           @id_enabled = enable_id
+          @node = node
 
           # Verify this cache exists
           # As this isn't intended to be user exposed, this allows us to not need to show it in attributes.rb
-          if node[:rackspace_cloudmonitoring][:cm_cache].nil?
-            node.set[:rackspace_cloudmonitoring][:cm_cache] = {}
+          if @node[:rackspace_cloudmonitoring][:cm_cache].nil?
+            @node.set[:rackspace_cloudmonitoring][:cm_cache] = {}
           end
           
           # Initialization here is only needed for multi-id caches (hashes)
           if @id_enabled
-              if node[:rackspace_cloudmonitoring][:cm_cache][@cache_key].nil?
+              if @node[:rackspace_cloudmonitoring][:cm_cache][@cache_key].nil?
                 # Initialize our cache
-                node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key] = {}
+                @node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key] = {}
               end
           end
         end
@@ -106,9 +107,9 @@ module Opscode
                 Chef::Log.error("Opscode::Rackspace::Monitoring::cm_cache.get: ERROR: id unspecified on a id enabled cache")
               end
 
-              return node[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id]
+              return @node[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id]
             else
-              return node[:rackspace_cloudmonitoring][:cm_cache][@cache_key]
+              return @node[:rackspace_cloudmonitoring][:cm_cache][@cache_key]
             end
         end
 
@@ -123,10 +124,10 @@ module Opscode
               end
               
               Chef::Log.info("Updating cache entry [#{@cache_key}][#{id}] to #{value}")
-              node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id] = value
+              @node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id] = value
             else
               Chef::Log.info("Updating cache entry [#{@cache_key}] to #{value}")
-              node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key] = value
+              @node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key] = value
             end
         end
       end
@@ -134,10 +135,10 @@ module Opscode
 
       # cm_entity: Class handling entity operations
       class CM_entity < CM_api
-        def initialize()
-          super
+        def initialize(node)
+          super(node)
 
-          @id_cache = CM_cache.new('entity_id')
+          @id_cache = CM_cache.new(node, 'entity_id')
           cached_id = @id_cache.get
           if !cached_id.nil?
             @entity_obj = get_cm().entities.find{ |entity| entity.id==@id_cache.get}
@@ -281,8 +282,8 @@ module Opscode
       # CM_Child class: This is a generic class to be inherited for checks and alarms
       # as the two are handled amlost identically
       class CM_child < CM_entity
-        def initialize(my_target_name)
-          super
+        def initialize(node, my_target_name)
+          super(node)
           @obj = nil
           @target_name = my_target_name
         end
@@ -324,7 +325,7 @@ module Opscode
         # RETURN VALUE: Returns true if the entity was updated, false otherwise
         # Idempotent: Does not update entities unless required
         def update(attributes = {})
-          new_obj = _get_target().new(attributres)
+          new_obj = _get_target().new(attributes)
           if @obj.nil?
             new_obj.save
             @obj = new_obj
@@ -347,23 +348,25 @@ module Opscode
       class CM_check < CM_child
         # Note that this initializer DOES NOT LOAD ANY CHECKS!
         # User must call a lookup function before calling update
-        def initialize()
-          super(:checks)
+        def initialize(node)
+          super(node, :checks)
         end
       end
       
       class CM_alarm < CM_child
         # Note that this initializer DOES NOT LOAD ANY ALARMS!
         # User must call a lookup function before calling update
-        def initialize()
-          super(:alarms)
+        def initialize(node)
+          super(node, :alarms)
         end
       end
         
       class CM_agent_token < CM_api
         # This does not inherit from CM_child as it doesn't use an entity.
         # Otherwise it is very similar.
-        def initialize(token, label)
+        def initialize(node, token, label)
+          super(node)
+
           if not token.nil?
             @obj = get_cm().agent_tokens.find{ |agent| agent.id==token}
             if !@obj.nil?
@@ -388,7 +391,7 @@ module Opscode
         # RETURN VALUE: Returns true if the entity was updated, false otherwise
         # Idempotent: Does not update entities unless required
         def update(attributes = {})
-          new_obj = get_cm().agent_tokens.new(attributres)
+          new_obj = get_cm().agent_tokens.new(attributes)
           if @obj.nil?
             new_obj.save
             @obj = new_obj
