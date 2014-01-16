@@ -22,11 +22,8 @@
 # limitations under the License.
 #
 
-rackspace_cloudmonitoring_entity node[:rackspace_cloudmonitoring]['label'] do
-  label                 node[:rackspace_cloudmonitoring]['label']
-  agent_id              node[:rackspace_cloudmonitoring]['agent']['id']
-  rackspace_username    node[:rackspace_cloudmonitoring]['rackspace_username']
-  rackspace_api_key     node[:rackspace_cloudmonitoring]['rackspace_api_key']
+rackspace_cloudmonitoring_entity node.hostname do
+  agent_id              node[:rackspace_cloudmonitoring][:agent][:id]
   search_method         "ip"
   search_ip             node["cloud"]["local_ipv4"]
   action :create                                 

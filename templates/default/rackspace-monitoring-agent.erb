@@ -2,6 +2,6 @@
 monitoring_id <%= @monitoring_id %>
 <% end %>
 monitoring_token <%= @monitoring_token %>
-<% if not node[:rackspace_cloudmonitoring]['monitoring_endpoints'].empty? %>
-monitoring_endpoints <%= node[:rackspace_cloudmonitoring]['monitoring_endpoints'].join(",") %>
+<% if not node[:rackspace_cloudmonitoring][:agent][:monitoring_endpoints].empty? %>
+monitoring_endpoints <%= node[:rackspace_cloudmonitoring][:agent][:monitoring_endpoints].join(",") %>
 <% end %>

@@ -4,7 +4,7 @@
 #
 # Install and configure the cloud monitoring agent on a server
 #
-# Copyright 2014, Rackspace
+# Copyright 2014, Rackspace, US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,21 +63,19 @@ end
 
 
 begin
-  databag_dir = node[:rackspace_cloudmonitoring]["credentials"]["databag_name"]
-  databag_filename = node[:rackspace_cloudmonitoring]["credentials"]["databag_item"]
+  values = Chef::EncryptedDataBagItem.load(node[:rackspace_cloudmonitoring][:auth][:databag][:name],
+                                           node[:rackspace_cloudmonitoring][:auth][:databag][:item])
 
-  values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
-
-  node.set[:rackspace_cloudmonitoring]['agent']['token'] = values['agent_token'] || nil
+  if !values['agent_token'].nil?
+    node.set[:rackspace_cloudmonitoring][:agent][:token] = values['agent_token']
+  end
 rescue Exception => e
-  Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
+  Chef::Log.warn 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
 
 # Call the agent_token LWRP to ensure we have a token in the API
 rackspace_cloudmonitoring_agent_token "#{node.hostname}" do
-  rackspace_username  node[:rackspace_cloudmonitoring]['rackspace_username']
-  rackspace_api_key   node[:rackspace_cloudmonitoring]['rackspace_api_key']
-  token               node[:rackspace_cloudmonitoring]['agent']['token']
+  token               node[:rackspace_cloudmonitoring][:agent][:token]
   action :create
 end
 
@@ -88,7 +86,7 @@ class Chef::Recipe
   include Opscode::Rackspace::Monitoring
 end
 
-my_token_obj = CM_agent_token.new(node, node[:rackspace_cloudmonitoring]['agent']['token'], "#{node.hostname}")
+my_token_obj = CM_agent_token.new(node, node[:rackspace_cloudmonitoring][:agent][:token], "#{node.hostname}")
 my_token = my_token_obj.get_obj()
 
 # Generate the config template
@@ -108,22 +106,22 @@ end
 
 # Save the token label into the node attributes for use by the entity recipe
 # Note that, like the agent, the entity API calls it ID.
-node.default[:rackspace_cloudmonitoring]['agent']['id'] = my_token.label
+node.default[:rackspace_cloudmonitoring][:agent][:id] = my_token.label
 
 package "rackspace-monitoring-agent" do
-  if node[:rackspace_cloudmonitoring]['agent']['version'] == 'latest'
+  if node[:rackspace_cloudmonitoring][:agent][:version] == 'latest'
     action :upgrade
   else
-    version node[:rackspace_cloudmonitoring]['agent']['version']
+    version node[:rackspace_cloudmonitoring][:agent][:version]
     action :install
   end
 
   notifies :restart, "service[rackspace-monitoring-agent]"
 end
 
-node[:rackspace_cloudmonitoring]['plugins'].each_pair do |source_cookbook, path|
+node[:rackspace_cloudmonitoring][:agent][:plugins].each_pair do |source_cookbook, path|
   remote_directory "rackspace_cloudmonitoring_plugins_#{source_cookbook}" do
-    path node[:rackspace_cloudmonitoring]['plugin_path']
+    path node[:rackspace_cloudmonitoring][:agent][:plugin_path]
     cookbook source_cookbook
     source path
     files_mode 0755

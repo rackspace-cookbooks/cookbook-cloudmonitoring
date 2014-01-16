@@ -27,19 +27,17 @@ action :create do
     check_id = check_obj.get_obj().id
   end
 
-  notification_plan_id = new_resource.notification_plan_id || node[:rackspace_cloudmonitoring]['notification_plan_id']
-  if notification_plan_id.nil? then
-    raise ValueError, "Must specify 'notification_plan_id' in alarm resource or in node[:rackspace_cloudmonitoring]['notification_plan_id']"
+  if new_resource.notification_plan_id.nil? then
+    raise ValueError, "Must specify 'notification_plan_id' in alarm resource"
   end
-
   
   new_resource.updated_by_last_action(@current_resource.update(
-    :label => new_resource.label,
-    :check_type => new_resource.check_type,
-    :metadata => new_resource.metadata,
-    :check => check_id,
-    :criteria => criteria,
-    :notification_plan_id => notification_plan_id
+    :label                => new_resource.label,
+    :check_type           => new_resource.check_type,
+    :metadata             => new_resource.metadata,
+    :check                => check_id,
+    :criteria             => criteria,
+    :notification_plan_id => new_resource.notification_plan_id
   ))
 
 end

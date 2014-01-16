@@ -37,16 +37,16 @@ module Opscode
           begin
             # Access the Rackspace Cloud encrypted data_bag
             creds = Chef::EncryptedDataBagItem.load(
-                                                    node[:rackspace_cloudmonitoring]["credentials"]["databag_name"],
-                                                    node[:rackspace_cloudmonitoring]["credentials"]["databag_item"]
+                                                    node[:rackspace_cloudmonitoring][:auth][:databag][:name],
+                                                    node[:rackspace_cloudmonitoring][:auth][:databag][:item]
                                                     )
           rescue Exception => e
             creds = {'username' => nil, 'apikey' => nil, 'auth_url' => nil }
           end
 
-          apikey   = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_api_key : nil,  node[:rackspace_cloudmonitoring][:rackspace_api_key],  creds['apikey'])
-          username = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_username : nil, node[:rackspace_cloudmonitoring][:rackspace_username], creds['username'])
-          auth_url = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_auth_url : nil, node[:rackspace_cloudmonitoring][:rackspace_auth_url], creds['auth_url'])
+          apikey   = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_api_key : nil,  node[:rackspace][:cloud_credentials][:api_key],  creds['apikey'])
+          username = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_username : nil, node[:rackspace][:cloud_credentials][:username], creds['username'])
+          auth_url = _cm_attribute_logic(defined?(new_resource) ? new_resource.rackspace_auth_url : nil, node[:rackspace_cloudmonitoring][:auth][:url],   creds['auth_url'])
 
           Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: creating new Fog connection")
           @@cm = Fog::Rackspace::Monitoring.new(
