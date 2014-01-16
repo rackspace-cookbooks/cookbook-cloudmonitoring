@@ -20,7 +20,7 @@
 #
 
 if platform_family?("debian")
-  apt_repository "cloud-monitoring" do
+  rackspace_apt_repository "cloud-monitoring" do
    
     if node['platform'] == 'ubuntu'
       uri "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-#{node['platform_version']}-#{node['kernel']['machine']}"
