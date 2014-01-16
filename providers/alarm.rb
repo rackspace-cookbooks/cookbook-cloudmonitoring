@@ -33,21 +33,21 @@ action :create do
   end
 
   
-  resource_updated = @current_resource.update(
+  new_resource.updated_by_last_action(@current_resource.update(
     :label => new_resource.label,
     :check_type => new_resource.check_type,
     :metadata => new_resource.metadata,
     :check => check_id,
     :criteria => criteria,
     :notification_plan_id => notification_plan_id
-  )
-  if resource_updated
-    Chef::Log.info("Resource #{current_resource} updated")
-  end
-  new_resource.updated_by_last_action(resource_updated)
+  ))
 
 end
 
+action :delete do
+  Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
+  new_resource.updated_by_last_action(@current_resource.delete())
+end
 
 def load_current_resource
   @current_resource = CM_alarm.new(node)
