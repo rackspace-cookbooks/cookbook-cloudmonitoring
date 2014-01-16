@@ -1,7 +1,7 @@
 module Opscode
   module Rackspace
     module Monitoring
-      # cm_api:  This class contains all the methods we use to access the Cloud Monitoring API
+      # cm_api:  This class initializes the connection to the Cloud Monitoring API
       class CM_api
         # Initialize: Initialize the class
         # Opens connections to the API via Fog, will share connections when possible
