@@ -1,3 +1,22 @@
+#
+# Cookbook Name:: rackspace_cloudmonitoring
+# Library:: cloud_monitoring
+#
+# Copyright 2014, Rackspace, US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 module Opscode
   module Rackspace
     module Monitoring
@@ -86,7 +105,7 @@ module Opscode
 
           if !obj.nil?
             if obj.id == id
-              Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: Existing object hit for #{id}") 
+              Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: Existing object hit for #{id}")
               return obj
             end
           end
@@ -97,7 +116,7 @@ module Opscode
           else
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: New object found for #{id}")
           end
-            
+
           return obj
         end
 
@@ -112,7 +131,7 @@ module Opscode
 
           if !obj.nil?
             if obj.label == label
-              Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: Existing object hit for #{label}") 
+              Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: Existing object hit for #{label}")
               return obj
             end
           end
@@ -123,7 +142,7 @@ module Opscode
           else
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: New object found for #{label}.  ID: #{obj.id}")
           end
-            
+
           return obj
         end
 
@@ -215,7 +234,7 @@ module Opscode
             if id.nil?
               raise Exception, "Opscode::Rackspace::Monitoring::cm_cache.get: ERROR: id unspecified on a id enabled cache"
             end
-            
+
             if value != @node[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id]
               Chef::Log.info("Opscode::Rackspace::Monitoring::cm_cache: Updating cache entry [#{@cache_key}][#{id}] to #{value}")
               @node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id] = value
@@ -290,7 +309,7 @@ module Opscode
           else
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching EMPTY Entity")
           end
-          
+
           return new_entity
         end
 
@@ -394,7 +413,7 @@ module Opscode
           @target_name = my_target_name
           @debug_name = my_debug_name
         end
-        
+
         # _get_target: Call send on the entity to get the target object
         # PRE: get_entity_obj() PRE conditions met
         # POST: None
@@ -464,7 +483,7 @@ module Opscode
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: Created new #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{entity_id}]")
             return true
           end
-            
+
           if !@obj.compare? orig_obj
             entity_id = get_entity_obj_id()
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: Updated #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{entity_id}]")
@@ -573,7 +592,7 @@ module Opscode
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_agent_token.update: Created new agent token #{@obj.id}")
             return true
           end
-            
+
           if !@obj.compare? orig_obj
             entity_id = get_entity_obj_id()
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_agent_token.update: Updated agent token #{@obj.id}")
