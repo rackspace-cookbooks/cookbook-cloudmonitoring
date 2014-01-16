@@ -2,7 +2,7 @@ include Opscode::Rackspace::Monitoring
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.update(
+  resource_updated = @current_resource.update(
     :label => new_resource.label,
     :type => new_resource.type,
     :details => new_resource.details,
@@ -13,7 +13,12 @@ action :create do
     :target_resolver => new_resource.target_resolver,
     :timeout => new_resource.timeout,
     :period => new_resource.period
-  ))
+  )
+  if resource_updated
+    Chef::Log.info("Resource #{current_resource} updated")
+  end
+  new_resource.updated_by_last_action(resource_updated)
+
 end
 
 

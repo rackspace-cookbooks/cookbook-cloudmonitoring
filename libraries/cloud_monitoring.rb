@@ -166,6 +166,18 @@ module Opscode
           
           return @entity_obj.id
         end
+
+        # to_s: Print the class as a string
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: A string representing the class
+        def to_s
+          if @entity_obj.nil?
+            return "nil"
+          end
+          
+          return "Entity #{@entity_obj.label} (#{@entity_obj.id})"
+        end
         
         # _update_entity_obj: helper function to update @entity_obj, update the ID cache, and help keep the code DRY
         # PRE: new_entity is a valid Fog::Rackspace::Monitoring::Entity object
@@ -326,6 +338,20 @@ module Opscode
           return @obj
         end
         
+        # to_s: Print the class as a string
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: A string representing the class
+        def to_s
+          if @obj.nil?
+            return "nil"
+          end
+          
+          target_name_cap = @target_name.capitalize
+          entity_id = get_entity_obj_id()
+          return "#{target_name_cap} #{@obj.label} (#{@obj.id})[Entity #{entity_id}]"
+        end
+
         # lookup_by_label: Lookup a check by label
         # PRE: none
         # POST: None
@@ -424,6 +450,18 @@ module Opscode
         # RETURN VALUE: Fog::Rackspace::Monitoring::AgentToken object or nil
         def get_obj
           return @obj
+        end
+
+        # to_s: Print the class as a string
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: A string representing the class
+        def to_s
+          if @obj.nil?
+            return "nil"
+          end
+          
+          return "Alarm Token #{@obj.id}"
         end
 
         # update: Update or create a new token object
