@@ -92,6 +92,7 @@ my_token = my_token_obj.get_obj()
 # Generate the config template
 template "/etc/rackspace-monitoring-agent.cfg" do
   source "rackspace-monitoring-agent.erb"
+  cookbook node[:rackspace_cloudmonitoring][:templates_cookbook][:"rackspace-monitoring-agent"]
   owner "root"
   group "root"
   mode 0600

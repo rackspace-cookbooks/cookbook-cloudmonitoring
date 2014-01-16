@@ -52,3 +52,7 @@ default[:rackspace_cloudmonitoring][:monitors_defaults][:check][:timeout] = 10
 # No checks are defined by default as there is an account-wide limit and each check incurrs billing
 # http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-rsource-limits.html
 default[:rackspace_cloudmonitoring][:monitors] = {}
+
+# Configuration template overrides
+default[:rackspace_cloudmonitoring][:templates_cookbook][:"rackspace-monitoring-agent"] = "rackspace_cloudmonitoring"
+default[:rackspace_cloudmonitoring][:templates_cookbook][:raxrc]                        = "rackspace_cloudmonitoring"

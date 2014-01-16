@@ -20,6 +20,7 @@ include_recipe "python"
 
 #Create the .raxrc with credentials in /root
 template "/root/.raxrc" do
+  cookbook node[:rackspace_cloudmonitoring][:templates_cookbook][:raxrc]
   source "raxrc.erb"
   owner "root"
   group "root"
