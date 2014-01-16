@@ -173,7 +173,14 @@ module Opscode
         # RETURN VALUE: new_entity
         def _update_entity_obj(new_entity)
           @entity_obj = new_entity
-          @id_cache.set(new_entity.id)
+
+          if not new_entity.nil?
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching entity with ID #{new_entity.id}")
+            @id_cache.set(new_entity.id)
+          else
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching EMPTY Entity")
+          end
+
           return new_entity
         end
         
