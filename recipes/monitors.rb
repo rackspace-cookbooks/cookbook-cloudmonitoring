@@ -22,7 +22,13 @@
 # Include dependency recipes
 include_recipe "rackspace_cloudmonitoring"
 include_recipe "rackspace_cloudmonitoring::agent"
-include_recipe "rackspace_cloudmonitoring::entity"
+
+rackspace_cloudmonitoring_entity node.hostname do
+  agent_id              node[:rackspace_cloudmonitoring][:agent][:id]
+  search_method         "ip"
+  search_ip             node["cloud"]["local_ipv4"]
+  action :create                                 
+end                                              
 
 node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
   rackspace_cloudmonitoring_check key do
