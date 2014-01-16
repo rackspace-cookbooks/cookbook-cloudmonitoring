@@ -7,10 +7,7 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 
 version          "2.0.0"
 
-# TODO: Update these to meet our dep spec
-depends "apt", ">= 1.4.2"
+# TODO: Update these to rackspace-* cookbooks
+depends "apt", "~> 1.4"
 depends "yum", "~> 2.0"
-depends "xml"
-
-#chef_gem cookbook/library required for chef versions <= 10.12.0
-recommends "chef_gem"
+depends "xml", "~> 1.2"
