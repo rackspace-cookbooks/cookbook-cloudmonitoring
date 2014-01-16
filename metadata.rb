@@ -9,7 +9,6 @@ version          "2.0.0"
 
 # TODO: Update these to meet our dep spec
 depends "apt", ">= 1.4.2"
-depends "python"
 depends "yum", "~> 2.0"
 depends "xml"
 
