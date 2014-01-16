@@ -1,3 +1,6 @@
+WARNING: DOCUMENTATION NOT YET UPDATED FOR THE 2.0.0 REFACTOR!  README RIDICULOUSLY OUT OF DATE!
+================================================================================================
+
 **NOTE, there have been many changes in v1.0.0 series of this cookbook. Some of which are possibly breaking for older installations. Please see the changelog.**
  Older versions can be found on the [release page](https://github.com/rackspace-cookbooks/cookbook-cloudmonitoring/releases)
 
