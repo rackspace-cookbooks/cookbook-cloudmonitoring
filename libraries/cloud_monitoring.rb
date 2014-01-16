@@ -211,22 +211,27 @@ module Opscode
         # POST: None
         # RETURN VALUE: None
         def set(value, id = nil)
-            if @id_enabled
-              if id.nil?
-                raise Exception, "Opscode::Rackspace::Monitoring::cm_cache.get: ERROR: id unspecified on a id enabled cache"
-              end
-
-              Chef::Log.info("Updating cache entry [#{@cache_key}][#{id}] to #{value}")
+          if @id_enabled
+            if id.nil?
+              raise Exception, "Opscode::Rackspace::Monitoring::cm_cache.get: ERROR: id unspecified on a id enabled cache"
+            end
+            
+            if value != @node[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id]
+              Chef::Log.info("Opscode::Rackspace::Monitoring::cm_cache: Updating cache entry [#{@cache_key}][#{id}] to #{value}")
               @node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key][id] = value
-            else
-              Chef::Log.info("Updating cache entry [#{@cache_key}] to #{value}")
+            end
+          else
+            if value != @node[:rackspace_cloudmonitoring][:cm_cache][@cache_key]
+              Chef::Log.info("Opscode::Rackspace::Monitoring::cm_cache: Updating cache entry [#{@cache_key}] to #{value}")
               @node.set[:rackspace_cloudmonitoring][:cm_cache][@cache_key] = value
             end
+          end
         end
       end
       # END CM_cache class
 
       # cm_entity: Class handling entity operations
+      # Uses @@entity_obj class variable to avoid entity API lookups for every check and alarm
       class CM_entity < CM_api
         def initialize(node)
           super(node)
@@ -234,9 +239,9 @@ module Opscode
           @id_cache = CM_cache.new(node, 'entity_id')
           cached_id = @id_cache.get
           if !cached_id.nil?
-            @entity_obj = obj_lookup_by_id(nil, get_cm().entities, "Entity", cached_id)
+            @@entity_obj = obj_lookup_by_id(nil, get_cm().entities, "Entity", cached_id)
           else
-            @entity_obj = nil
+            @@entity_obj = nil
           end
         end
 
@@ -245,7 +250,7 @@ module Opscode
         # POST: None
         # Returns a Fog::Rackspace::Monitoring::Entity object or nil
         def get_entity_obj
-          return @entity_obj
+          return @@entity_obj
         end
 
         # get_entity_obj_id: Return the entity object id
@@ -253,11 +258,11 @@ module Opscode
         # POST: None
         # Returns a string or nil
         def get_entity_obj_id
-          if @entity_obj.nil?
+          if @@entity_obj.nil?
             return nil
           end
 
-          return @entity_obj.id
+          return @@entity_obj.id
         end
 
         # to_s: Print the class as a string
@@ -265,19 +270,19 @@ module Opscode
         # POST: None
         # RETURN VALUE: A string representing the class
         def to_s
-          if @entity_obj.nil?
+          if @@entity_obj.nil?
             return "nil"
           end
 
-          return "Entity #{@entity_obj.label} (#{@entity_obj.id})"
+          return "Entity #{@@entity_obj.label} (#{@@entity_obj.id})"
         end
 
-        # _update_entity_obj: helper function to update @entity_obj, update the ID cache, and help keep the code DRY
+        # _update_entity_obj: helper function to update @@entity_obj, update the ID cache, and help keep the code DRY
         # PRE: new_entity is a valid Fog::Rackspace::Monitoring::Entity object
         # POST: None
         # RETURN VALUE: new_entity
         def _update_entity_obj(new_entity)
-          @entity_obj = new_entity
+          @@entity_obj = new_entity
 
           if not new_entity.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching entity with ID #{new_entity.id}")
@@ -285,7 +290,7 @@ module Opscode
           else
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching EMPTY Entity")
           end
-
+          
           return new_entity
         end
 
@@ -293,25 +298,25 @@ module Opscode
         # PRE: None
         # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
-        # Sets @entity_obj
+        # Sets @@entity_obj
         def lookup_entity_by_id(id)
-          return _update_entity_obj(obj_lookup_by_id(@entity_obj, get_cm().entities, "Entity", id))
+          return _update_entity_obj(obj_lookup_by_id(@@entity_obj, get_cm().entities, "Entity", id))
         end
 
         # lookup_entity_by_label: Locate an entity by label string
         # PRE: None
         # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
-        # Sets @entity_obj
+        # Sets @@entity_obj
         def lookup_entity_by_label(label)
-          return _update_entity_obj(obj_lookup_by_label(@entity_obj, get_cm().entities, "Entity", label))
+          return _update_entity_obj(obj_lookup_by_label(@@entity_obj, get_cm().entities, "Entity", label))
         end
 
         # lookup_entity_by_ip: Locate an entity by IP address
         # PRE: None
         # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
-        # Sets @entity_obj
+        # Sets @@entity_obj
         def lookup_entity_by_ip(ip)
           # Search helper function
           def _lookup_entity_by_ip_checker ( entity, tgtip )
@@ -332,9 +337,9 @@ module Opscode
             raise Exception, "Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip"
           end
 
-          if !@entity_obj.nil?
-            if _lookup_entity_by_ip_checker(@entity_obj, ip)
-              return @entity_obj
+          if !@@entity_obj.nil?
+            if _lookup_entity_by_ip_checker(@@entity_obj, ip)
+              return @@entity_obj
             end
           end
 
@@ -342,21 +347,21 @@ module Opscode
         end
 
         # update_entity: Update or create a new monitoring entity
-        # PRE: @entity_obj has been looked up and set for updating existing entities
+        # PRE: @@entity_obj has been looked up and set for updating existing entities
         # POST: None
         # RETURN VALUE: Returns true if the entity was updated, false otherwise
         # Idempotent: Does not update entities unless required
         def update_entity(attributes = {})
-          orig_obj = @entity_obj
-          _update_entity_obj(obj_update(@entity_obj, get_cm().entities, "Entity", attributes))
+          orig_obj = @@entity_obj
+          _update_entity_obj(obj_update(@@entity_obj, get_cm().entities, "Entity", attributes))
 
           if orig_obj.nil?
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Created new entity #{@entity_obj.label} (#{@entity_obj.id})")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Created new entity #{@@entity_obj.label} (#{@@entity_obj.id})")
             return true
           end
 
-          if !@entity_obj.compare? orig_obj
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Updated entity #{@entity_obj.label} (#{@entity_obj.id})")
+          if !@@entity_obj.compare? orig_obj
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Updated entity #{@@entity_obj.label} (#{@@entity_obj.id})")
             return true
           end
 
@@ -368,8 +373,8 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def delete_entity()
-          orig_obj = @entity_obj
-          if obj_delete(@entity_obj, get_cm().entities, "Entity")
+          orig_obj = @@entity_obj
+          if obj_delete(@@entity_obj, get_cm().entities, "Entity")
             _update_entity_obj(nil)
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.delete: Deleted entity #{@orig_obj.label} (#{@orig_obj.id})")
             return true
@@ -428,7 +433,6 @@ module Opscode
         # PRE: none
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
-        # This is separate from the initializer to allow modifications to the @entity_obj
         def lookup_by_id(id)
           @obj = obj_lookup_by_id(@obj, _get_target(), @debug_name, id)
           return @obj
@@ -438,7 +442,6 @@ module Opscode
         # PRE: none
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
-        # This is separate from the initializer to allow modifications to the @entity_obj
         def lookup_by_label(label)
           @obj = obj_lookup_by_label(@obj, _get_target(), @debug_name, label)
           return @obj
@@ -584,11 +587,10 @@ module Opscode
         # PRE: None
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
-        def delete_entity()
+        def delete_()
           orig_obj = obj
           if obj_delete(@obj, _get_target(), @target_name)
-            _update_entity_obj(nil)
-
+            @obj = nil
             entity_id = get_entity_obj_id()
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_agent_token.delete: Deleted token #{@orig_obj.id}")
             return true
