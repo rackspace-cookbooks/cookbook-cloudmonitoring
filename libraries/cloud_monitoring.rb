@@ -190,6 +190,11 @@ module Opscode
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
         # Sets @entity_obj
         def lookup_entity_by_id(id)
+          if id.nil?
+            Chef::Log.error("Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_id: ERROR: Passed nil ID")
+            return nil
+          end
+
           if !@entity_obj.nil?
             if @entity_obj.id == id
               return @entity_obj
@@ -205,6 +210,11 @@ module Opscode
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
         # Sets @entity_obj
         def lookup_entity_by_label(label)
+          if label.nil?
+            Chef::Log.error("Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_label: ERROR: Passed nil label")
+            return nil
+          end
+
           if !@entity_obj.nil?
             if @entity_obj.label == label
               return @entity_obj
@@ -235,6 +245,11 @@ module Opscode
             return false
           end
           
+          if ip.nil?
+            Chef::Log.error("Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip")
+            return nil
+          end
+
           if !@entity_obj.nil?
             if _lookup_entity_by_ip_checker(@entity_obj, ip)
               return @entity_obj
@@ -317,6 +332,11 @@ module Opscode
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
         # This is separate from the initializer to allow modifications to the @entity_obj
         def lookup_by_label(label)
+          if label.nil?
+            Chef::Log.error("Opscode::Rackspace::Monitoring::CM_child(#{@target_name}).lookup_by_label: ERROR: Passed nil label")
+            return nil
+          end
+
           if !@obj.nil?
             if @obj.label == label
               return @obj
@@ -388,6 +408,11 @@ module Opscode
             if !@obj.nil?
               return
             end
+          end
+
+          if label.nil?
+            Chef::Log.error("Opscode::Rackspace::Monitoring::CM_agent_token.initialize: ERROR: Passed nil label")
+            return nil
           end
 
           @obj = get_cm().agent_tokens.find{ |agent| agent.label==label}
