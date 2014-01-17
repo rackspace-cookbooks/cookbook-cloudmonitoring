@@ -63,5 +63,5 @@ default[:rackspace_cloudmonitoring][:monitors_defaults][:check][:timeout] = 10
 
 
 # Configuration template overrides
-default[:rackspace_cloudmonitoring][:templates_cookbook][:"rackspace-monitoring-agent"] = "rackspace_cloudmonitoring"
-default[:rackspace_cloudmonitoring][:templates_cookbook][:raxrc]                        = "rackspace_cloudmonitoring"
+default[:rackspace_cloudmonitoring][:templates_cookbook][:'rackspace-monitoring-agent'] = 'rackspace_cloudmonitoring'
+default[:rackspace_cloudmonitoring][:templates_cookbook][:raxrc]                        = 'rackspace_cloudmonitoring'

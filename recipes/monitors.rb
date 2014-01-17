@@ -21,13 +21,13 @@
 #
 
 # Include dependency recipes
-include_recipe "rackspace_cloudmonitoring"
-include_recipe "rackspace_cloudmonitoring::agent"
+include_recipe 'rackspace_cloudmonitoring'
+include_recipe 'rackspace_cloudmonitoring::agent'
 
 rackspace_cloudmonitoring_entity node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label] do
   agent_id              node[:rackspace_cloudmonitoring][:agent][:id]
-  search_method         "ip"
-  search_ip             node["cloud"]["local_ipv4"]
+  search_method         'ip'
+  search_ip             node[:cloud][:local_ipv4]
   action :create                                 
 end                                              
 
@@ -42,7 +42,7 @@ node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
   end
   
   if value.has_key?('alarm')
-    value["alarm"].each do |alarm, alarm_value|
+    value[:alarm].each do |alarm, alarm_value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
       

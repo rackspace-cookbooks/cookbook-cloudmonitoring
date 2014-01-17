@@ -21,7 +21,7 @@
 # Required to install fog
 include_recipe 'xml::ruby'
 
-chef_gem "fog" do
+chef_gem 'fog' do
   version ">= #{node[:rackspace_cloudmonitoring][:dependency_versions][:fog_version]}"
   action :install
 end

@@ -20,8 +20,8 @@
 # limitations under the License.
 #
 
-if platform_family?("debian")
-  rackspace_apt_repository "cloud-monitoring" do
+if platform_family?('debian')
+  rackspace_apt_repository 'cloud-monitoring' do
    
     if node['platform'] == 'ubuntu'
       uri "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-#{node['platform_version']}-#{node['kernel']['machine']}"
@@ -29,13 +29,13 @@ if platform_family?("debian")
       uri "http://stable.packages.cloudmonitoring.rackspace.com/debian-#{node['lsb']['codename']}-#{node['kernel']['machine']}"
     end
 
-    distribution "cloudmonitoring"
-    components ["main"]
-    key "https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc" 
+    distribution 'cloudmonitoring'
+    components ['main']
+    key 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc' 
     action :add
   end
 
-elsif platform_family?("rhel")
+elsif platform_family?('rhel')
   # do RHEL things
 
   #Grab the major release for cent and rhel servers as this is what the repos use.
@@ -50,13 +50,13 @@ elsif platform_family?("rhel")
     signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc'
   end
   
-  rackspace_yum_key "Rackspace-Monitoring" do
+  rackspace_yum_key 'Rackspace-Monitoring' do
     url signingKey
     action :add
   end
 
-  rackspace_yum_repository "cloud-monitoring" do
-    description "Rackspace Monitoring"
+  rackspace_yum_repository 'cloud-monitoring' do
+    description 'Rackspace Monitoring'
     url "http://stable.packages.cloudmonitoring.rackspace.com/#{node['platform']}-#{releaseVersion}-#{node['kernel']['machine']}"
     action :add
   end
@@ -82,11 +82,11 @@ my_token_obj = CM_agent_token.new(credentials, node[:rackspace_cloudmonitoring][
 my_token = my_token_obj.get_obj()
 
 # Generate the config template
-template "/etc/rackspace-monitoring-agent.cfg" do
-  source "rackspace-monitoring-agent.erb"
-  cookbook node[:rackspace_cloudmonitoring][:templates_cookbook][:"rackspace-monitoring-agent"]
-  owner "root"
-  group "root"
+template '/etc/rackspace-monitoring-agent.cfg' do
+  source 'rackspace-monitoring-agent.erb'
+  cookbook node[:rackspace_cloudmonitoring][:templates_cookbook][:'rackspace-monitoring-agent']
+  owner 'root'
+  group 'root'
   mode 0600
   variables(
             # So the API calls it label, and the config calls it ID
@@ -101,7 +101,7 @@ end
 # Note that, like the agent, the entity API calls it ID.
 node.default[:rackspace_cloudmonitoring][:agent][:id] = my_token.label
 
-package "rackspace-monitoring-agent" do
+package 'rackspace-monitoring-agent' do
   if node[:rackspace_cloudmonitoring][:agent][:version] == 'latest'
     action :upgrade
   else
@@ -109,7 +109,7 @@ package "rackspace-monitoring-agent" do
     action :install
   end
 
-  notifies :restart, "service[rackspace-monitoring-agent]"
+  notifies :restart, 'service[rackspace-monitoring-agent]'
 end
 
 node[:rackspace_cloudmonitoring][:agent][:plugins].each_pair do |source_cookbook, path|
@@ -126,7 +126,7 @@ node[:rackspace_cloudmonitoring][:agent][:plugins].each_pair do |source_cookbook
   end
 end
 
-service "rackspace-monitoring-agent" do
+service 'rackspace-monitoring-agent' do
   # TODO: RHEL, CentOS, ... support
   supports value_for_platform(
     ubuntu:  { default: [ :start, :stop, :restart, :status ] },
@@ -134,7 +134,7 @@ service "rackspace-monitoring-agent" do
   )
 
   case node[:platform]
-    when "ubuntu"
+    when 'ubuntu'
     if node[:platform_version].to_f >= 9.10
       provider Chef::Provider::Service::Upstart
     end

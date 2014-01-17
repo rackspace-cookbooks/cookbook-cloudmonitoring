@@ -153,9 +153,9 @@ module Opscode
                                                )
           
           if @cm.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog"
+            raise Exception, 'Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog'
           end
-          Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful")
+          Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful')
           
           _save_cached_cm(username)
         end
@@ -303,7 +303,7 @@ module Opscode
           # Reuse an existing entity from our local cache, if present
           _get_cached_entity(@username, @chef_label)
           unless @entity_obj.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_entity: Using entity saved in local cache")
+            Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_entity: Using entity saved in local cache')
             return
           end
           
@@ -364,7 +364,7 @@ module Opscode
         # RETURN VALUE: A string representing the class
         def to_s
           if @entity_obj.nil?
-            return "nil"
+            return 'nil'
           end
 
           return "Entity #{@entity_obj.label} (#{@entity_obj.id})"
@@ -381,7 +381,7 @@ module Opscode
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching entity with ID #{new_entity.id}")
             _save_cached_entity(@username, @chef_label)
           else
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching EMPTY Entity")
+            Chef::Log.debug('Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching EMPTY Entity')
           end
 
           return new_entity
@@ -393,7 +393,7 @@ module Opscode
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
         # Sets @entity_obj
         def lookup_entity_by_id(id)
-          return _update_entity_obj(obj_lookup_by_id(@entity_obj, @cm.entities, "Entity", id))
+          return _update_entity_obj(obj_lookup_by_id(@entity_obj, @cm.entities, 'Entity', id))
         end
 
         # lookup_entity_by_label: Locate an entity by label string
@@ -402,7 +402,7 @@ module Opscode
         # RETURN VALUE: Fog::Rackspace::Monitoring::Entity object or Nil
         # Sets @entity_obj
         def lookup_entity_by_label(label)
-          return _update_entity_obj(obj_lookup_by_label(@entity_obj, @cm.entities, "Entity", label))
+          return _update_entity_obj(obj_lookup_by_label(@entity_obj, @cm.entities, 'Entity', label))
         end
 
         # lookup_entity_by_ip: Locate an entity by IP address
@@ -427,7 +427,7 @@ module Opscode
           end
 
           if ip.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip"
+            raise Exception, 'Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip'
           end
 
           unless @entity_obj.nil?
@@ -446,7 +446,7 @@ module Opscode
         # Idempotent: Does not update entities unless required
         def update_entity(attributes = {})
           orig_obj = @entity_obj
-          _update_entity_obj(obj_update(@entity_obj, @cm.entities, "Entity", attributes))
+          _update_entity_obj(obj_update(@entity_obj, @cm.entities, 'Entity', attributes))
 
           if orig_obj.nil?
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Created new entity #{@entity_obj.label} (#{@entity_obj.id})")
@@ -467,7 +467,7 @@ module Opscode
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def delete_entity()
           orig_obj = @entity_obj
-          if obj_delete(@entity_obj, @cm.entities, "Entity")
+          if obj_delete(@entity_obj, @cm.entities, 'Entity')
             _update_entity_obj(nil)
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.delete: Deleted entity #{@orig_obj.label} (#{@orig_obj.id})")
             return true
@@ -514,7 +514,7 @@ module Opscode
         # RETURN VALUE: A string representing the class
         def to_s
           if @obj.nil?
-            return "nil"
+            return 'nil'
           end
 
           entity_id = @entity.get_entity_obj_id()
@@ -587,7 +587,7 @@ module Opscode
         # Note that this initializer DOES NOT LOAD ANY CHECKS!
         # User must call a lookup function before calling update
         def initialize(credentials, entity_label)
-          super(credentials, entity_label, :checks, "Check")
+          super(credentials, entity_label, :checks, 'Check')
         end
       end
 
@@ -595,7 +595,7 @@ module Opscode
         # Note that this initializer DOES NOT LOAD ANY ALARMS!
         # User must call a lookup function before calling update
         def initialize(credentials, entity_label)
-          super(credentials, entity_label, :alarms, "Alarm")
+          super(credentials, entity_label, :alarms, 'Alarm')
           @credentials = credentials
         end
 
@@ -625,17 +625,17 @@ module Opscode
         def initialize(credentials, token, label)
           @cm = CM_api.new(credentials).get_cm()
           unless token.nil?
-            @obj = obj_lookup_by_id(nil, @cm.agent_tokens, "Agent_Token", token)
+            @obj = obj_lookup_by_id(nil, @cm.agent_tokens, 'Agent_Token', token)
             unless @obj.nil?
               return
             end
           end
 
           if label.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_agent_token.initialize: ERROR: Passed nil label"
+            raise Exception, 'Opscode::Rackspace::Monitoring::CM_agent_token.initialize: ERROR: Passed nil label'
           end
 
-          @obj = obj_lookup_by_label(nil, @cm.agent_tokens, "Agent_Token", label)
+          @obj = obj_lookup_by_label(nil, @cm.agent_tokens, 'Agent_Token', label)
         end
 
         # get_obj: Returns the token object
@@ -652,7 +652,7 @@ module Opscode
         # RETURN VALUE: A string representing the class
         def to_s
           if @obj.nil?
-            return "nil"
+            return 'nil'
           end
 
           return "Alarm Token #{@obj.id}"
@@ -665,9 +665,9 @@ module Opscode
         # Idempotent: Does not update entities unless required
         def update(attributes = {})
           orig_obj = @obj
-          @obj = obj_update(@obj, @cm.agent_tokens, "Agent_Token", attributes)
+          @obj = obj_update(@obj, @cm.agent_tokens, 'Agent_Token', attributes)
           if @obj.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_agent_token.update obj_update returned nil"
+            raise Exception, 'Opscode::Rackspace::Monitoring::CM_agent_token.update obj_update returned nil'
           end
 
           if orig_obj.nil?

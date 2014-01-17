@@ -26,13 +26,13 @@ action :create do
   check_id = new_resource.check_id
 
   if new_resource.example_id then
-    raise Exception, "Cannot specify example_id and criteria" unless new_resource.criteria.nil?
+    raise Exception, 'Cannot specify example_id and criteria' unless new_resource.criteria.nil?
 
     criteria = @current_resource.get_example_alarm(new_resource.example_id, new_resource.example_values)
   end
 
   if new_resource.check_label then
-    raise Exception, "Cannot specify check_label and check_id" unless new_resource.check_id.nil?
+    raise Exception, 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
     
     check_obj = CM_check.new(@current_resource.get_credentials(), @new_resource.entity_chef_label)
     check_obj.lookup_by_label(new_resource.check_label)
@@ -45,7 +45,7 @@ action :create do
   end
 
   if new_resource.notification_plan_id.nil? then
-    raise ValueError, "Must specify 'notification_plan_id' in alarm resource"
+    raise ValueError, 'Must specify notification_plan_id in alarm resource'
   end
   
   new_resource.updated_by_last_action(@current_resource.update(
