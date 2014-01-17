@@ -57,17 +57,17 @@ module Opscode
         # PRE: None
         # POST: None
         def get_attribute(attribute_name)
-          if not @attribute_map.has_key? attribute_name
+          unless @attribute_map.has_key? attribute_name
             raise Exception, "Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
           end
           
-          if not @attribute_map[attribute_name][:resource].nil?
+          unless @attribute_map[attribute_name][:resource].nil?
             # Resource attributes are called as methods, so use send to access the attribute
             resource = @resource.nil? ? nil : @resource.send(@attribute_map[attribute_name][:resource])
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Resource value for attribute #{attribute_name}: #{resource}")
           end
           
-          if not @attribute_map[attribute_name][:node].nil?
+          unless @attribute_map[attribute_name][:node].nil?
             # Note is a hash, so use eval to tack on the indexes
             begin
               node_val = eval("@node#{@attribute_map[attribute_name][:node]}")
@@ -77,7 +77,7 @@ module Opscode
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Node value for attribute #{attribute_name}: #{node_val}")
           end
 
-          if not @attribute_map[attribute_name][:databag].nil?
+          unless @attribute_map[attribute_name][:databag].nil?
             # databag is just a hash set by load_databag which is controlled in this class
             databag = @databag_data[@attribute_map[attribute_name][:databag]]
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Databag value for attribute #{attribute_name}: #{databag}")
@@ -138,7 +138,7 @@ module Opscode
           username = credentials.get_attribute(:username)
           
           _get_cached_cm(username)
-          if !@cm.nil?
+          unless @cm.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Reusing existing Fog connection for username #{username}")
             return
           end
@@ -165,7 +165,7 @@ module Opscode
         # POST: None
         # RETURN VALUE: None; interacts directly with @cm
         def _get_cached_cm(username)
-          if not defined?(@@cm_cache)
+          unless defined?(@@cm_cache)
             @cm = nil
             return
           end
@@ -174,7 +174,7 @@ module Opscode
         end
         
         def _save_cached_cm(username)
-          if not defined?(@@cm_cache)
+          unless defined?(@@cm_cache)
             @@cm_cache = {}
           end
           
@@ -208,7 +208,7 @@ module Opscode
             return nil
           end
 
-          if !obj.nil?
+          unless obj.nil?
             if obj.id == id
               Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: Existing object hit for #{id}")
               return obj
@@ -234,7 +234,7 @@ module Opscode
             raise Exception, "Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: ERROR: Passed nil label"
           end
 
-          if !obj.nil?
+          unless obj.nil?
             if obj.label == label
               Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: Existing object hit for #{label}")
               return obj
@@ -265,7 +265,7 @@ module Opscode
 
           new_obj.id = obj.id
           # Compare attributes
-          if !new_obj.compare? obj then
+          unless new_obj.compare? obj then
             # It's different
             new_obj.save
             return new_obj
@@ -301,7 +301,7 @@ module Opscode
           
           # Reuse an existing entity from our local cache, if present
           _get_cached_entity(@username, @chef_label)
-          if !@entity_obj.nil?
+          unless @entity_obj.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_entity: Using entity saved in local cache")
             return
           end
@@ -316,7 +316,7 @@ module Opscode
         # POST: None
         # RETURN VALUE: None; interacts directly with @entity_obj
         def _get_cached_entity(username, label)
-          if not defined?(@@entity_cache)
+          unless defined?(@@entity_cache)
             @entity_obj = nil
             return
           end
@@ -325,11 +325,11 @@ module Opscode
         end
 
         def _save_cached_entity(username, label)
-          if not defined?(@@entity_cache)
+          unless defined?(@@entity_cache)
             @@entity_cache = {}
           end
 
-          if not @@entity_cache.has_key?(username)
+          unless @@entity_cache.has_key?(username)
             @@entity_cache[username] = {}
           end
 
@@ -376,7 +376,7 @@ module Opscode
         def _update_entity_obj(new_entity)
           @entity_obj = new_entity
 
-          if not new_entity.nil?
+          unless new_entity.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching entity with ID #{new_entity.id}")
             _save_cached_entity(@username, @chef_label)
           else
@@ -429,7 +429,7 @@ module Opscode
             raise Exception, "Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip"
           end
 
-          if !@entity_obj.nil?
+          unless @entity_obj.nil?
             if _lookup_entity_by_ip_checker(@entity_obj, ip)
               return @entity_obj
             end
@@ -452,7 +452,7 @@ module Opscode
             return true
           end
 
-          if !@entity_obj.compare? orig_obj
+          unless @entity_obj.compare? orig_obj
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Updated entity #{@entity_obj.label} (#{@entity_obj.id})")
             return true
           end
@@ -556,7 +556,7 @@ module Opscode
             return true
           end
 
-          if !@obj.compare? orig_obj
+          unless @obj.compare? orig_obj
             entity_id = @entity.get_entity_obj_id()
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: Updated #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
@@ -623,9 +623,9 @@ module Opscode
       class CM_agent_token < CM_obj_base
         def initialize(credentials, token, label)
           @cm = CM_api.new(credentials).get_cm()
-          if not token.nil?
+          unless token.nil?
             @obj = obj_lookup_by_id(nil, @cm.agent_tokens, "Agent_Token", token)
-            if !@obj.nil?
+            unless @obj.nil?
               return
             end
           end
@@ -674,7 +674,7 @@ module Opscode
             return true
           end
 
-          if !@obj.compare? orig_obj
+          unless @obj.compare? orig_obj
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_agent_token.update: Updated agent token #{@obj.id}")
             return true
           end
