@@ -22,7 +22,7 @@
 
 if platform_family?('debian')
   rackspace_apt_repository 'cloud-monitoring' do
-   
+
     if node['platform'] == 'ubuntu'
       uri "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-#{node['platform_version']}-#{node['kernel']['machine']}"
     elsif node['platform'] =='debian'
@@ -31,7 +31,7 @@ if platform_family?('debian')
 
     distribution 'cloudmonitoring'
     components ['main']
-    key 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc' 
+    key 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc'
     action :add
   end
 
@@ -43,13 +43,13 @@ elsif platform_family?('rhel')
 
   #We need to figure out which signing key to use, cent5 and rhel5 have their own.
   if (node['platform'] == 'centos') && (releaseVersion == '5')
-    signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/centos-5.asc' 
+    signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/centos-5.asc'
   elsif (node['platform'] == 'redhat') && (releaseVersion == '5')
     signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/redhat-5.asc'
   else
     signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc'
   end
-  
+
   rackspace_yum_key 'Rackspace-Monitoring' do
     url signingKey
     action :add

@@ -27,7 +27,7 @@ module Opscode
           @node = my_node
           @resource = @my_resource
           @databag_data = load_databag
-          
+
           # @attribute_map: This is a mapping of how the attributes are named ant stored
           # in the various source structures
           @attribute_map = {
@@ -53,7 +53,7 @@ module Opscode
             },
           }
         end
-        
+
         # get_attribute: get an attribute
         # PRE: None
         # POST: None
@@ -61,13 +61,13 @@ module Opscode
           unless @attribute_map.has_key? attribute_name
             raise Exception, "Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
           end
-          
+
           unless @attribute_map[attribute_name][:resource].nil?
             # Resource attributes are called as methods, so use send to access the attribute
             resource = @resource.nil? ? nil : @resource.send(@attribute_map[attribute_name][:resource])
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Resource value for attribute #{attribute_name}: #{resource}")
           end
-          
+
           unless @attribute_map[attribute_name][:node].nil?
             # Note is a hash, so use eval to tack on the indexes
             begin
@@ -83,14 +83,14 @@ module Opscode
             databag = @databag_data[@attribute_map[attribute_name][:databag]]
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Databag value for attribute #{attribute_name}: #{databag}")
           end
-          
+
           # I think this is about as clean as this code can be without redefining the LWRP arguments
           # and databag storage, which is simply too much of a refactor.
           ret_val =  _precidence_logic(resource, node_val, databag)
           Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: returning \"#{ret_val}\" for attribute #{attribute_name}")
           return ret_val
         end
-        
+
         # load_databag: Load credentials from the databag
         # PRE: Databag details defined in node[:rackspace_cloudmonitoring][:auth][:databag] attributes
         # POST: None
@@ -137,13 +137,13 @@ module Opscode
         # Opens @cm class variable
         def initialize(credentials)
           username = credentials.get_attribute(:username)
-          
+
           _get_cached_cm(username)
           unless @cm.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Reusing existing Fog connection for username #{username}")
             return
           end
-          
+
           # No cached cm, create a new one
           Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: creating new Fog connection for username #{username}")
           @cm = Fog::Rackspace::Monitoring.new(
@@ -151,12 +151,12 @@ module Opscode
                                                rackspace_username: username,
                                                rackspace_auth_url: credentials.get_attribute(:auth_url)
                                                )
-          
+
           if @cm.nil?
             raise Exception, 'Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog'
           end
           Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful')
-          
+
           _save_cached_cm(username)
         end
 
@@ -170,19 +170,19 @@ module Opscode
             @cm = nil
             return
           end
-          
+
           @cm = @@cm_cache[username]
         end
-        
+
         def _save_cached_cm(username)
           unless defined?(@@cm_cache)
             @@cm_cache = {}
           end
-          
+
           @@cm_cache[username] = @cm
         end
-        
-        
+
+
         # get_cm: Getter for the @@cm class variable
         # PRE: Class initialized
         # POST: none
@@ -191,11 +191,11 @@ module Opscode
           return @cm
         end
       end # END CM_api class
-      
+
       # CM_obj_base: Common methods for interacting with MaaS Objects
       # Intended to be inherited as a base class
       # Common arguments for methods:
-      #   obj: Current target object 
+      #   obj: Current target object
       #   parent_obj: Parent object to call methods against for finding/generating obj
       #   debug_name: Name string to print in informational/diagnostic/debug messages
       class CM_obj_base
@@ -299,17 +299,17 @@ module Opscode
           @chef_label = my_chef_label
           @cm = CM_api.new(credentials).get_cm
           @username = credentials.get_attribute(:username)
-          
+
           # Reuse an existing entity from our local cache, if present
           _get_cached_entity(@username, @chef_label)
           unless @entity_obj.nil?
             Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_entity: Using entity saved in local cache')
             return
           end
-          
+
           @entity_obj = nil
         end
-        
+
         # _*_cached_entity: Implement a local cache of entities using a class variable
         # This DOES NOT use the node[] cache as it is simply for reusing Fog connections
         # Uses username and label as keys
@@ -337,7 +337,7 @@ module Opscode
           @@entity_cache[username][label] = @entity_obj
         end
 
-        
+
         # get_entity_obj: Return the entity object
         # PRE: None
         # POST: None

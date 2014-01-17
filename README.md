@@ -17,7 +17,7 @@ Specifically this recipe will focus on main atom's in the system.
 
 The cookbook also installs the python-pip package in Debian and RedHat based systems, and then uses pip to install the Rackspace Cloud Monitoring client, raxmon-cli, via pip
 
-The raxmon-cli recipe in this cookbook is not automatically added by default.  To install raxmon-cli, add the cloud_monitoring::raxmon recipe to the run_list. 
+The raxmon-cli recipe in this cookbook is not automatically added by default.  To install raxmon-cli, add the cloud_monitoring::raxmon recipe to the run_list.
 
 # Requirements
 **New in version v1.0.1 and higher**
@@ -120,33 +120,33 @@ The following example configures CPU, load, disk, and filesystem monitors, with 
 #
 # Configure monitors to suit our app
 #
- 
+
 # Calculate default values
 # Critical at x4 CPU count
 cpu_critical_threshold = (node["cpu"]["total"] * 4)
 # Warning at x2 CPU count
 cpu_warning_threshold = (node["cpu"]["total"] * 2)
- 
+
 # Define our monitors
-node.default[:rackspace_cloudmonitoring]['monitors'] = { 
+node.default[:rackspace_cloudmonitoring]['monitors'] = {
   'cpu' =>  { 'type' => 'cpu', },
   'load' => { 'type'  => 'load_average',
-    'alarm' => { 
+    'alarm' => {
       'CRITICAL' => { 'conditional' => "metric['5m'] > #{cpu_critical_threshold}", },
       'WARNING'  => { 'conditional' => "metric['5m'] > #{cpu_warning_threshold}", },
     },
   },
-  
+
   'disk' => {
     'type' => 'disk',
     'details' => { 'target' => '/dev/xvda1'},
   },
   'root_filesystem' => {
-    'type' => 'filesystem', 
+    'type' => 'filesystem',
     'details' => { 'target' => '/'},
   },
 }
- 
+
 #
 # Call the monitoring cookbook with our changes
 #
@@ -364,7 +364,7 @@ The Agent recipe will install the cloud monitoring agent on your node and either
 or if none is provided it will call the cloud_monitoring_agent_token provider to generate a new one for this node.
 
 The Agent token can either be provided through the following attribute.
-* `node[:rackspace_cloudmonitoring]['agent']['token']`  
+* `node[:rackspace_cloudmonitoring]['agent']['token']`
 
 or through an entry in the rackspace cloud data bag like so.
 

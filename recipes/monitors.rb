@@ -28,8 +28,8 @@ rackspace_cloudmonitoring_entity node[:rackspace_cloudmonitoring][:monitors_defa
   agent_id              node[:rackspace_cloudmonitoring][:agent][:id]
   search_method         'ip'
   search_ip             node[:cloud][:local_ipv4]
-  action :create                                 
-end                                              
+  action :create
+end
 
 node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
   rackspace_cloudmonitoring_check key do
@@ -40,12 +40,12 @@ node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
     details               value.has_key?('details') ? value['details'] : nil
     action :create
   end
-  
+
   if value.has_key?('alarm')
     value[:alarm].each do |alarm, alarm_value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
-      
+
       rackspace_cloudmonitoring_alarm  "#{value['type']} #{alarm} alarm" do
         entity_chef_label     node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label]
         check_label           key
