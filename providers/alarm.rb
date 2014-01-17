@@ -49,14 +49,13 @@ action :create do
   end
   
   new_resource.updated_by_last_action(@current_resource.update(
-    :label                => new_resource.label,
-    :check_type           => new_resource.check_type,
-    :metadata             => new_resource.metadata,
-    :check                => check_id,
-    :criteria             => criteria,
-    :notification_plan_id => new_resource.notification_plan_id
+    label:                new_resource.label,
+    check_type:           new_resource.check_type,
+    metadata:             new_resource.metadata,
+    check:                check_id,
+    criteria:             criteria,
+    notification_plan_id: new_resource.notification_plan_id
   ))
-
 end
 
 action :delete do

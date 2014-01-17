@@ -32,10 +32,10 @@ action :create do
   end
   
   new_resource.updated_by_last_action(@current_resource.update_entity(
-    :label => new_resource.label,
-    :ip_addresses => new_resource.ip_addresses,
-    :metadata => new_resource.metadata,
-    :agent_id => new_resource.agent_id
+    label:        new_resource.label,
+    ip_addresses: new_resource.ip_addresses,
+    metadata:     new_resource.metadata,
+    agent_id:     new_resource.agent_id
   ))
 end
 

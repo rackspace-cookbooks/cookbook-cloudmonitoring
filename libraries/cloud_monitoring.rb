@@ -31,25 +31,25 @@ module Opscode
           # @attribute_map: This is a mapping of how the attributes are named ant stored
           # in the various source structures
           @attribute_map = {
-            :api_key => {
-              :resource => 'rackspace_api_key',
-              :node     => '[:rackspace][:cloud_credentials][:api_key]',
-              :databag  => 'apikey',
+            api_key: {
+              resource: 'rackspace_api_key',
+              node:     '[:rackspace][:cloud_credentials][:api_key]',
+              databag:  'apikey',
             },
-            :username => {
-              :resource => 'rackspace_username',
-              :node     => '[:rackspace][:cloud_credentials][:username]',
-              :databag  => 'username',
+            username: {
+              resource: 'rackspace_username',
+              node:     '[:rackspace][:cloud_credentials][:username]',
+              databag:  'username',
             },
-            :auth_url => {
-              :resource => 'rackspace_auth_url',
-              :node     => 'default[:rackspace_cloudmonitoring][:agent][:token]',
-              :databag  => 'auth_url',
+            auth_url: {
+              resource: 'rackspace_auth_url',
+              node:     'default[:rackspace_cloudmonitoring][:agent][:token]',
+              databag:  'auth_url',
             },
-            :token => {
-              :resource => nil,
-              :node     => nil,
-              :databag  => 'agent_token',
+            token: {
+              resource: nil,
+              node:     nil,
+              databag:  'agent_token',
             },
           }
         end
@@ -147,9 +147,9 @@ module Opscode
           # No cached cm, create a new one
           Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: creating new Fog connection for username #{username}")
           @cm = Fog::Rackspace::Monitoring.new(
-                                               :rackspace_api_key => credentials.get_attribute(:api_key),
-                                               :rackspace_username => username,
-                                               :rackspace_auth_url => credentials.get_attribute(:auth_url)
+                                               rackspace_api_key: credentials.get_attribute(:api_key),
+                                               rackspace_username: username,
+                                               rackspace_auth_url: credentials.get_attribute(:auth_url)
                                                )
           
           if @cm.nil?

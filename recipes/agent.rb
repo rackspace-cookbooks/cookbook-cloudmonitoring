@@ -91,8 +91,8 @@ template "/etc/rackspace-monitoring-agent.cfg" do
   variables(
             # So the API calls it label, and the config calls it ID
             # Clear as mud.
-            :monitoring_id => my_token.label,
-            :monitoring_token => my_token.token,
+            monitoring_id:    my_token.label,
+            monitoring_token: my_token.token,
             )
   action :create
 end
@@ -129,8 +129,8 @@ end
 service "rackspace-monitoring-agent" do
   # TODO: RHEL, CentOS, ... support
   supports value_for_platform(
-    "ubuntu" => { "default" => [ :start, :stop, :restart, :status ] },
-    "default" => { "default" => [ :start, :stop ] }
+    ubuntu:  { default: [ :start, :stop, :restart, :status ] },
+    default: { default: [ :start, :stop ] }
   )
 
   case node[:platform]
@@ -141,6 +141,6 @@ service "rackspace-monitoring-agent" do
   end
 
   action [ :enable, :start ]
-  subscribes :restart, resources(:template => '/etc/rackspace-monitoring-agent.cfg'), :delayed
+  subscribes :restart, resources(template: '/etc/rackspace-monitoring-agent.cfg'), :delayed
 
 end

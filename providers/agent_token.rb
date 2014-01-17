@@ -22,7 +22,7 @@ include Opscode::Rackspace::Monitoring
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.update(:label => new_resource.label))
+  new_resource.updated_by_last_action(@current_resource.update(label: new_resource.label))
 end
 
 action :delete do
