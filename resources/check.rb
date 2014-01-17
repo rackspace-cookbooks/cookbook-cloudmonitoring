@@ -1,3 +1,4 @@
+# encoding: UTF-8
 actions :create, :enable, :disable, :delete
 
 attribute :label, :kind_of => String, :name_attribute => true
