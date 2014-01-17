@@ -23,7 +23,7 @@
 include_recipe "rackspace_cloudmonitoring"
 include_recipe "rackspace_cloudmonitoring::agent"
 
-rackspace_cloudmonitoring_entity node.hostname do
+rackspace_cloudmonitoring_entity node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label] do
   agent_id              node[:rackspace_cloudmonitoring][:agent][:id]
   search_method         "ip"
   search_ip             node["cloud"]["local_ipv4"]
@@ -32,6 +32,7 @@ end
 
 node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
   rackspace_cloudmonitoring_check key do
+    entity_chef_label     node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label]
     type                  "agent.#{value['type']}"
     period                value.has_key?('period') ? value['period'] : node[:rackspace_cloudmonitoring][:monitors_defaults][:check][:period]
     timeout               value.has_key?('timeout') ? value['timeout'] : node[:rackspace_cloudmonitoring][:monitors_defaults][:check][:timeout]
@@ -45,6 +46,7 @@ node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
       
       rackspace_cloudmonitoring_alarm  "#{value['type']} #{alarm} alarm" do
+        entity_chef_label     node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label]
         check_label           key
         criteria              criteria
         notification_plan_id  value.has_key?('notification_plan_id') ? value[:notification_plan_id] : node[:rackspace_cloudmonitoring][:monitors_defaults][:alarm][:notification_plan_id]

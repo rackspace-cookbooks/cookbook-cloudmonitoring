@@ -44,6 +44,7 @@ default[:rackspace_cloudmonitoring][:agent][:plugins] = {}
 default[:rackspace_cloudmonitoring][:agent][:plugins][:rackspace_cloudmonitoring] = 'plugins'
 
 # Check values
+default[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label] = node.hostname
 default[:rackspace_cloudmonitoring][:monitors_defaults][:check][:period] = 30
 default[:rackspace_cloudmonitoring][:monitors_defaults][:check][:timeout] = 10
 #node[:rackspace_cloudmonitoring][:monitors_defaults][:alarm][:notification_plan_id] = nil

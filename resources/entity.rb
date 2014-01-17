@@ -1,6 +1,7 @@
 actions :create, :delete
 
 attribute :label, :kind_of => String, :name_attribute => true
+attribute :api_label, :kind_of => String
 attribute :metadata, :kind_of => Hash
 attribute :ip_addresses, :kind_of => Hash
 attribute :agent_id, :kind_of => String

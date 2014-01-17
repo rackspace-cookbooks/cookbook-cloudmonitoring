@@ -32,17 +32,14 @@ action :create do
 
   if new_resource.check_label then
     raise Exception, "Cannot specify check_label and check_id" unless new_resource.check_id.nil?
-
-    check_obj = CM_check.new(node)
-    # Use the entity_id from our alarm class
-    check_obj.lookup_entity_by_id(@current_resource.get_entity_obj_id)
+    
+    check_obj = CM_check.new(@current_resource.get_credentials(), @new_resource.entity_chef_label)
     check_obj.lookup_by_label(new_resource.check_label)
 
     if check_obj.get_obj().nil?
-      entity_id = @current_resource.get_entity_obj_id
-      raise Exception, "Unable to lookup check #{new_resource.check_label} on entity #{entity_id}"
+      raise Exception, "Unable to lookup check #{new_resource.check_label} on for alarm #{@new_resource.label} on entity #{@new_resource.entity_chef_label}"
     end
-
+    
     check_id = check_obj.get_obj().id
   end
 
@@ -67,18 +64,7 @@ action :delete do
 end
 
 def load_current_resource
-  @current_resource = CM_alarm.new(node)
-
-  # Configure the entity details, if specified
-  if @new_resource.entity_label then
-    raise Exception, "Cannot specify entity_label and entity_id" unless @new_resource.entity_id.nil?
-    @current_resource.lookup_entity_by_label(@new_resource.entity_label)
-  else
-    if @new_resource.entity_id
-      @current_resource.lookup_entity_by_id(@new_resource.entity_id)
-    end
-  end
-
-  # Lookup the check
+  
+  @current_resource = CM_alarm.new(CM_credentials.new(node, @new_resource), @new_resource.entity_chef_label)
   @current_resource.lookup_by_label(@new_resource.label)
 end

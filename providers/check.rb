@@ -41,18 +41,6 @@ action :delete do
 end
 
 def load_current_resource
-  @current_resource = CM_check.new(node)
-  
-  # Configure the entity details, if specified
-  if @new_resource.entity_label then
-    raise Exception, "Cannot specify entity_label and entity_id" unless @new_resource.entity_id.nil?
-    @current_resource.lookup_entity_by_label(@new_resource.entity_label)
-  else
-    if @new_resource.entity_id
-      @current_resource.lookup_entity_by_id(@new_resource.entity_id)
-    end
-  end
-
-  # Lookup the check
+  @current_resource = CM_check.new(CM_credentials.new(node, @new_resource), @new_resource.entity_chef_label)
   @current_resource.lookup_by_label(@new_resource.label)
 end

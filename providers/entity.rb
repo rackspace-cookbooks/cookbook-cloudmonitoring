@@ -45,13 +45,15 @@ end
 
 
 def load_current_resource
-  @current_resource = CM_entity.new(node)
+  @current_resource = CM_entity.new(CM_credentials.new(node, @new_resource), @new_resource.label)
   Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: Using search method #{new_resource.search_method}")
   case new_resource.search_method
   when 'ip'
     @current_resource.lookup_entity_by_ip(@new_resource.search_ip)
   when 'id'
     @current_resource.lookup_entity_by_id(@new_resource.id)
+  when 'api_label'
+    @current_resource.lookup_entity_by_label(@new_resource.api_label)
   else
     @current_resource.lookup_entity_by_label(@new_resource.label)
   end
