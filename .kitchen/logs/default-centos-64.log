@@ -1,0 +1,147 @@
+I, [2014-01-17T16:05:57.837969 #22370]  INFO -- default-centos-64: -----> Cleaning up any prior instances of <default-centos-64>
+I, [2014-01-17T16:05:57.838152 #22370]  INFO -- default-centos-64: -----> Destroying <default-centos-64>...
+I, [2014-01-17T16:05:57.838598 #22370]  INFO -- default-centos-64: Finished destroying <default-centos-64> (0m0.00s).
+I, [2014-01-17T16:05:57.838805 #22370]  INFO -- default-centos-64: -----> Testing <default-centos-64>
+I, [2014-01-17T16:05:57.838949 #22370]  INFO -- default-centos-64: -----> Creating <default-centos-64>...
+I, [2014-01-17T16:05:59.412506 #22370]  INFO -- default-centos-64: Bringing machine 'default' up with 'virtualbox' provider...
+I, [2014-01-17T16:06:00.553856 #22370]  INFO -- default-centos-64: [default] Importing base box 'opscode-centos-6.4'...
+Progress: 10%Progress: 40%Progress: 50%Progress: 60%Progress: 70%Progress: 80%Progress: 90%I, [2014-01-17T16:06:25.726247 #22370]  INFO -- default-centos-64: [default] Matching MAC address for NAT networking...
+I, [2014-01-17T16:06:26.656004 #22370]  INFO -- default-centos-64: [default] Setting the name of the VM...
+I, [2014-01-17T16:06:26.923678 #22370]  INFO -- default-centos-64: [default] Clearing any previously set forwarded ports...
+I, [2014-01-17T16:06:27.007846 #22370]  INFO -- default-centos-64: [Berkshelf] Skipping Berkshelf with --no-provision
+I, [2014-01-17T16:06:27.537817 #22370]  INFO -- default-centos-64: [default] Fixed port collision for 22 => 2222. Now on port 2200.
+I, [2014-01-17T16:06:27.604611 #22370]  INFO -- default-centos-64: [default] Clearing any previously set network interfaces...
+I, [2014-01-17T16:06:27.739185 #22370]  INFO -- default-centos-64: [default] Preparing network interfaces based on configuration...
+I, [2014-01-17T16:06:27.850334 #22370]  INFO -- default-centos-64: [default] Forwarding ports...
+I, [2014-01-17T16:06:27.945390 #22370]  INFO -- default-centos-64: [default] -- 22 => 2200 (adapter 1)
+I, [2014-01-17T16:06:30.899257 #22370]  INFO -- default-centos-64: [default] Running 'pre-boot' VM customizations...
+I, [2014-01-17T16:06:31.396511 #22370]  INFO -- default-centos-64: [default] Booting VM...
+[default] Waiting for machine to boot. This may take a few minutes...I, [2014-01-17T16:06:55.616580 #22370]  INFO -- default-centos-64: [default] Machine booted and ready!
+I, [2014-01-17T16:06:55.671389 #22370]  INFO -- default-centos-64: [default] Setting hostname...
+I, [2014-01-17T16:07:07.743029 #22370]  INFO -- default-centos-64: Vagrant instance <default-centos-64> created.
+I, [2014-01-17T16:07:07.744593 #22370]  INFO -- default-centos-64: Finished creating <default-centos-64> (1m9.90s).
+I, [2014-01-17T16:07:07.744768 #22370]  INFO -- default-centos-64: -----> Converging <default-centos-64>...
+I, [2014-01-17T16:07:07.747630 #22370]  INFO -- default-centos-64: Preparing files for transfer
+I, [2014-01-17T16:07:07.785225 #22370]  INFO -- default-centos-64: Resolving cookbook dependencies with Berkshelf...
+I, [2014-01-17T16:07:07.840067 #22370]  INFO -- default-centos-64: Removing non-cookbook files before transfer
+I, [2014-01-17T16:07:08.170617 #22370]  INFO -- default-centos-64: -----> Installing Chef Omnibus (latest)
+I, [2014-01-17T16:07:08.170696 #22370]  INFO -- default-centos-64: downloading https://www.opscode.com/chef/install.sh
+I, [2014-01-17T16:07:08.170718 #22370]  INFO -- default-centos-64:   to file /tmp/install.sh
+I, [2014-01-17T16:07:08.170951 #22370]  INFO -- default-centos-64: trying wget...
+I, [2014-01-17T16:07:13.432085 #22370]  INFO -- default-centos-64: Downloading Chef  for el...
+I, [2014-01-17T16:07:13.433353 #22370]  INFO -- default-centos-64: downloading https://www.opscode.com/chef/metadata?v=&prerelease=false&p=el&pv=6&m=x86_64
+I, [2014-01-17T16:07:13.433400 #22370]  INFO -- default-centos-64:   to file /tmp/install.sh.2335/metadata.txt
+I, [2014-01-17T16:07:13.433421 #22370]  INFO -- default-centos-64: trying wget...
+I, [2014-01-17T16:07:18.612180 #22370]  INFO -- default-centos-64: url	https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+I, [2014-01-17T16:07:18.612314 #22370]  INFO -- default-centos-64: md5	10f3d0da82efa973fe91cc24a6a74549
+I, [2014-01-17T16:07:18.630601 #22370]  INFO -- default-centos-64: sha256	044558f38d25bbf75dbd5790ccce892a38e5e9f2a091ed55367ab914fbd1cfed
+I, [2014-01-17T16:07:18.630865 #22370]  INFO -- default-centos-64: downloaded metadata file looks valid...
+I, [2014-01-17T16:07:18.630965 #22370]  INFO -- default-centos-64: downloading https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+I, [2014-01-17T16:07:18.630991 #22370]  INFO -- default-centos-64:   to file /tmp/install.sh.2335/chef-.x86_64.rpm
+I, [2014-01-17T16:07:18.631010 #22370]  INFO -- default-centos-64: trying wget...
+I, [2014-01-17T16:07:42.434404 #22370]  INFO -- default-centos-64: Checksum compare with sha256sum succeeded.
+I, [2014-01-17T16:07:42.435306 #22370]  INFO -- default-centos-64: Installing Chef 
+I, [2014-01-17T16:07:42.435340 #22370]  INFO -- default-centos-64: installing with rpm...
+I, [2014-01-17T16:07:42.551290 #22370]  INFO -- default-centos-64: warning: /tmp/install.sh.2335/chef-.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+Preparing...                                                            (100%)#                                           (100%)##                                          (100%)###                                         (100%)####                                        (100%)#####                                       (100%)######                                      (100%)#######                                     (100%)########                                    (100%)#########                                   (100%)##########                                  (100%)###########                                 (100%)############                                (100%)#############                               (100%)##############                              (100%)###############                             (100%)################                            (100%)#################                           (100%)##################                          (100%)###################                         (100%)####################                        (100%)#####################                       (100%)######################                      (100%)#######################                     (100%)########################                    (100%)#########################                   (100%)##########################                  (100%)###########################                 (100%)############################                (100%)#############################               (100%)##############################              (100%)###############################             (100%)################################            (100%)#################################           (100%)##################################          (100%)###################################         (100%)####################################        (100%)#####################################       (100%)######################################      (100%)#######################################     (100%)########################################    (100%)I, [2014-01-17T16:07:43.240108 #22370]  INFO -- default-centos-64: #########################################   (100%)##########################################  (100%)########################################### (100%)########################################### [100%]
+   1:chef                                                               (  1%)#                                           (  3%)##                                          (  6%)###                                         (  8%)####                                        ( 10%)#####                                       ( 13%)######                                      ( 15%)#######                                     ( 17%)########                                    ( 19%)#########                                   ( 22%)##########                                  ( 24%)###########                                 ( 26%)############                                ( 28%)#############                               ( 31%)##############                              ( 33%)###############                             ( 35%)################                            ( 38%)#################                           ( 40%)##################                          ( 42%)###################                         ( 44%)####################                        ( 47%)#####################                       ( 49%)######################                      ( 51%)#######################                     ( 53%)########################                    ( 56%)#########################                   ( 58%)##########################                  ( 60%)###########################                 ( 63%)############################                ( 65%)#############################               ( 67%)##############################              ( 69%)###############################             ( 72%)################################            ( 74%)#################################           ( 76%)##################################          ( 78%)###################################         ( 81%)####################################        ( 83%)#####################################       ( 85%)######################################      ( 88%)#######################################     ( 90%)########################################    ( 92%)#########################################   ( 94%)##########################################  ( 97%)I, [2014-01-17T16:07:46.327676 #22370]  INFO -- default-centos-64: ########################################### ( 99%)########################################### [100%]
+I, [2014-01-17T16:07:47.079541 #22370]  INFO -- default-centos-64: Thank you for installing Chef!
+I, [2014-01-17T16:07:47.200256 #22370]  INFO -- default-centos-64: Transfering files to <default-centos-64>
+I, [2014-01-17T16:07:50.923086 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:49+00:00] INFO: Forking chef instance to converge...
+I, [2014-01-17T16:07:50.983088 #22370]  INFO -- default-centos-64: Starting Chef Client, version 11.8.2[0m
+I, [2014-01-17T16:07:50.983153 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:49+00:00] INFO: *** Chef 11.8.2 ***
+I, [2014-01-17T16:07:50.983937 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:49+00:00] INFO: Chef-client pid: 2434
+I, [2014-01-17T16:07:51.445320 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:50+00:00] INFO: Setting the run_list to ["recipe[rackspace_cloudmonitoring::default]"] from JSON
+I, [2014-01-17T16:07:51.448961 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:50+00:00] INFO: Run List is [recipe[rackspace_cloudmonitoring::default]]
+I, [2014-01-17T16:07:51.448999 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:50+00:00] INFO: Run List expands to [rackspace_cloudmonitoring::default]
+I, [2014-01-17T16:07:51.449019 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:50+00:00] INFO: Starting Chef Run for default-centos-64
+I, [2014-01-17T16:07:51.449038 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:50+00:00] INFO: Running start handlers
+I, [2014-01-17T16:07:51.449057 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:50+00:00] INFO: Start handlers complete.
+I, [2014-01-17T16:07:51.454678 #22370]  INFO -- default-centos-64: Compiling Cookbooks...[0m
+I, [2014-01-17T16:07:51.492786 #22370]  INFO -- default-centos-64: Recipe: build-essential::rhel[0m
+I, [2014-01-17T16:07:51.492853 #22370]  INFO -- default-centos-64:   * package[autoconf] action install[0m
+I, [2014-01-17T16:07:51.493689 #22370]  INFO -- default-centos-64: [2014-01-17T22:07:50+00:00] INFO: Processing package[autoconf] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592137 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592252 #22370]  INFO -- default-centos-64:   * package[bison] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[bison] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592300 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592341 #22370]  INFO -- default-centos-64:   * package[flex] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[flex] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592381 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592421 #22370]  INFO -- default-centos-64:   * package[gcc] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[gcc] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592460 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592501 #22370]  INFO -- default-centos-64:   * package[gcc-c++] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[gcc-c++] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592541 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592580 #22370]  INFO -- default-centos-64:   * package[kernel-devel] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[kernel-devel] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592620 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592660 #22370]  INFO -- default-centos-64:   * package[make] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[make] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592700 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592740 #22370]  INFO -- default-centos-64:   * package[m4] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[m4] action install (build-essential::rhel line 38)
+I, [2014-01-17T16:08:19.592779 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:08:19.592818 #22370]  INFO -- default-centos-64: Recipe: xml::default[0m
+I, [2014-01-17T16:08:19.592859 #22370]  INFO -- default-centos-64:   * package[libxml2-devel] action install[0m[2014-01-17T22:08:18+00:00] INFO: Processing package[libxml2-devel] action install (xml::default line 21)
+I, [2014-01-17T16:08:19.592899 #22370]  INFO -- default-centos-64: [2014-01-17T22:08:18+00:00] INFO: package[libxml2-devel] installing libxml2-devel-2.7.6-14.el6 from base repository
+I, [2014-01-17T16:08:31.029145 #22370]  INFO -- default-centos-64: [32m
+I, [2014-01-17T16:08:31.029226 #22370]  INFO -- default-centos-64:     - install version 2.7.6-14.el6 of package libxml2-devel[0m
+I, [2014-01-17T16:08:31.029257 #22370]  INFO -- default-centos-64: [0m
+I, [2014-01-17T16:08:31.029285 #22370]  INFO -- default-centos-64:   * package[libxslt-devel] action install[0m[2014-01-17T22:08:29+00:00] INFO: Processing package[libxslt-devel] action install (xml::default line 21)
+I, [2014-01-17T16:08:31.404686 #22370]  INFO -- default-centos-64: [2014-01-17T22:08:30+00:00] INFO: package[libxslt-devel] installing libxslt-devel-1.1.26-2.el6_3.1 from base repository
+I, [2014-01-17T16:08:39.806820 #22370]  INFO -- default-centos-64: [32m
+I, [2014-01-17T16:08:39.806929 #22370]  INFO -- default-centos-64:     - install version 1.1.26-2.el6_3.1 of package libxslt-devel[0m
+I, [2014-01-17T16:08:39.806976 #22370]  INFO -- default-centos-64: [0m
+I, [2014-01-17T16:08:39.829060 #22370]  INFO -- default-centos-64: Recipe: xml::ruby[0m
+I, [2014-01-17T16:08:39.829124 #22370]  INFO -- default-centos-64:   * chef_gem[nokogiri] action install[0m[2014-01-17T22:08:38+00:00] INFO: Processing chef_gem[nokogiri] action install (xml::ruby line 32)
+I, [2014-01-17T16:10:22.236394 #22370]  INFO -- default-centos-64: [32m
+I, [2014-01-17T16:10:22.236485 #22370]  INFO -- default-centos-64:     - install version 1.6.1 of package nokogiri[0m
+I, [2014-01-17T16:10:22.236862 #22370]  INFO -- default-centos-64: 
+I, [2014-01-17T16:10:22.236895 #22370]  INFO -- default-centos-64: [0m
+I, [2014-01-17T16:10:22.244849 #22370]  INFO -- default-centos-64: Recipe: rackspace_cloudmonitoring::default[0m
+I, [2014-01-17T16:10:22.244900 #22370]  INFO -- default-centos-64:   * chef_gem[fog] action install[0m
+I, [2014-01-17T16:10:22.245632 #22370]  INFO -- default-centos-64: [2014-01-17T22:10:21+00:00] INFO: Processing chef_gem[fog] action install (rackspace_cloudmonitoring::default line 23)
+I, [2014-01-17T16:11:06.459435 #22370]  INFO -- default-centos-64: [32m
+I, [2014-01-17T16:11:06.459508 #22370]  INFO -- default-centos-64:     - install version >= 1.16.0 of package fog[0m
+I, [2014-01-17T16:11:06.459537 #22370]  INFO -- default-centos-64: [0m
+I, [2014-01-17T16:11:07.481462 #22370]  INFO -- default-centos-64: Converging 12 resources[0m
+I, [2014-01-17T16:11:07.481527 #22370]  INFO -- default-centos-64: Recipe: build-essential::rhel[0m
+I, [2014-01-17T16:11:07.481548 #22370]  INFO -- default-centos-64:   * package[autoconf] action nothing[0m
+I, [2014-01-17T16:11:07.482739 #22370]  INFO -- default-centos-64: [2014-01-17T22:11:06+00:00] INFO: Processing package[autoconf] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.482777 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.482798 #22370]  INFO -- default-centos-64:   * package[bison] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[bison] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.482817 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.482836 #22370]  INFO -- default-centos-64:   * package[flex] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[flex] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.482855 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.482873 #22370]  INFO -- default-centos-64:   * package[gcc] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[gcc] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.482892 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.482910 #22370]  INFO -- default-centos-64:   * package[gcc-c++] action nothing[0m
+I, [2014-01-17T16:11:07.483467 #22370]  INFO -- default-centos-64: [2014-01-17T22:11:06+00:00] INFO: Processing package[gcc-c++] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.483499 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.483519 #22370]  INFO -- default-centos-64:   * package[kernel-devel] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[kernel-devel] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.483539 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.483557 #22370]  INFO -- default-centos-64:   * package[make] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[make] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.483576 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.483594 #22370]  INFO -- default-centos-64:   * package[m4] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[m4] action nothing (build-essential::rhel line 38)
+I, [2014-01-17T16:11:07.483612 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.483630 #22370]  INFO -- default-centos-64: Recipe: xml::default[0m
+I, [2014-01-17T16:11:07.483648 #22370]  INFO -- default-centos-64:   * package[libxml2-devel] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[libxml2-devel] action nothing (xml::default line 21)
+I, [2014-01-17T16:11:07.483684 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.484631 #22370]  INFO -- default-centos-64:   * package[libxslt-devel] action nothing[0m[2014-01-17T22:11:06+00:00] INFO: Processing package[libxslt-devel] action nothing (xml::default line 21)
+I, [2014-01-17T16:11:07.484666 #22370]  INFO -- default-centos-64:  (skipped due to action :nothing)[0m
+I, [2014-01-17T16:11:07.484687 #22370]  INFO -- default-centos-64: Recipe: xml::ruby[0m
+I, [2014-01-17T16:11:07.484706 #22370]  INFO -- default-centos-64:   * chef_gem[nokogiri] action install[0m[2014-01-17T22:11:06+00:00] INFO: Processing chef_gem[nokogiri] action install (xml::ruby line 32)
+I, [2014-01-17T16:11:07.485474 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:11:07.485508 #22370]  INFO -- default-centos-64: Recipe: rackspace_cloudmonitoring::default[0m
+I, [2014-01-17T16:11:07.485529 #22370]  INFO -- default-centos-64:   * chef_gem[fog] action install[0m[2014-01-17T22:11:06+00:00] INFO: Processing chef_gem[fog] action install (rackspace_cloudmonitoring::default line 23)
+I, [2014-01-17T16:11:07.485549 #22370]  INFO -- default-centos-64:  (up to date)[0m
+I, [2014-01-17T16:11:07.486568 #22370]  INFO -- default-centos-64: [2014-01-17T22:11:06+00:00] INFO: Chef Run complete in 196.137464441 seconds
+I, [2014-01-17T16:11:07.486614 #22370]  INFO -- default-centos-64: [2014-01-17T22:11:06+00:00] INFO: Running report handlers
+I, [2014-01-17T16:11:07.486635 #22370]  INFO -- default-centos-64: [2014-01-17T22:11:06+00:00] INFO: Report handlers complete
+I, [2014-01-17T16:11:07.486654 #22370]  INFO -- default-centos-64: Chef Client finished, 4 resources updated[0m
+I, [2014-01-17T16:11:07.970148 #22370]  INFO -- default-centos-64: Finished converging <default-centos-64> (4m0.22s).
+I, [2014-01-17T16:11:07.970355 #22370]  INFO -- default-centos-64: -----> Setting up <default-centos-64>...
+I, [2014-01-17T16:11:07.974060 #22370]  INFO -- default-centos-64: Finished setting up <default-centos-64> (0m0.00s).
+I, [2014-01-17T16:11:07.974237 #22370]  INFO -- default-centos-64: -----> Verifying <default-centos-64>...
+I, [2014-01-17T16:11:07.978006 #22370]  INFO -- default-centos-64: Finished verifying <default-centos-64> (0m0.00s).
+I, [2014-01-17T16:11:07.979564 #22370]  INFO -- default-centos-64: -----> Destroying <default-centos-64>...
+I, [2014-01-17T16:11:13.372056 #22370]  INFO -- default-centos-64: [default] Forcing shutdown of VM...
+I, [2014-01-17T16:11:15.155334 #22370]  INFO -- default-centos-64: [default] Destroying VM and associated drives...
+I, [2014-01-17T16:11:15.931629 #22370]  INFO -- default-centos-64: Vagrant instance <default-centos-64> destroyed.
+I, [2014-01-17T16:11:15.932536 #22370]  INFO -- default-centos-64: Finished destroying <default-centos-64> (0m7.95s).
+I, [2014-01-17T16:11:15.932741 #22370]  INFO -- default-centos-64: Finished testing <default-centos-64> (5m18.09s).
