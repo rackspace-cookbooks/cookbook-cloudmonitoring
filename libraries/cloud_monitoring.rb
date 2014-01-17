@@ -58,7 +58,7 @@ module Opscode
         # PRE: None
         # POST: None
         def get_attribute(attribute_name)
-          unless @attribute_map.has_key? attribute_name
+          unless @attribute_map.key? attribute_name
             raise Exception, "Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
           end
 
@@ -330,7 +330,7 @@ module Opscode
             @@entity_cache = {}
           end
 
-          unless @@entity_cache.has_key?(username)
+          unless @@entity_cache.key?(username)
             @@entity_cache[username] = {}
           end
 

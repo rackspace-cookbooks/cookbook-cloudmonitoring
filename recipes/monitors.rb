@@ -35,13 +35,13 @@ node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
   rackspace_cloudmonitoring_check key do
     entity_chef_label     node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label]
     type                  "agent.#{value['type']}"
-    period                value.has_key?('period') ? value['period'] : node[:rackspace_cloudmonitoring][:monitors_defaults][:check][:period]
-    timeout               value.has_key?('timeout') ? value['timeout'] : node[:rackspace_cloudmonitoring][:monitors_defaults][:check][:timeout]
-    details               value.has_key?('details') ? value['details'] : nil
+    period                value.key?('period') ? value['period'] : node[:rackspace_cloudmonitoring][:monitors_defaults][:check][:period]
+    timeout               value.key?('timeout') ? value['timeout'] : node[:rackspace_cloudmonitoring][:monitors_defaults][:check][:timeout]
+    details               value.key?('details') ? value['details'] : nil
     action :create
   end
 
-  if value.has_key?('alarm')
+  if value.key?('alarm')
     value[:alarm].each do |alarm, alarm_value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
@@ -50,10 +50,10 @@ node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
         entity_chef_label     node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label]
         check_label           key
         criteria              criteria
-        notification_plan_id  value.has_key?('notification_plan_id') ? value[:notification_plan_id] : node[:rackspace_cloudmonitoring][:monitors_defaults][:alarm][:notification_plan_id]
+        notification_plan_id  value.key?('notification_plan_id') ? value[:notification_plan_id] : node[:rackspace_cloudmonitoring][:monitors_defaults][:alarm][:notification_plan_id]
         action                :create
       end
 
     end # alarm loop
-  end # has_key?('alarm')
+  end # key?('alarm')
 end # monitors loop
