@@ -34,14 +34,14 @@ action :create do
   if new_resource.check_label then
     raise Exception, 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
     
-    check_obj = CM_check.new(@current_resource.get_credentials(), @new_resource.entity_chef_label)
+    check_obj = CM_check.new(@current_resource.get_credentials, @new_resource.entity_chef_label)
     check_obj.lookup_by_label(new_resource.check_label)
 
-    if check_obj.get_obj().nil?
+    if check_obj.get_obj.nil?
       raise Exception, "Unable to lookup check #{new_resource.check_label} on for alarm #{@new_resource.label} on entity #{@new_resource.entity_chef_label}"
     end
     
-    check_id = check_obj.get_obj().id
+    check_id = check_obj.get_obj.id
   end
 
   if new_resource.notification_plan_id.nil? then
@@ -60,7 +60,7 @@ end
 
 action :delete do
   Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.delete())
+  new_resource.updated_by_last_action(@current_resource.delete)
 end
 
 def load_current_resource

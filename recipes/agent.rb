@@ -79,7 +79,7 @@ end
 
 
 my_token_obj = CM_agent_token.new(credentials, node[:rackspace_cloudmonitoring][:agent][:token], "#{node.hostname}")
-my_token = my_token_obj.get_obj()
+my_token = my_token_obj.get_obj
 
 # Generate the config template
 template '/etc/rackspace-monitoring-agent.cfg' do

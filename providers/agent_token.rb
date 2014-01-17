@@ -27,7 +27,7 @@ end
 
 action :delete do
   Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.delete())
+  new_resource.updated_by_last_action(@current_resource.delete)
 end
 
 def load_current_resource

@@ -183,11 +183,11 @@ module Opscode
         end
         
         
-        # get_cm(): Getter for the @@cm class variable
+        # get_cm: Getter for the @@cm class variable
         # PRE: Class initialized
         # POST: none
         # RETURN VALUE: Fog::Rackspace::Monitoring class
-        def get_cm()
+        def get_cm
           return @cm
         end
       end # END CM_api class
@@ -297,7 +297,7 @@ module Opscode
         # RETURN VALUE: None
         def initialize(credentials, my_chef_label)
           @chef_label = my_chef_label
-          @cm = CM_api.new(credentials).get_cm()
+          @cm = CM_api.new(credentials).get_cm
           @username = credentials.get_attribute(:username)
           
           # Reuse an existing entity from our local cache, if present
@@ -412,7 +412,7 @@ module Opscode
         # Sets @entity_obj
         def lookup_entity_by_ip(ip)
           # Search helper function
-          def _lookup_entity_by_ip_checker ( entity, tgtip )
+          def _lookup_entity_by_ip_checker(entity, tgtip)
             if entity.ip_addresses.nil?
               return false
             end
@@ -465,7 +465,7 @@ module Opscode
         # PRE: None
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
-        def delete_entity()
+        def delete_entity
           orig_obj = @entity_obj
           if obj_delete(@entity_obj, @cm.entities, 'Entity')
             _update_entity_obj(nil)
@@ -493,11 +493,11 @@ module Opscode
         end
 
         # _get_target: Call send on the entity to get the target object
-        # PRE: get_entity_obj() PRE conditions met
+        # PRE: get_entity_obj PRE conditions met
         # POST: None
         # Return Value: Target Object
         def _get_target
-          return @entity.get_entity_obj().send(@target_name)
+          return @entity.get_entity_obj.send(@target_name)
         end
 
         # get_obj: Returns the check object
@@ -517,7 +517,7 @@ module Opscode
             return 'nil'
           end
 
-          entity_id = @entity.get_entity_obj_id()
+          entity_id = @entity.get_entity_obj_id
           return "#{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]"
         end
 
@@ -526,7 +526,7 @@ module Opscode
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
         def lookup_by_id(id)
-          @obj = obj_lookup_by_id(@obj, _get_target(), @debug_name, id)
+          @obj = obj_lookup_by_id(@obj, _get_target, @debug_name, id)
           return @obj
         end
 
@@ -535,7 +535,7 @@ module Opscode
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
         def lookup_by_label(label)
-          @obj = obj_lookup_by_label(@obj, _get_target(), @debug_name, label)
+          @obj = obj_lookup_by_label(@obj, _get_target, @debug_name, label)
           return @obj
         end
 
@@ -546,19 +546,19 @@ module Opscode
         # Idempotent: Does not update entities unless required
         def update(attributes = {})
           orig_obj = @obj
-          @obj = obj_update(@obj, _get_target(), @debug_name, attributes)
+          @obj = obj_update(@obj, _get_target, @debug_name, attributes)
           if @obj.nil?
             raise Exception, "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: obj_update returned nil"
           end
 
           if orig_obj.nil?
-            entity_id = @entity.get_entity_obj_id()
+            entity_id = @entity.get_entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: Created new #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
 
           unless @obj.compare? orig_obj
-            entity_id = @entity.get_entity_obj_id()
+            entity_id = @entity.get_entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: Updated #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
@@ -570,12 +570,12 @@ module Opscode
         # PRE: None
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
-        def delete()
+        def delete
           orig_obj = obj
-          if obj_delete(@obj, _get_target(), @target_name)
+          if obj_delete(@obj, _get_target, @target_name)
             _update_entity_obj(nil)
 
-            entity_id = @entity.get_entity_obj_id()
+            entity_id = @entity.get_entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).delete: Deleted #{@debug_name} #{@orig_obj.label} (#{@orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
@@ -603,9 +603,9 @@ module Opscode
         # PRE: None
         # POST: None
         # RETURN VALUE: CM_credentials class
-        # This is a *bit* of a hack as @credentials was originially saved in case get_example_alarm() was called
+        # This is a *bit* of a hack as @credentials was originially saved in case get_example_alarm was called
         # which needs a cm object and should otherwise not be needed.  However, it makes our life slightly easier
-        # in the alarm LWRP as we can use it to pass to the CM_check() constructor to get the check ID.
+        # in the alarm LWRP as we can use it to pass to the CM_check constructor to get the check ID.
         def get_credentials
           return @credentials
         end
@@ -616,14 +616,14 @@ module Opscode
         # POST: None
         # Return Value: bound_criteria string
         def get_example_alarm(example_id, example_values)
-          @cm = CM_api.new(@credentials).get_cm()
+          @cm = CM_api.new(@credentials).get_cm
           return @cm.alarm_examples.evaluate(example_id, example_values).bound_criteria
         end
       end
 
       class CM_agent_token < CM_obj_base
         def initialize(credentials, token, label)
-          @cm = CM_api.new(credentials).get_cm()
+          @cm = CM_api.new(credentials).get_cm
           unless token.nil?
             @obj = obj_lookup_by_id(nil, @cm.agent_tokens, 'Agent_Token', token)
             unless @obj.nil?
@@ -687,7 +687,7 @@ module Opscode
         # PRE: None
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
-        def delete_()
+        def delete_
           orig_obj = obj
           if obj_delete(@obj, @cm.agent_tokens, @target_name)
             @obj = nil
