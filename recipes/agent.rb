@@ -38,10 +38,10 @@ if platform_family?('debian')
 elsif platform_family?('rhel')
   # do RHEL things
 
-  #Grab the major release for cent and rhel servers as this is what the repos use.
+  # Grab the major release for cent and rhel servers as this is what the repos use.
   releaseVersion = node['platform_version'].split('.').first
 
-  #We need to figure out which signing key to use, cent5 and rhel5 have their own.
+  # We need to figure out which signing key to use, cent5 and rhel5 have their own.
   if (node['platform'] == 'centos') && (releaseVersion == '5')
     signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/centos-5.asc'
   elsif (node['platform'] == 'redhat') && (releaseVersion == '5')
