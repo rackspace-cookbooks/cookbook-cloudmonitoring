@@ -34,7 +34,7 @@ action :create do
   if new_resource.check_label then
     raise Exception, 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
     
-    check_obj = CM_check.new(@current_resource.get_credentials, @new_resource.entity_chef_label)
+    check_obj = CM_check.new(@current_resource.get_credentials, @new_resource.entity_chef_label, @new_resource.check_label)
     check_obj.lookup_by_label(new_resource.check_label)
 
     if check_obj.get_obj.nil?
@@ -64,7 +64,6 @@ action :delete do
 end
 
 def load_current_resource
-  
-  @current_resource = CM_alarm.new(CM_credentials.new(node, @new_resource), @new_resource.entity_chef_label)
+  @current_resource = CM_alarm.new(CM_credentials.new(node, @new_resource), @new_resource.entity_chef_label, @new_resource.label)
   @current_resource.lookup_by_label(@new_resource.label)
 end

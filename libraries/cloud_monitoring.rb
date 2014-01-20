@@ -21,18 +21,26 @@
 module Opscode
   module Rackspace
     module Monitoring
-      # CM_cache_1dkey: Implement a cache with a variable dimensional key structure in memory
+      # CM_cache: Implement a cache with a variable dimensional key structure in memory
       class CM_cache
+        # initialize: Class constructor
+        # PRE: my_num_keys: Number of keys this cache will use
+        # POST: None
+        # RETURN VALUE: None
         def initialize(my_num_keys)
           @num_keys = my_num_keys
         end
           
+        # get: Get a value from the cache
+        # PRE: Keys must be strings, not symbols
+        # POST: None
+        # RETURN VALUE: None
         def get(*keys)
           unless keys.length == @num_keys
             arg_count = keys.length
             raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
           end
-          
+
           unless defined?(@cache)
             return nil
           end
@@ -40,39 +48,62 @@ module Opscode
           eval_str = "@cache"
           for i in 0...@num_keys
             key = keys[i]
-            value = eval(eval_str)
-            unless value.key?(key)
+            cval = eval(eval_str)
+            unless cval.key?(key)
               return nil
             end
 
-            eval_str += "[#{key}]"
+            eval_str += "[\"#{key}\"]"
           end
             
+          Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_cache.get: Returning cached value from #{eval_str}")
           return eval(eval_str)
         end
         
+        # get: Save a value to the cache
+        # PRE: Keys must be strings, not symbols
+        # POST: None
+        # RETURN VALUE: Data or nil
         def save(value, *keys)
           unless keys.length == @num_keys
             arg_count = keys.length
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
+            raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.save: Key count mismatch (#{@num_keys}:#{arg_count})"
           end
 
           unless defined?(@cache)
-            return nil
+            @cache = {}
           end
           
           eval_str = "@cache"
           for i in 0...@num_keys
             key = keys[i]
-            value = eval(eval_str)
-            unless value.key?(key)
-              eval("#{eval_string} = {}")
+            if key.nil?
+              raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.save: Nil key at index #{i})"
             end
 
-            eval("#{eval_string} = value")
+            if key.length <= 0
+              raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.save: Empty key at index #{i})"
+            end
+
+            cval = eval(eval_str)
+            unless cval.key?(key)
+              eval("#{eval_str}[\"#{key}\"] = {}")
+            end
+
+            eval_str += "[\"#{key}\"]"
           end
             
-          eval(eval_str)
+          Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_cache.save: Saving #{value} to #{eval_str}")
+          eval("#{eval_str} = value")
+        end
+
+        # dump: Return the internal cache dictionary
+        # Intended for debugging
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: Internal cache
+        def dump
+          return @cache
         end
       end # END CM_cache_1dkey
 
@@ -80,7 +111,7 @@ module Opscode
       class CM_credentials
         def initialize(my_node, my_resource)
           @node = my_node
-          @resource = @my_resource
+          @resource = my_resource
           @databag_data = load_databag
 
           # @attribute_map: This is a mapping of how the attributes are named ant stored
@@ -190,9 +221,10 @@ module Opscode
         # Opens @cm class variable
         def initialize(credentials)
           username = credentials.get_attribute(:username)
-          @@cm_cache = CM_cache.new(1)
+          unless defined? @@cm_cache
+            @@cm_cache = CM_cache.new(1)
+          end
           @cm = @@cm_cache.get(username)
-
           unless @cm.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Reusing existing Fog connection for username #{username}")
             return
@@ -211,7 +243,7 @@ module Opscode
           end
           Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful')
           
-          @@cm_cache.save(username, @cm)
+          @@cm_cache.save(@cm, username)
         end
 
         # get_cm: Getter for the @@cm class variable
@@ -332,7 +364,9 @@ module Opscode
           @username = credentials.get_attribute(:username)
 
           # Reuse an existing entity from our local cache, if present
-          @@entity_cache = CM_cache.new(2)
+          unless defined? @@entity_cache
+            @@entity_cache = CM_cache.new(2)
+          end
           @entity_obj = @@entity_cache.get(@username, @chef_label)
           unless @entity_obj.nil?
             Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_entity: Using entity saved in local cache')
@@ -380,7 +414,7 @@ module Opscode
 
           unless new_entity.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching entity with ID #{new_entity.id}")
-            @@entity_cache.save(@username, @chef_label, @entity_obj)
+            @@entity_cache.save(@entity_obj, @username, @chef_label)
           end
 
           return new_entity
@@ -479,19 +513,26 @@ module Opscode
       # CM_Child class: This is a generic class to be inherited for checks and alarms
       # as the two are handled amlost identically
       class CM_child < CM_obj_base
-        def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_chef_label)
+        # initialize: initialize the class
+        # PRE: credentials is a CM_credentials instance, my_label is unique for this entity
+        # POST: None
+        # RETURN VALUE: None
+        def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_label)
           @target_name = my_target_name
           @debug_name = my_debug_name
           @entity_chef_label = entity_chef_label
 
           @entity = CM_entity.new(credentials, entity_chef_label)
-          if @entity.nil?
+          if @entity.get_entity_obj.nil?
             raise Exception, "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
           end
-
+          
           @username = credentials.get_attribute(:username)
-          @@obj_cache = CM_cache.new(4)
-          @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @my_chef_label)
+          @label = my_label
+          unless defined? @@obj_cache
+            @@obj_cache = CM_cache.new(4)
+          end
+          @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @label)
         end
 
         # _get_target: Call send on the entity to get the target object
@@ -532,7 +573,7 @@ module Opscode
 
           unless new_entity.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name})._update_obj: Caching entity with ID #{new_entity.id}")
-            @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @my_chef_label)
+            @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @label)
           end
 
           return new_entity
@@ -601,16 +642,16 @@ module Opscode
       class CM_check < CM_child
         # Note that this initializer DOES NOT LOAD ANY CHECKS!
         # User must call a lookup function before calling update
-        def initialize(credentials, entity_label)
-          super(credentials, entity_label, :checks, 'Check')
+        def initialize(credentials, entity_label, my_label)
+          super(credentials, entity_label, "checks", 'Check', my_label)
         end
       end
 
       class CM_alarm < CM_child
         # Note that this initializer DOES NOT LOAD ANY ALARMS!
         # User must call a lookup function before calling update
-        def initialize(credentials, entity_label)
-          super(credentials, entity_label, :alarms, 'Alarm')
+        def initialize(credentials, entity_label, my_label)
+          super(credentials, entity_label, "alarms", 'Alarm', my_label)
           @credentials = credentials
         end
 
