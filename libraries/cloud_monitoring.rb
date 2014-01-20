@@ -21,6 +21,61 @@
 module Opscode
   module Rackspace
     module Monitoring
+      # CM_cache_1dkey: Implement a cache with a variable dimensional key structure in memory
+      class CM_cache
+        def initialize(my_num_keys)
+          @num_keys = my_num_keys
+        end
+          
+        def get(*keys)
+          unless keys.length == @num_keys
+            arg_count = keys.length
+            raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
+          end
+          
+          unless defined?(@cache)
+            return nil
+          end
+
+          eval_str = "@cache"
+          for i in 0...@num_keys
+            key = keys[i]
+            value = eval(eval_str)
+            unless value.key?(key)
+              return nil
+            end
+
+            eval_str += "[#{key}]"
+          end
+            
+          return eval(eval_str)
+        end
+        
+        def save(value, *keys)
+          unless keys.length == @num_keys
+            arg_count = keys.length
+            raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
+          end
+
+          unless defined?(@cache)
+            return nil
+          end
+          
+          eval_str = "@cache"
+          for i in 0...@num_keys
+            key = keys[i]
+            value = eval(eval_str)
+            unless value.key?(key)
+              eval("#{eval_string} = {}")
+            end
+
+            eval("#{eval_string} = value")
+          end
+            
+          eval(eval_str)
+        end
+      end # END CM_cache_1dkey
+
       # CM_credentials: Class for handling the various credential sources
       class CM_credentials
         def initialize(my_node, my_resource)
@@ -99,10 +154,8 @@ module Opscode
         def load_databag
           begin
             # Access the Rackspace Cloud encrypted data_bag
-            return Chef::EncryptedDataBagItem.load(
-                                                   @node[:rackspace_cloudmonitoring][:auth][:databag][:name],
-                                                   @node[:rackspace_cloudmonitoring][:auth][:databag][:item]
-                                                   )
+            return Chef::EncryptedDataBagItem.load(@node[:rackspace_cloudmonitoring][:auth][:databag][:name],
+                                                   @node[:rackspace_cloudmonitoring][:auth][:databag][:item])
           rescue Exception => e
             return {}
           end
@@ -137,8 +190,9 @@ module Opscode
         # Opens @cm class variable
         def initialize(credentials)
           username = credentials.get_attribute(:username)
+          @@cm_cache = CM_cache.new(1)
+          @cm = @@cm_cache.get(username)
 
-          _get_cached_cm(username)
           unless @cm.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Reusing existing Fog connection for username #{username}")
             return
@@ -156,32 +210,9 @@ module Opscode
             raise Exception, 'Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog'
           end
           Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful')
-
-          _save_cached_cm(username)
+          
+          @@cm_cache.save(username, @cm)
         end
-
-        # _*_cached_cm: Implement a local cache of cm variables using a class variable
-        # Uses a single unique key
-        # PRE: None
-        # POST: None
-        # RETURN VALUE: None; interacts directly with @cm
-        def _get_cached_cm(username)
-          unless defined?(@@cm_cache)
-            @cm = nil
-            return
-          end
-
-          @cm = @@cm_cache[username]
-        end
-
-        def _save_cached_cm(username)
-          unless defined?(@@cm_cache)
-            @@cm_cache = {}
-          end
-
-          @@cm_cache[username] = @cm
-        end
-
 
         # get_cm: Getter for the @@cm class variable
         # PRE: Class initialized
@@ -301,42 +332,12 @@ module Opscode
           @username = credentials.get_attribute(:username)
 
           # Reuse an existing entity from our local cache, if present
-          _get_cached_entity(@username, @chef_label)
+          @@entity_cache = CM_cache.new(2)
+          @entity_obj = @@entity_cache.get(@username, @chef_label)
           unless @entity_obj.nil?
             Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_entity: Using entity saved in local cache')
-            return
           end
-
-          @entity_obj = nil
         end
-
-        # _*_cached_entity: Implement a local cache of entities using a class variable
-        # This DOES NOT use the node[] cache as it is simply for reusing Fog connections
-        # Uses username and label as keys
-        # PRE: None
-        # POST: None
-        # RETURN VALUE: None; interacts directly with @entity_obj
-        def _get_cached_entity(username, label)
-          unless defined?(@@entity_cache)
-            @entity_obj = nil
-            return
-          end
-
-          @entity_obj = @@entity_cache[username][label]
-        end
-
-        def _save_cached_entity(username, label)
-          unless defined?(@@entity_cache)
-            @@entity_cache = {}
-          end
-
-          unless @@entity_cache.key?(username)
-            @@entity_cache[username] = {}
-          end
-
-          @@entity_cache[username][label] = @entity_obj
-        end
-
 
         # get_entity_obj: Return the entity object
         # PRE: None
@@ -379,9 +380,7 @@ module Opscode
 
           unless new_entity.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching entity with ID #{new_entity.id}")
-            _save_cached_entity(@username, @chef_label)
-          else
-            Chef::Log.debug('Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching EMPTY Entity')
+            @@entity_cache.save(@username, @chef_label, @entity_obj)
           end
 
           return new_entity
@@ -480,8 +479,7 @@ module Opscode
       # CM_Child class: This is a generic class to be inherited for checks and alarms
       # as the two are handled amlost identically
       class CM_child < CM_obj_base
-        def initialize(credentials, entity_chef_label, my_target_name, my_debug_name)
-          @obj = nil
+        def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_chef_label)
           @target_name = my_target_name
           @debug_name = my_debug_name
           @entity_chef_label = entity_chef_label
@@ -490,6 +488,10 @@ module Opscode
           if @entity.nil?
             raise Exception, "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
           end
+
+          @username = credentials.get_attribute(:username)
+          @@obj_cache = CM_cache.new(4)
+          @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @my_chef_label)
         end
 
         # _get_target: Call send on the entity to get the target object
@@ -521,13 +523,27 @@ module Opscode
           return "#{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]"
         end
 
+        # _update_obj: helper function to update @obj, update the cache, and help keep the code DRY
+        # PRE: new_entity is a valid Fog::Rackspace::Monitoring::#{foo} object
+        # POST: None
+        # RETURN VALUE: new_entity
+        def _update_obj(new_entity)
+          @obj = new_entity
+
+          unless new_entity.nil?
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name})._update_obj: Caching entity with ID #{new_entity.id}")
+            @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @my_chef_label)
+          end
+
+          return new_entity
+        end
+
         # lookup_by_id: Lookup a child by label
         # PRE: none
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
         def lookup_by_id(id)
-          @obj = obj_lookup_by_id(@obj, _get_target, @debug_name, id)
-          return @obj
+          return _update_obj(obj_lookup_by_id(@obj, _get_target, @debug_name, id))
         end
 
         # lookup_by_label: Lookup a child by label
@@ -535,8 +551,7 @@ module Opscode
         # POST: None
         # RETURN VALUE: a Fog::Rackspace::Monitoring::Check object
         def lookup_by_label(label)
-          @obj = obj_lookup_by_label(@obj, _get_target, @debug_name, label)
-          return @obj
+          return _update_obj(obj_lookup_by_label(@obj, _get_target, @debug_name, label))
         end
 
         # update: Update or create a new object
@@ -546,7 +561,7 @@ module Opscode
         # Idempotent: Does not update entities unless required
         def update(attributes = {})
           orig_obj = @obj
-          @obj = obj_update(@obj, _get_target, @debug_name, attributes)
+          return _update_obj(obj_update(@obj, _get_target, @debug_name, attributes))
           if @obj.nil?
             raise Exception, "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: obj_update returned nil"
           end
@@ -573,7 +588,7 @@ module Opscode
         def delete
           orig_obj = obj
           if obj_delete(@obj, _get_target, @target_name)
-            _update_entity_obj(nil)
+            _update_obj(nil)
 
             entity_id = @entity.get_entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).delete: Deleted #{@debug_name} #{@orig_obj.label} (#{@orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
