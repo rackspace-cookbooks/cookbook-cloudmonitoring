@@ -246,11 +246,11 @@ module Opscode
           @@cm_cache.save(@cm, username)
         end
 
-        # get_cm: Getter for the @@cm class variable
+        # cm: Getter for the @@cm class variable
         # PRE: Class initialized
         # POST: none
         # RETURN VALUE: Fog::Rackspace::Monitoring class
-        def get_cm
+        def cm
           return @cm
         end
       end # END CMApi class
@@ -359,7 +359,7 @@ module Opscode
         # RETURN VALUE: None
         def initialize(credentials, my_chef_label)
           @chef_label = my_chef_label
-          @cm = CMApi.new(credentials).get_cm
+          @cm = CMApi.new(credentials).cm
           @username = credentials.get_attribute(:username)
 
           # Reuse an existing entity from our local cache, if present
@@ -372,19 +372,19 @@ module Opscode
           end
         end
 
-        # get_entity_obj: Return the entity object
+        # entity_obj: Return the entity object
         # PRE: None
         # POST: None
         # Returns a Fog::Rackspace::Monitoring::Entity object or nil
-        def get_entity_obj
+        def entity_obj
           return @entity_obj
         end
 
-        # get_entity_obj_id: Return the entity object id
+        # entity_obj_id: Return the entity object id
         # PRE: None
         # POST: None
         # Returns a string or nil
-        def get_entity_obj_id
+        def entity_obj_id
           if @entity_obj.nil?
             return nil
           end
@@ -521,7 +521,7 @@ module Opscode
           @entity_chef_label = entity_chef_label
 
           @entity = CMEntity.new(credentials, entity_chef_label)
-          if @entity.get_entity_obj.nil?
+          if @entity.entity_obj.nil?
             fail "Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
           end
 
@@ -538,14 +538,14 @@ module Opscode
         # POST: None
         # Return Value: Target Object
         def _get_target
-          return @entity.get_entity_obj.send(@target_name)
+          return @entity.entity_obj.send(@target_name)
         end
 
-        # get_obj: Returns the check object
+        # obj: Returns the check object
         # PRE: None
         # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring::Check object or nil
-        def get_obj
+        def obj
           return @obj
         end
 
@@ -558,7 +558,7 @@ module Opscode
             return 'nil'
           end
 
-          entity_id = @entity.get_entity_obj_id
+          entity_id = @entity.entity_obj_id
           return "#{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]"
         end
 
@@ -606,13 +606,13 @@ module Opscode
           end
 
           if orig_obj.nil?
-            entity_id = @entity.get_entity_obj_id
+            entity_id = @entity.entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: Created new #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
 
           unless @obj.compare? orig_obj
-            entity_id = @entity.get_entity_obj_id
+            entity_id = @entity.entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: Updated #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
@@ -629,7 +629,7 @@ module Opscode
           if obj_delete(@obj, _get_target, @target_name)
             _update_obj(nil)
 
-            entity_id = @entity.get_entity_obj_id
+            entity_id = @entity.entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).delete: Deleted #{@debug_name} #{@orig_obj.label} (#{@orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
@@ -660,24 +660,24 @@ module Opscode
         # This is a *bit* of a hack as @credentials was originially saved in case get_example_alarm was called
         # which needs a cm object and should otherwise not be needed.  However, it makes our life slightly easier
         # in the alarm LWRP as we can use it to pass to the CMCheck constructor to get the check ID.
-        def get_credentials
+        def credentials
           return @credentials
         end
 
-        # get_example_alarm: Look up an alarm definition from the example API and return its criteria
+        # example_alarm: Look up an alarm definition from the example API and return its criteria
         # This does not modify the current alarm object, but it does require the inherited CMApi class
         # PRE: None
         # POST: None
         # Return Value: bound_criteria string
-        def get_example_alarm(example_id, example_values)
-          @cm = CMApi.new(@credentials).get_cm
+        def example_alarm(example_id, example_values)
+          @cm = CMApi.new(@credentials).cm
           return @cm.alarm_examples.evaluate(example_id, example_values).bound_criteria
         end
       end
 
       class CMAgentToken < CMObjBase
         def initialize(credentials, token, label)
-          @cm = CMApi.new(credentials).get_cm
+          @cm = CMApi.new(credentials).cm
           unless token.nil?
             @obj = obj_lookup_by_id(nil, @cm.agent_tokens, 'Agent_Token', token)
             unless @obj.nil?
@@ -692,11 +692,11 @@ module Opscode
           @obj = obj_lookup_by_label(nil, @cm.agent_tokens, 'Agent_Token', label)
         end
 
-        # get_obj: Returns the token object
+        # obj: Returns the token object
         # PRE: None
         # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring::AgentToken object or nil
-        def get_obj
+        def obj
           return @obj
         end
 

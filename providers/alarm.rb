@@ -28,20 +28,20 @@ action :create do
   if new_resource.example_id
     fail 'Cannot specify example_id and criteria' unless new_resource.criteria.nil?
 
-    criteria = @current_resource.get_example_alarm(new_resource.example_id, new_resource.example_values)
+    criteria = @current_resource.example_alarm(new_resource.example_id, new_resource.example_values)
   end
 
   if new_resource.check_label
     fail 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
 
-    check_obj = CMCheck.new(@current_resource.get_credentials, @new_resource.entity_chef_label, @new_resource.check_label)
+    check_obj = CMCheck.new(@current_resource.credentials, @new_resource.entity_chef_label, @new_resource.check_label)
     check_obj.lookup_by_label(new_resource.check_label)
 
-    if check_obj.get_obj.nil?
+    if check_obj.obj.nil?
       fail "Unable to lookup check #{new_resource.check_label} on for alarm #{@new_resource.label} on entity #{@new_resource.entity_chef_label}"
     end
 
-    check_id = check_obj.get_obj.id
+    check_id = check_obj.obj.id
   end
 
   if new_resource.notification_plan_id.nil?
