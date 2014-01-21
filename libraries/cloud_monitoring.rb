@@ -207,7 +207,9 @@ module Opscode
           # Access the Rackspace Cloud encrypted data_bag
           return Chef::EncryptedDataBagItem.load(@node[:rackspace_cloudmonitoring][:auth][:databag][:name],
                                                  @node[:rackspace_cloudmonitoring][:auth][:databag][:item])
-        rescue Chef::Exceptions::ValidationFailed
+        # Chef::Exceptions::ValidationFailed is thrown in real use when the databag is not in use
+        # Chef::Exceptions::InvalidDataBagPath is thrown by test kitchen when there are no databags
+        rescue Chef::Exceptions::ValidationFailed, Chef::Exceptions::InvalidDataBagPath
           return {}
         end
 
