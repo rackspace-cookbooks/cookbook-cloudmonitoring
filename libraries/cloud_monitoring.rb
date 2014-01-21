@@ -154,6 +154,10 @@ module Opscode
         # get_attribute: get an attribute
         # PRE: attribute_name must be defined in code and not come from user input for security
         # POST: None
+        #
+        # Disable Cyclomatic Complexity check as we're right on the threshold, and I don't believe breaking this up
+        #   will improve readbility or flow.
+        # rubocop:disable CyclomaticComplexity
         def get_attribute(attribute_name)
           unless @attribute_map.key? attribute_name
             fail "Opscode::Rackspace::Monitoring::CMCredentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
@@ -192,6 +196,7 @@ module Opscode
           Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCredentials.get_attribute: returning \"#{ret_val}\" for attribute #{attribute_name}")
           return ret_val
         end
+        # rubocop:enable CyclomaticComplexity
 
         # load_databag: Load credentials from the databag
         # PRE: Databag details defined in node[:rackspace_cloudmonitoring][:auth][:databag] attributes
