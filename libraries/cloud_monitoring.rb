@@ -158,7 +158,7 @@ module Opscode
             # Note is a hash, so use eval to tack on the indexes
             begin
               node_val = eval("@node#{@attribute_map[attribute_name][:node]}")
-            rescue Exception => e
+            rescue NoMethodError
               node_val = nil
             end
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Node value for attribute #{attribute_name}: #{node_val}")
