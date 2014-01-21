@@ -204,13 +204,11 @@ module Opscode
         # RETURN VALUE: Data on success, empty hash on error
         # DOES NOT SET @databag_data
         def load_databag
-          begin
-            # Access the Rackspace Cloud encrypted data_bag
-            return Chef::EncryptedDataBagItem.load(@node[:rackspace_cloudmonitoring][:auth][:databag][:name],
-                                                   @node[:rackspace_cloudmonitoring][:auth][:databag][:item])
-          rescue Exception => e
-            return {}
-          end
+          # Access the Rackspace Cloud encrypted data_bag
+          return Chef::EncryptedDataBagItem.load(@node[:rackspace_cloudmonitoring][:auth][:databag][:name],
+                                                 @node[:rackspace_cloudmonitoring][:auth][:databag][:item])
+        rescue Chef::Exceptions::ValidationFailed
+          return {}
         end
 
         # precidence_logic: Helper method to handle precidence of attributes
