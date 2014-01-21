@@ -30,7 +30,7 @@ module Opscode
         def initialize(my_num_keys)
           @num_keys = my_num_keys
         end
-          
+
         # get: Get a value from the cache
         # PRE: Keys must be strings, not symbols
         # POST: None
@@ -45,8 +45,8 @@ module Opscode
             return nil
           end
 
-          eval_str = "@cache"
-          for i in 0...@num_keys
+          eval_str = '@cache'
+          (0...@num_keys).each do |i|
             key = keys[i]
             cval = eval(eval_str)
             unless cval.key?(key)
@@ -55,11 +55,11 @@ module Opscode
 
             eval_str += "[\"#{key}\"]"
           end
-            
+
           Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_cache.get: Returning cached value from #{eval_str}")
           return eval(eval_str)
         end
-        
+
         # get: Save a value to the cache
         # PRE: Keys must be strings, not symbols
         # POST: None
@@ -73,9 +73,9 @@ module Opscode
           unless defined?(@cache)
             @cache = {}
           end
-          
-          eval_str = "@cache"
-          for i in 0...@num_keys
+
+          eval_str = '@cache'
+          (0...@num_keys).each do |i|
             key = keys[i]
             if key.nil?
               fail "Opscode::Rackspace::Monitoring::CM_cache.save: Nil key at index #{i})"
@@ -92,7 +92,7 @@ module Opscode
 
             eval_str += "[\"#{key}\"]"
           end
-            
+
           Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_cache.save: Saving #{value} to #{eval_str}")
           eval("#{eval_str} = value")
         end
@@ -242,7 +242,7 @@ module Opscode
             fail 'Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog'
           end
           Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful')
-          
+
           @@cm_cache.save(@cm, username)
         end
 
@@ -279,7 +279,7 @@ module Opscode
             end
           end
 
-          obj = parent_obj.find{ |sobj| sobj.id==id}
+          obj = parent_obj.find { |sobj| sobj.id == id }
           if obj.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: No object found for #{id}")
           else
@@ -305,7 +305,7 @@ module Opscode
             end
           end
 
-          obj = parent_obj.find{ |sobj| sobj.label==label}
+          obj = parent_obj.find { |sobj| sobj.label == label }
           if obj.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: No object found for #{label}")
           else
@@ -329,7 +329,7 @@ module Opscode
 
           new_obj.id = obj.id
           # Compare attributes
-          unless new_obj.compare? obj then
+          unless new_obj.compare? obj
             # It's different
             new_obj.save
             return new_obj
@@ -469,7 +469,7 @@ module Opscode
             end
           end
 
-          return _update_entity_obj(@cm.entities.find{ |entity| _lookup_entity_by_ip_checker(entity, ip)})
+          return _update_entity_obj(@cm.entities.find { |entity| _lookup_entity_by_ip_checker(entity, ip) })
         end
 
         # update_entity: Update or create a new monitoring entity
@@ -507,7 +507,6 @@ module Opscode
           end
           return false
         end
-
       end # END CM_entity class
 
       # CM_Child class: This is a generic class to be inherited for checks and alarms
@@ -526,7 +525,7 @@ module Opscode
           if @entity.get_entity_obj.nil?
             fail "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
           end
-          
+
           @username = credentials.get_attribute(:username)
           @label = my_label
           unless defined? @@obj_cache
@@ -643,7 +642,7 @@ module Opscode
         # Note that this initializer DOES NOT LOAD ANY CHECKS!
         # User must call a lookup function before calling update
         def initialize(credentials, entity_label, my_label)
-          super(credentials, entity_label, "checks", 'Check', my_label)
+          super(credentials, entity_label, 'checks', 'Check', my_label)
         end
       end
 
@@ -651,7 +650,7 @@ module Opscode
         # Note that this initializer DOES NOT LOAD ANY ALARMS!
         # User must call a lookup function before calling update
         def initialize(credentials, entity_label, my_label)
-          super(credentials, entity_label, "alarms", 'Alarm', my_label)
+          super(credentials, entity_label, 'alarms', 'Alarm', my_label)
           @credentials = credentials
         end
 
@@ -753,7 +752,6 @@ module Opscode
           return false
         end
       end # END CM_tokens class
-
     end # END MODULE
   end
 end

@@ -62,7 +62,6 @@ default[:rackspace_cloudmonitoring][:monitors_defaults][:check][:period] = 30
 default[:rackspace_cloudmonitoring][:monitors_defaults][:check][:timeout] = 10
 # default[:rackspace_cloudmonitoring][:monitors_defaults][:alarm][:notification_plan_id] = nil
 
-
 # Configuration template overrides
 default[:rackspace_cloudmonitoring][:templates_cookbook][:'rackspace-monitoring-agent'] = 'rackspace_cloudmonitoring'
 default[:rackspace_cloudmonitoring][:templates_cookbook][:raxrc]                        = 'rackspace_cloudmonitoring'
