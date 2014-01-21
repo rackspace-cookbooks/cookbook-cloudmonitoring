@@ -31,7 +31,7 @@ action :delete do
 end
 
 def load_current_resource
-  @current_resource = CM_agent_token.new(CM_credentials.new(node, @new_resource),
+  @current_resource = CMAgentToken.new(CMCredentials.new(node, @new_resource),
                                          @new_resource.token,
                                          @new_resource.label)
 end

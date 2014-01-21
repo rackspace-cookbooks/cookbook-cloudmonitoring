@@ -45,7 +45,7 @@ action :delete do
 end
 
 def load_current_resource
-  @current_resource = CM_entity.new(CM_credentials.new(node, @new_resource), @new_resource.label)
+  @current_resource = CMEntity.new(CMCredentials.new(node, @new_resource), @new_resource.label)
   Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: Using search method #{new_resource.search_method}")
   case new_resource.search_method
   when 'ip'

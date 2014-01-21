@@ -21,8 +21,8 @@
 module Opscode
   module Rackspace
     module Monitoring
-      # CM_cache: Implement a cache with a variable dimensional key structure in memory
-      class CM_cache
+      # CMCache: Implement a cache with a variable dimensional key structure in memory
+      class CMCache
         # initialize: Class constructor
         # PRE: my_num_keys: Number of keys this cache will use
         # POST: None
@@ -38,7 +38,7 @@ module Opscode
         def get(*keys)
           unless keys.length == @num_keys
             arg_count = keys.length
-            fail "Opscode::Rackspace::Monitoring::CM_cache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
+            fail "Opscode::Rackspace::Monitoring::CMCache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
           end
 
           unless defined?(@cache)
@@ -56,7 +56,7 @@ module Opscode
             eval_str += "[\"#{key}\"]"
           end
 
-          Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_cache.get: Returning cached value from #{eval_str}")
+          Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCache.get: Returning cached value from #{eval_str}")
           return eval(eval_str)
         end
 
@@ -67,7 +67,7 @@ module Opscode
         def save(value, *keys)
           unless keys.length == @num_keys
             arg_count = keys.length
-            fail "Opscode::Rackspace::Monitoring::CM_cache.save: Key count mismatch (#{@num_keys}:#{arg_count})"
+            fail "Opscode::Rackspace::Monitoring::CMCache.save: Key count mismatch (#{@num_keys}:#{arg_count})"
           end
 
           unless defined?(@cache)
@@ -78,11 +78,11 @@ module Opscode
           (0...@num_keys).each do |i|
             key = keys[i]
             if key.nil?
-              fail "Opscode::Rackspace::Monitoring::CM_cache.save: Nil key at index #{i})"
+              fail "Opscode::Rackspace::Monitoring::CMCache.save: Nil key at index #{i})"
             end
 
             if key.length <= 0
-              fail "Opscode::Rackspace::Monitoring::CM_cache.save: Empty key at index #{i})"
+              fail "Opscode::Rackspace::Monitoring::CMCache.save: Empty key at index #{i})"
             end
 
             cval = eval(eval_str)
@@ -93,7 +93,7 @@ module Opscode
             eval_str += "[\"#{key}\"]"
           end
 
-          Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_cache.save: Saving #{value} to #{eval_str}")
+          Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCache.save: Saving #{value} to #{eval_str}")
           eval("#{eval_str} = value")
         end
 
@@ -105,10 +105,10 @@ module Opscode
         def dump
           return @cache
         end
-      end # END CM_cache_1dkey
+      end # END CMCache
 
-      # CM_credentials: Class for handling the various credential sources
-      class CM_credentials
+      # CMCredentials: Class for handling the various credential sources
+      class CMCredentials
         def initialize(my_node, my_resource)
           @node = my_node
           @resource = my_resource
@@ -145,13 +145,13 @@ module Opscode
         # POST: None
         def get_attribute(attribute_name)
           unless @attribute_map.key? attribute_name
-            fail "Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
+            fail "Opscode::Rackspace::Monitoring::CMCredentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
           end
 
           unless @attribute_map[attribute_name][:resource].nil?
             # Resource attributes are called as methods, so use send to access the attribute
             resource = @resource.nil? ? nil : @resource.send(@attribute_map[attribute_name][:resource])
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Resource value for attribute #{attribute_name}: #{resource}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCredentials.get_attribute: Resource value for attribute #{attribute_name}: #{resource}")
           end
 
           unless @attribute_map[attribute_name][:node].nil?
@@ -161,19 +161,19 @@ module Opscode
             rescue NoMethodError
               node_val = nil
             end
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Node value for attribute #{attribute_name}: #{node_val}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCredentials.get_attribute: Node value for attribute #{attribute_name}: #{node_val}")
           end
 
           unless @attribute_map[attribute_name][:databag].nil?
             # databag is just a hash set by load_databag which is controlled in this class
             databag = @databag_data[@attribute_map[attribute_name][:databag]]
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Databag value for attribute #{attribute_name}: #{databag}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCredentials.get_attribute: Databag value for attribute #{attribute_name}: #{databag}")
           end
 
           # I think this is about as clean as this code can be without redefining the LWRP arguments
           # and databag storage, which is simply too much of a refactor.
           ret_val =  _precidence_logic(resource, node_val, databag)
-          Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: returning \"#{ret_val}\" for attribute #{attribute_name}")
+          Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCredentials.get_attribute: returning \"#{ret_val}\" for attribute #{attribute_name}")
           return ret_val
         end
 
@@ -209,29 +209,29 @@ module Opscode
           end
           return databag
         end
-      end # END CM_credentials
+      end # END CMCredentials
 
-      # cm_api:  This class initializes the connection to the Cloud Monitoring API
-      class CM_api
+      # CMApi:  This class initializes the connection to the Cloud Monitoring API
+      class CMApi
         # Initialize: Initialize the class
         # Opens connections to the API via Fog, will share connections when possible
-        # PRE: credentials is a CM_credentials instance
+        # PRE: credentials is a CMCredentials instance
         # POST: None
         # RETURN VALUE: None
         # Opens @cm class variable
         def initialize(credentials)
           username = credentials.get_attribute(:username)
           unless defined? @@cm_cache
-            @@cm_cache = CM_cache.new(1)
+            @@cm_cache = CMCache.new(1)
           end
           @cm = @@cm_cache.get(username)
           unless @cm.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: Reusing existing Fog connection for username #{username}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi.initialize: Reusing existing Fog connection for username #{username}")
             return
           end
 
           # No cached cm, create a new one
-          Chef::Log.debug("Opscode::Rackspace::Monitoring::cm_api.initialize: creating new Fog connection for username #{username}")
+          Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi.initialize: creating new Fog connection for username #{username}")
           @cm = Fog::Rackspace::Monitoring.new(
                                                rackspace_api_key: credentials.get_attribute(:api_key),
                                                rackspace_username: username,
@@ -239,9 +239,9 @@ module Opscode
                                                )
 
           if @cm.nil?
-            fail 'Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog'
+            fail 'Opscode::Rackspace::Monitoring::CMApi.initialize: ERROR: Unable to connect to Fog'
           end
-          Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful')
+          Chef::Log.debug('Opscode::Rackspace::Monitoring::CMApi.initialize: Fog connection successful')
 
           @@cm_cache.save(@cm, username)
         end
@@ -253,37 +253,37 @@ module Opscode
         def get_cm
           return @cm
         end
-      end # END CM_api class
+      end # END CMApi class
 
-      # CM_obj_base: Common methods for interacting with MaaS Objects
+      # CMObjBase: Common methods for interacting with MaaS Objects
       # Intended to be inherited as a base class
       # Common arguments for methods:
       #   obj: Current target object
       #   parent_obj: Parent object to call methods against for finding/generating obj
       #   debug_name: Name string to print in informational/diagnostic/debug messages
-      class CM_obj_base
+      class CMObjBase
         # lookup_by_id: Locate an entity by ID string
         # PRE:
         # POST: None
         # RETURN VALUE: returns looked up obj
         def obj_lookup_by_id(obj, parent_obj, debug_name, id)
           if id.nil?
-            fail "Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: ERROR: Passed nil id"
+            fail "Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: ERROR: Passed nil id"
             return nil
           end
 
           unless obj.nil?
             if obj.id == id
-              Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: Existing object hit for #{id}")
+              Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: Existing object hit for #{id}")
               return obj
             end
           end
 
           obj = parent_obj.find { |sobj| sobj.id == id }
           if obj.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: No object found for #{id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: No object found for #{id}")
           else
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: New object found for #{id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: New object found for #{id}")
           end
 
           return obj
@@ -295,21 +295,21 @@ module Opscode
         # RETURN VALUE: returns looked up obj
         def obj_lookup_by_label(obj, parent_obj, debug_name, label)
           if label.nil?
-            fail "Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: ERROR: Passed nil label"
+            fail "Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_label: ERROR: Passed nil label"
           end
 
           unless obj.nil?
             if obj.label == label
-              Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: Existing object hit for #{label}")
+              Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_label: Existing object hit for #{label}")
               return obj
             end
           end
 
           obj = parent_obj.find { |sobj| sobj.label == label }
           if obj.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: No object found for #{label}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_label: No object found for #{label}")
           else
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: New object found for #{label}.  ID: #{obj.id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: New object found for #{label}.  ID: #{obj.id}")
           end
 
           return obj
@@ -350,26 +350,26 @@ module Opscode
           @obj.destroy
           return true
         end
-      end # END CM_api class
+      end # END CMApi class
 
-      # cm_entity: Class handling entity operations
-      class CM_entity < CM_obj_base
+      # CMEntity: Class handling entity operations
+      class CMEntity < CMObjBase
         # initialize: initialize the class
-        # PRE: credentials is a CM_credentials instance, my_chef_label is unique for this entity
+        # PRE: credentials is a CMCredentials instance, my_chef_label is unique for this entity
         # POST: None
         # RETURN VALUE: None
         def initialize(credentials, my_chef_label)
           @chef_label = my_chef_label
-          @cm = CM_api.new(credentials).get_cm
+          @cm = CMApi.new(credentials).get_cm
           @username = credentials.get_attribute(:username)
 
           # Reuse an existing entity from our local cache, if present
           unless defined? @@entity_cache
-            @@entity_cache = CM_cache.new(2)
+            @@entity_cache = CMCache.new(2)
           end
           @entity_obj = @@entity_cache.get(@username, @chef_label)
           unless @entity_obj.nil?
-            Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_entity: Using entity saved in local cache')
+            Chef::Log.debug('Opscode::Rackspace::Monitoring::CMEntity: Using entity saved in local cache')
           end
         end
 
@@ -413,7 +413,7 @@ module Opscode
           @entity_obj = new_entity
 
           unless new_entity.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_entity._update_entity_obj: Caching entity with ID #{new_entity.id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMEntity._update_entity_obj: Caching entity with ID #{new_entity.id}")
             @@entity_cache.save(@entity_obj, @username, @chef_label)
           end
 
@@ -460,7 +460,7 @@ module Opscode
           end
 
           if ip.nil?
-            fail 'Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip'
+            fail 'Opscode::Rackspace::Monitoring::CMEntity.lookup_entity_by_ip: ERROR: Passed nil ip'
           end
 
           unless @entity_obj.nil?
@@ -482,12 +482,12 @@ module Opscode
           _update_entity_obj(obj_update(@entity_obj, @cm.entities, 'Entity', attributes))
 
           if orig_obj.nil?
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Created new entity #{@entity_obj.label} (#{@entity_obj.id})")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMEntity.update_entity: Created new entity #{@entity_obj.label} (#{@entity_obj.id})")
             return true
           end
 
           unless @entity_obj.compare? orig_obj
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.update_entity: Updated entity #{@entity_obj.label} (#{@entity_obj.id})")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMEntity.update_entity: Updated entity #{@entity_obj.label} (#{@entity_obj.id})")
             return true
           end
 
@@ -502,18 +502,18 @@ module Opscode
           orig_obj = @entity_obj
           if obj_delete(@entity_obj, @cm.entities, 'Entity')
             _update_entity_obj(nil)
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_entity.delete: Deleted entity #{@orig_obj.label} (#{@orig_obj.id})")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMEntity.delete: Deleted entity #{@orig_obj.label} (#{@orig_obj.id})")
             return true
           end
           return false
         end
-      end # END CM_entity class
+      end # END CMEntity class
 
-      # CM_Child class: This is a generic class to be inherited for checks and alarms
+      # CMChild class: This is a generic class to be inherited for checks and alarms
       # as the two are handled amlost identically
-      class CM_child < CM_obj_base
+      class CMChild < CMObjBase
         # initialize: initialize the class
-        # PRE: credentials is a CM_credentials instance, my_label is unique for this entity
+        # PRE: credentials is a CMCredentials instance, my_label is unique for this entity
         # POST: None
         # RETURN VALUE: None
         def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_label)
@@ -521,15 +521,15 @@ module Opscode
           @debug_name = my_debug_name
           @entity_chef_label = entity_chef_label
 
-          @entity = CM_entity.new(credentials, entity_chef_label)
+          @entity = CMEntity.new(credentials, entity_chef_label)
           if @entity.get_entity_obj.nil?
-            fail "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
+            fail "Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
           end
 
           @username = credentials.get_attribute(:username)
           @label = my_label
           unless defined? @@obj_cache
-            @@obj_cache = CM_cache.new(4)
+            @@obj_cache = CMCache.new(4)
           end
           @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @label)
         end
@@ -571,7 +571,7 @@ module Opscode
           @obj = new_entity
 
           unless new_entity.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name})._update_obj: Caching entity with ID #{new_entity.id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name})._update_obj: Caching entity with ID #{new_entity.id}")
             @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @label)
           end
 
@@ -603,18 +603,18 @@ module Opscode
           orig_obj = @obj
           return _update_obj(obj_update(@obj, _get_target, @debug_name, attributes))
           if @obj.nil?
-            fail "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: obj_update returned nil"
+            fail "Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: obj_update returned nil"
           end
 
           if orig_obj.nil?
             entity_id = @entity.get_entity_obj_id
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: Created new #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: Created new #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
 
           unless @obj.compare? orig_obj
             entity_id = @entity.get_entity_obj_id
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: Updated #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: Updated #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
 
@@ -631,14 +631,14 @@ module Opscode
             _update_obj(nil)
 
             entity_id = @entity.get_entity_obj_id
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).delete: Deleted #{@debug_name} #{@orig_obj.label} (#{@orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).delete: Deleted #{@debug_name} #{@orig_obj.label} (#{@orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             return true
           end
           return false
         end
-      end # END CM_child class
+      end # END CMChild class
 
-      class CM_check < CM_child
+      class CMCheck < CMChild
         # Note that this initializer DOES NOT LOAD ANY CHECKS!
         # User must call a lookup function before calling update
         def initialize(credentials, entity_label, my_label)
@@ -646,7 +646,7 @@ module Opscode
         end
       end
 
-      class CM_alarm < CM_child
+      class CMAlarm < CMChild
         # Note that this initializer DOES NOT LOAD ANY ALARMS!
         # User must call a lookup function before calling update
         def initialize(credentials, entity_label, my_label)
@@ -657,28 +657,28 @@ module Opscode
         # get_credentials: return the credentials used
         # PRE: None
         # POST: None
-        # RETURN VALUE: CM_credentials class
+        # RETURN VALUE: CMCredentials class
         # This is a *bit* of a hack as @credentials was originially saved in case get_example_alarm was called
         # which needs a cm object and should otherwise not be needed.  However, it makes our life slightly easier
-        # in the alarm LWRP as we can use it to pass to the CM_check constructor to get the check ID.
+        # in the alarm LWRP as we can use it to pass to the CMCheck constructor to get the check ID.
         def get_credentials
           return @credentials
         end
 
         # get_example_alarm: Look up an alarm definition from the example API and return its criteria
-        # This does not modify the current alarm object, but it does require the inherited CM_api class
+        # This does not modify the current alarm object, but it does require the inherited CMApi class
         # PRE: None
         # POST: None
         # Return Value: bound_criteria string
         def get_example_alarm(example_id, example_values)
-          @cm = CM_api.new(@credentials).get_cm
+          @cm = CMApi.new(@credentials).get_cm
           return @cm.alarm_examples.evaluate(example_id, example_values).bound_criteria
         end
       end
 
-      class CM_agent_token < CM_obj_base
+      class CMAgentToken < CMObjBase
         def initialize(credentials, token, label)
-          @cm = CM_api.new(credentials).get_cm
+          @cm = CMApi.new(credentials).get_cm
           unless token.nil?
             @obj = obj_lookup_by_id(nil, @cm.agent_tokens, 'Agent_Token', token)
             unless @obj.nil?
@@ -687,7 +687,7 @@ module Opscode
           end
 
           if label.nil?
-            fail 'Opscode::Rackspace::Monitoring::CM_agent_token.initialize: ERROR: Passed nil label'
+            fail 'Opscode::Rackspace::Monitoring::CMAgentToken.initialize: ERROR: Passed nil label'
           end
 
           @obj = obj_lookup_by_label(nil, @cm.agent_tokens, 'Agent_Token', label)
@@ -722,16 +722,16 @@ module Opscode
           orig_obj = @obj
           @obj = obj_update(@obj, @cm.agent_tokens, 'Agent_Token', attributes)
           if @obj.nil?
-            fail 'Opscode::Rackspace::Monitoring::CM_agent_token.update obj_update returned nil'
+            fail 'Opscode::Rackspace::Monitoring::CMAgentToken.update obj_update returned nil'
           end
 
           if orig_obj.nil?
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_agent_token.update: Created new agent token #{@obj.id}")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMAgentToken.update: Created new agent token #{@obj.id}")
             return true
           end
 
           unless @obj.compare? orig_obj
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_agent_token.update: Updated agent token #{@obj.id}")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMAgentToken.update: Updated agent token #{@obj.id}")
             return true
           end
 
@@ -746,12 +746,12 @@ module Opscode
           orig_obj = obj
           if obj_delete(@obj, @cm.agent_tokens, @target_name)
             @obj = nil
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CM_agent_token.delete: Deleted token #{@orig_obj.id}")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMAgentToken.delete: Deleted token #{@orig_obj.id}")
             return true
           end
           return false
         end
-      end # END CM_tokens class
+      end # END CMAgentToken class
     end # END MODULE
   end
 end
