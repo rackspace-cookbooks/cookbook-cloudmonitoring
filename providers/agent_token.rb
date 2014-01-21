@@ -32,6 +32,6 @@ end
 
 def load_current_resource
   @current_resource = CMAgentToken.new(CMCredentials.new(node, @new_resource),
-                                         @new_resource.token,
-                                         @new_resource.label)
+                                       @new_resource.token,
+                                       @new_resource.label)
 end
