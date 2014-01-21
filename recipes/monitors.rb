@@ -47,11 +47,11 @@ node[:rackspace_cloudmonitoring][:monitors].each do |key, value|
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
 
       rackspace_cloudmonitoring_alarm  "#{value['type']} #{alarm} alarm" do
-        entity_chef_label     node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label]
-        check_label           key
-        criteria              criteria
-        notification_plan_id  value.key?('notification_plan_id') ? value[:notification_plan_id] : node[:rackspace_cloudmonitoring][:monitors_defaults][:alarm][:notification_plan_id]
-        action                :create
+        entity_chef_label    node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label]
+        check_label          key
+        criteria             criteria
+        notification_plan_id value.key?('notification_plan_id') ? value[:notification_plan_id] : node[:rackspace_cloudmonitoring][:monitors_defaults][:alarm][:notification_plan_id]
+        action               :create
       end
 
     end # alarm loop
