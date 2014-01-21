@@ -22,7 +22,11 @@ platforms:
   - recipe[rackspace_apt]
 
 suites:
-  - name: default
+  - name: agent
     run_list:
-      - recipe[rackspace_cloudmonitoring::default]
+      - recipe[rackspace_cloudmonitoring::agent]
     attributes:
+      rackspace_cloudmonitoring:
+        agent:
+          id:    "rackspacerules"
+          token: "kittenmittens"

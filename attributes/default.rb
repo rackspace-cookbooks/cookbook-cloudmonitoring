@@ -43,6 +43,7 @@ default[:rackspace_cloudmonitoring][:auth][:databag][:item] = 'cloud'
 
 default[:rackspace_cloudmonitoring][:agent][:version] = 'latest'
 # default[:rackspace_cloudmonitoring][:agent][:token] = nil
+# default[:rackspace_cloudmonitoring][:agent][:id] = nil
 default[:rackspace_cloudmonitoring][:agent][:monitoring_endpoints] = [] # This should be a list of strings like 'x.x.x.x:port'
                                                                         # This is used in the agent configuratuon
                                                                         # TODO: See if this can be populated from Fog

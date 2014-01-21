@@ -1,287 +1,0 @@
-I, [2014-01-17T16:11:15.932911 #22370]  INFO -- default-debian-720: -----> Cleaning up any prior instances of <default-debian-720>
-I, [2014-01-17T16:11:15.933097 #22370]  INFO -- default-debian-720: -----> Destroying <default-debian-720>...
-I, [2014-01-17T16:11:15.933531 #22370]  INFO -- default-debian-720: Finished destroying <default-debian-720> (0m0.00s).
-I, [2014-01-17T16:11:15.933735 #22370]  INFO -- default-debian-720: -----> Testing <default-debian-720>
-I, [2014-01-17T16:11:15.933882 #22370]  INFO -- default-debian-720: -----> Creating <default-debian-720>...
-I, [2014-01-17T16:11:17.485400 #22370]  INFO -- default-debian-720: Bringing machine 'default' up with 'virtualbox' provider...
-I, [2014-01-17T16:11:17.671381 #22370]  INFO -- default-debian-720: [default] Box 'opscode-debian-7.2.0' was not found. Fetching box from specified URL for
-I, [2014-01-17T16:11:17.671472 #22370]  INFO -- default-debian-720: the provider 'virtualbox'. Note that if the URL does not have
-I, [2014-01-17T16:11:17.671521 #22370]  INFO -- default-debian-720: a box for this provider, you should interrupt Vagrant now and add
-I, [2014-01-17T16:11:17.671565 #22370]  INFO -- default-debian-720: the box yourself. Otherwise Vagrant will attempt to download the
-I, [2014-01-17T16:11:17.671609 #22370]  INFO -- default-debian-720: full box prior to discovering this error.
-I, [2014-01-17T16:11:17.682952 #22370]  INFO -- default-debian-720: Downloading box from URL: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-7.2.0_chef-provisionerless.box
-Progress: 0% (Rate: 0/s, Estimated time remaining: --:--:--)Progress: 0% (Rate: 146k/s, Estimated time remaining: 0:32:56)Progress: 0% (Rate: 1613k/s, Estimated time remaining: 0:02:58)Progress: 2% (Rate: 3382k/s, Estimated time remaining: 0:01:23)Progress: 4% (Rate: 4053k/s, Estimated time remaining: 0:01:08)Progress: 6% (Rate: 4276k/s, Estimated time remaining: 0:01:03)Progress: 8% (Rate: 4714k/s, Estimated time remaining: 0:01:01)Progress: 9% (Rate: 5096k/s, Estimated time remaining: 0:01:00)Progress: 10% (Rate: 4671k/s, Estimated time remaining: 0:01:00)Progress: 12% (Rate: 4408k/s, Estimated time remaining: 0:00:59)Progress: 14% (Rate: 4824k/s, Estimated time remaining: 0:00:54)Progress: 17% (Rate: 4707k/s, Estimated time remaining: 0:00:53)Progress: 18% (Rate: 4959k/s, Estimated time remaining: 0:00:51)Progress: 19% (Rate: 5058k/s, Estimated time remaining: 0:00:51)Progress: 20% (Rate: 4896k/s, Estimated time remaining: 0:00:51)Progress: 22% (Rate: 4150k/s, Estimated time remaining: 0:00:51)Progress: 23% (Rate: 3878k/s, Estimated time remaining: 0:00:51)Progress: 24% (Rate: 3719k/s, Estimated time remaining: 0:00:50)Progress: 27% (Rate: 4285k/s, Estimated time remaining: 0:00:47)Progress: 29% (Rate: 4767k/s, Estimated time remaining: 0:00:45)Progress: 31% (Rate: 5393k/s, Estimated time remaining: 0:00:42)Progress: 34% (Rate: 6654k/s, Estimated time remaining: 0:00:38)Progress: 37% (Rate: 7584k/s, Estimated time remaining: 0:00:35)Progress: 40% (Rate: 7591k/s, Estimated time remaining: 0:00:33)Progress: 42% (Rate: 7586k/s, Estimated time remaining: 0:00:32)Progress: 43% (Rate: 7245k/s, Estimated time remaining: 0:00:31)Progress: 45% (Rate: 6265k/s, Estimated time remaining: 0:00:30)Progress: 46% (Rate: 5330k/s, Estimated time remaining: 0:00:30)Progress: 47% (Rate: 4270k/s, Estimated time remaining: 0:00:30)Progress: 48% (Rate: 3773k/s, Estimated time remaining: 0:00:30)Progress: 49% (Rate: 3313k/s, Estimated time remaining: 0:00:30)Progress: 53% (Rate: 4529k/s, Estimated time remaining: 0:00:26)Progress: 54% (Rate: 4161k/s, Estimated time remaining: 0:00:26)Progress: 55% (Rate: 4467k/s, Estimated time remaining: 0:00:26)Progress: 59% (Rate: 5942k/s, Estimated time remaining: 0:00:23)Progress: 62% (Rate: 7155k/s, Estimated time remaining: 0:00:21)Progress: 65% (Rate: 6824k/s, Estimated time remaining: 0:00:19)Progress: 67% (Rate: 7886k/s, Estimated time remaining: 0:00:17)Progress: 70% (Rate: 8846k/s, Estimated time remaining: 0:00:15)Progress: 73% (Rate: 8422k/s, Estimated time remaining: 0:00:14)Progress: 75% (Rate: 7959k/s, Estimated time remaining: 0:00:12)Progress: 77% (Rate: 7238k/s, Estimated time remaining: 0:00:12)Progress: 79% (Rate: 6740k/s, Estimated time remaining: 0:00:11)Progress: 82% (Rate: 7004k/s, Estimated time remaining: 0:00:09)Progress: 86% (Rate: 7207k/s, Estimated time remaining: 0:00:07)Progress: 88% (Rate: 7561k/s, Estimated time remaining: 0:00:05)Progress: 91% (Rate: 8150k/s, Estimated time remaining: 0:00:04)Progress: 93% (Rate: 7156k/s, Estimated time remaining: 0:00:04)Progress: 94% (Rate: 6897k/s, Estimated time remaining: 0:00:03)Progress: 95% (Rate: 5485k/s, Estimated time remaining: 0:00:02)Progress: 96% (Rate: 4537k/s, Estimated time remaining: 0:00:02)I, [2014-01-17T16:12:08.031694 #22370]  INFO -- default-debian-720: Extracting box...
-I, [2014-01-17T16:12:11.063816 #22370]  INFO -- default-debian-720: Successfully added box 'opscode-debian-7.2.0' with provider 'virtualbox'!
-I, [2014-01-17T16:12:12.113272 #22370]  INFO -- default-debian-720: [default] Importing base box 'opscode-debian-7.2.0'...
-Progress: 10%Progress: 30%Progress: 40%Progress: 50%Progress: 60%Progress: 70%Progress: 80%Progress: 90%I, [2014-01-17T16:12:26.384865 #22370]  INFO -- default-debian-720: [default] Matching MAC address for NAT networking...
-I, [2014-01-17T16:12:27.322845 #22370]  INFO -- default-debian-720: [default] Setting the name of the VM...
-I, [2014-01-17T16:12:27.577816 #22370]  INFO -- default-debian-720: [default] Clearing any previously set forwarded ports...
-I, [2014-01-17T16:12:27.669269 #22370]  INFO -- default-debian-720: [Berkshelf] Skipping Berkshelf with --no-provision
-I, [2014-01-17T16:12:28.200358 #22370]  INFO -- default-debian-720: [default] Fixed port collision for 22 => 2222. Now on port 2200.
-I, [2014-01-17T16:12:28.266397 #22370]  INFO -- default-debian-720: [default] Clearing any previously set network interfaces...
-I, [2014-01-17T16:12:28.394044 #22370]  INFO -- default-debian-720: [default] Preparing network interfaces based on configuration...
-I, [2014-01-17T16:12:28.513587 #22370]  INFO -- default-debian-720: [default] Forwarding ports...
-I, [2014-01-17T16:12:28.601209 #22370]  INFO -- default-debian-720: [default] -- 22 => 2200 (adapter 1)
-I, [2014-01-17T16:12:31.181126 #22370]  INFO -- default-debian-720: [default] Running 'pre-boot' VM customizations...
-I, [2014-01-17T16:12:31.307115 #22370]  INFO -- default-debian-720: [default] Booting VM...
-I, [2014-01-17T16:12:31.665207 #22370]  INFO -- default-debian-720: [default] Waiting for machine to boot. This may take a few minutes...
-I, [2014-01-17T16:12:47.667212 #22370]  INFO -- default-debian-720: [default] Machine booted and ready!
-I, [2014-01-17T16:12:47.712508 #22370]  INFO -- default-debian-720: [default] Setting hostname...
-I, [2014-01-17T16:13:11.012269 #22370]  INFO -- default-debian-720: Vagrant instance <default-debian-720> created.
-I, [2014-01-17T16:13:11.013232 #22370]  INFO -- default-debian-720: Finished creating <default-debian-720> (1m55.08s).
-I, [2014-01-17T16:13:11.013333 #22370]  INFO -- default-debian-720: -----> Converging <default-debian-720>...
-I, [2014-01-17T16:13:11.015094 #22370]  INFO -- default-debian-720: Preparing files for transfer
-I, [2014-01-17T16:13:11.015422 #22370]  INFO -- default-debian-720: Resolving cookbook dependencies with Berkshelf...
-I, [2014-01-17T16:13:11.052070 #22370]  INFO -- default-debian-720: Removing non-cookbook files before transfer
------> Installing Chef Omnibus (latest)I, [2014-01-17T16:13:11.214661 #22370]  INFO -- default-debian-720: 
-downloading https://www.opscode.com/chef/install.shI, [2014-01-17T16:13:11.214888 #22370]  INFO -- default-debian-720: 
-  to file /tmp/install.shI, [2014-01-17T16:13:11.215084 #22370]  INFO -- default-debian-720: 
-trying wget...I, [2014-01-17T16:13:11.215262 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:16.789099 #22370]  INFO -- default-debian-720: Downloading Chef  for debian...
-I, [2014-01-17T16:13:16.789854 #22370]  INFO -- default-debian-720: downloading https://www.opscode.com/chef/metadata?v=&prerelease=false&p=debian&pv=6&m=x86_64
-I, [2014-01-17T16:13:16.815906 #22370]  INFO -- default-debian-720:   to file /tmp/install.sh.2730/metadata.txt
-I, [2014-01-17T16:13:16.815970 #22370]  INFO -- default-debian-720: trying wget...
-url	https://opscode-omnibus-packages.s3.amazonaws.com/debian/6/x86_64/chef_11.8.2-1.debian.6.0.5_amd64.debI, [2014-01-17T16:13:22.214973 #22370]  INFO -- default-debian-720: 
-md5	d74cb779a02ac3809e6475503f9bb6a2I, [2014-01-17T16:13:22.215871 #22370]  INFO -- default-debian-720: 
-sha256	74e2c43091e1010f4480530c63d2c4074d8fedc811e77e6fe98951f63753acecI, [2014-01-17T16:13:22.216711 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:22.220991 #22370]  INFO -- default-debian-720: downloaded metadata file looks valid...
-I, [2014-01-17T16:13:22.222444 #22370]  INFO -- default-debian-720: downloading https://opscode-omnibus-packages.s3.amazonaws.com/debian/6/x86_64/chef_11.8.2-1.debian.6.0.5_amd64.deb
-I, [2014-01-17T16:13:22.222480 #22370]  INFO -- default-debian-720:   to file /tmp/install.sh.2730/chef__amd64.deb
-I, [2014-01-17T16:13:22.222500 #22370]  INFO -- default-debian-720: trying wget...
-I, [2014-01-17T16:13:32.542104 #22370]  INFO -- default-debian-720: Checksum compare with sha256sum succeeded.
-I, [2014-01-17T16:13:32.542832 #22370]  INFO -- default-debian-720: Installing Chef 
-I, [2014-01-17T16:13:32.542863 #22370]  INFO -- default-debian-720: installing with dpkg...
-Selecting previously unselected package chef.I, [2014-01-17T16:13:32.604651 #22370]  INFO -- default-debian-720: 
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 37434 files and directories currently installed.)I, [2014-01-17T16:13:32.703792 #22370]  INFO -- default-debian-720: 
-Unpacking chef (from .../chef__amd64.deb) ...I, [2014-01-17T16:13:32.705314 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:36.544311 #22370]  INFO -- default-debian-720: Setting up chef (11.8.2-1.debian.6.0.5) ...
-I, [2014-01-17T16:13:36.587511 #22370]  INFO -- default-debian-720: Thank you for installing Chef!
-I, [2014-01-17T16:13:36.662944 #22370]  INFO -- default-debian-720: Transfering files to <default-debian-720>
-[2014-01-17T22:13:39+00:00] INFO: Forking chef instance to converge...I, [2014-01-17T16:13:40.282109 #22370]  INFO -- default-debian-720: 
-Starting Chef Client, version 11.8.2[0mI, [2014-01-17T16:13:40.345655 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: *** Chef 11.8.2 ***I, [2014-01-17T16:13:40.345873 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: Chef-client pid: 2798I, [2014-01-17T16:13:40.346207 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: Setting the run_list to ["recipe[rackspace_apt]", "recipe[rackspace_cloudmonitoring::default]"] from JSONI, [2014-01-17T16:13:40.735405 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: Run List is [recipe[rackspace_apt], recipe[rackspace_cloudmonitoring::default]]I, [2014-01-17T16:13:40.738439 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: Run List expands to [rackspace_apt, rackspace_cloudmonitoring::default]I, [2014-01-17T16:13:40.738633 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: Starting Chef Run for default-debian-720I, [2014-01-17T16:13:40.738824 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: Running start handlersI, [2014-01-17T16:13:40.739121 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] INFO: Start handlers complete.I, [2014-01-17T16:13:40.739407 #22370]  INFO -- default-debian-720: 
-Compiling Cookbooks...[0mI, [2014-01-17T16:13:40.744228 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] WARN: Cloning resource attributes for execute[apt-get update] from prior resource (CHEF-3694)I, [2014-01-17T16:13:40.780332 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] WARN: Previous execute[apt-get update]: /tmp/kitchen/cookbooks/rackspace_apt/recipes/default.rb:42:in `from_file'I, [2014-01-17T16:13:40.780575 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:13:39+00:00] WARN: Current  execute[apt-get update]: /tmp/kitchen/cookbooks/xml/recipes/ruby.rb:22:in `from_file'I, [2014-01-17T16:13:40.780756 #22370]  INFO -- default-debian-720: 
-Recipe: xml::ruby[0mI, [2014-01-17T16:13:40.781058 #22370]  INFO -- default-debian-720: 
-  * execute[apt-get update] action run[0m[2014-01-17T22:13:39+00:00] INFO: Processing execute[apt-get update] action run (xml::ruby line 22)I, [2014-01-17T16:13:40.781622 #22370]  INFO -- default-debian-720: 
-Get:1 http://mirrors.kernel.org wheezy Release.gpg [1672 B]I, [2014-01-17T16:13:46.016406 #22370]  INFO -- default-debian-720: 
-Get:2 http://security.debian.org wheezy/updates Release.gpg [836 B]I, [2014-01-17T16:13:46.089558 #22370]  INFO -- default-debian-720: 
-Get:3 http://mirrors.kernel.org wheezy-updates Release.gpg [836 B]I, [2014-01-17T16:13:46.096346 #22370]  INFO -- default-debian-720: 
-Get:4 http://security.debian.org wheezy/updates Release [102 kB]I, [2014-01-17T16:13:46.155706 #22370]  INFO -- default-debian-720: 
-Get:5 http://mirrors.kernel.org wheezy Release [168 kB]I, [2014-01-17T16:13:46.174976 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:46.351464 #22370]  INFO -- default-debian-720: Get:6 http://security.debian.org wheezy/updates/main Sources [77.8 kB]
-I, [2014-01-17T16:13:46.482198 #22370]  INFO -- default-debian-720: Get:7 http://security.debian.org wheezy/updates/main amd64 Packages [147 kB]
-I, [2014-01-17T16:13:46.562227 #22370]  INFO -- default-debian-720: Get:8 http://mirrors.kernel.org wheezy-updates Release [124 kB]
-I, [2014-01-17T16:13:46.614607 #22370]  INFO -- default-debian-720: Get:9 http://security.debian.org wheezy/updates/main Translation-en [87.9 kB]
-I, [2014-01-17T16:13:46.730501 #22370]  INFO -- default-debian-720: Get:10 http://mirrors.kernel.org wheezy/main Sources [5958 kB]
-I, [2014-01-17T16:13:47.591235 #22370]  INFO -- default-debian-720: Get:11 http://mirrors.kernel.org wheezy/main amd64 Packages [5848 kB]
-I, [2014-01-17T16:13:48.207145 #22370]  INFO -- default-debian-720: Get:12 http://mirrors.kernel.org wheezy/main Translation-en [3852 kB]
-I, [2014-01-17T16:13:48.664880 #22370]  INFO -- default-debian-720: Get:13 http://mirrors.kernel.org wheezy-updates/main Sources [2981 B]
-I, [2014-01-17T16:13:48.746781 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy-updates/main amd64 Packages/DiffIndex
-I, [2014-01-17T16:13:48.821431 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy-updates/main Translation-en/DiffIndex
-I, [2014-01-17T16:13:51.639727 #22370]  INFO -- default-debian-720: Fetched 16.4 MB in 10s (1513 kB/s)
-I, [2014-01-17T16:13:51.639792 #22370]  INFO -- default-debian-720: Reading package lists...
-I, [2014-01-17T16:13:52.476729 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:52.496113 #22370]  INFO -- default-debian-720: [2014-01-17T22:13:51+00:00] INFO: execute[apt-get update] ran successfully
-I, [2014-01-17T16:13:52.496180 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:13:52.496209 #22370]  INFO -- default-debian-720:     - execute apt-get update[0m
-I, [2014-01-17T16:13:52.496236 #22370]  INFO -- default-debian-720: [0m
-Recipe: build-essential::debian[0mI, [2014-01-17T16:13:52.501362 #22370]  INFO -- default-debian-720: 
-  * execute[apt-get-update-build-essentials] action run[0m[2014-01-17T22:13:51+00:00] INFO: Processing execute[apt-get-update-build-essentials] action run (build-essential::debian line 22)I, [2014-01-17T16:13:52.502310 #22370]  INFO -- default-debian-720: 
-Hit http://security.debian.org wheezy/updates Release.gpgI, [2014-01-17T16:13:57.723740 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy Release.gpgI, [2014-01-17T16:13:57.752029 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:57.802696 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates Release
-I, [2014-01-17T16:13:57.821725 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy-updates Release.gpg
-I, [2014-01-17T16:13:57.880842 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main Sources
-Hit http://mirrors.kernel.org wheezy ReleaseI, [2014-01-17T16:13:57.902609 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:57.946328 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main amd64 Packages
-I, [2014-01-17T16:13:57.973732 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy-updates Release
-I, [2014-01-17T16:13:58.041511 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main Translation-en
-I, [2014-01-17T16:13:58.043969 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy/main Sources
-Hit http://mirrors.kernel.org wheezy/main amd64 PackagesI, [2014-01-17T16:13:58.136263 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy/main Translation-enI, [2014-01-17T16:13:58.222524 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main SourcesI, [2014-01-17T16:13:58.284301 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main amd64 Packages/DiffIndexI, [2014-01-17T16:13:58.368202 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main Translation-en/DiffIndexI, [2014-01-17T16:13:58.456164 #22370]  INFO -- default-debian-720: 
-Reading package lists...I, [2014-01-17T16:13:59.252678 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:13:59.266071 #22370]  INFO -- default-debian-720: [2014-01-17T22:13:58+00:00] INFO: execute[apt-get-update-build-essentials] ran successfully
-I, [2014-01-17T16:13:59.266138 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:13:59.266173 #22370]  INFO -- default-debian-720:     - execute apt-get update[0m
-I, [2014-01-17T16:13:59.266204 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:13:59.266236 #22370]  INFO -- default-debian-720:   * package[autoconf] action install[0m[2014-01-17T22:13:58+00:00] INFO: Processing package[autoconf] action install (build-essential::debian line 40)
-I, [2014-01-17T16:14:06.885156 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:14:06.885223 #22370]  INFO -- default-debian-720:     - install version 2.69-1 of package autoconf[0m
-I, [2014-01-17T16:14:06.885244 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:14:06.885262 #22370]  INFO -- default-debian-720:   * package[binutils-doc] action install[0m[2014-01-17T22:14:05+00:00] INFO: Processing package[binutils-doc] action install (build-essential::debian line 40)
-[32mI, [2014-01-17T16:14:13.345981 #22370]  INFO -- default-debian-720: 
-    - install version 2.22-8 of package binutils-doc[0mI, [2014-01-17T16:14:13.346185 #22370]  INFO -- default-debian-720: 
-[0mI, [2014-01-17T16:14:13.346354 #22370]  INFO -- default-debian-720: 
-  * package[bison] action install[0m[2014-01-17T22:14:12+00:00] INFO: Processing package[bison] action install (build-essential::debian line 40)I, [2014-01-17T16:14:13.347237 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:14:20.140659 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:14:20.140728 #22370]  INFO -- default-debian-720:     - install version 1:2.5.dfsg-2.1 of package bison[0m
-I, [2014-01-17T16:14:20.140748 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:14:20.140766 #22370]  INFO -- default-debian-720:   * package[build-essential] action install[0m[2014-01-17T22:14:18+00:00] INFO: Processing package[build-essential] action install (build-essential::debian line 40)
-I, [2014-01-17T16:14:30.988591 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:14:30.988684 #22370]  INFO -- default-debian-720:     - install version 11.5 of package build-essential[0m
-I, [2014-01-17T16:14:30.988721 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:14:30.988753 #22370]  INFO -- default-debian-720:   * package[flex] action install[0m[2014-01-17T22:14:29+00:00] INFO: Processing package[flex] action install (build-essential::debian line 40)
-I, [2014-01-17T16:14:37.530394 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:14:37.530503 #22370]  INFO -- default-debian-720:     - install version 2.5.35-10.1 of package flex[0m
-I, [2014-01-17T16:14:37.530548 #22370]  INFO -- default-debian-720: [0m
-Recipe: xml::default[0mI, [2014-01-17T16:14:37.532823 #22370]  INFO -- default-debian-720: 
-  * package[libxml2-dev] action install[0m[2014-01-17T22:14:36+00:00] INFO: Processing package[libxml2-dev] action install (xml::default line 21)I, [2014-01-17T16:14:37.533883 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:14:44.466840 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:14:44.466950 #22370]  INFO -- default-debian-720:     - install version 2.8.0+dfsg1-7+nmu2 of package libxml2-dev[0m
-I, [2014-01-17T16:14:44.466996 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:14:44.467036 #22370]  INFO -- default-debian-720:   * package[libxslt-dev] action install[0m[2014-01-17T22:14:43+00:00] INFO: Processing package[libxslt-dev] action install (xml::default line 21)
-I, [2014-01-17T16:14:44.565589 #22370]  INFO -- default-debian-720: [2014-01-17T22:14:43+00:00] INFO: package[libxslt-dev] is a virtual package, actually acting on package[libxslt1-dev]
-I, [2014-01-17T16:14:51.800378 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:14:51.821327 #22370]  INFO -- default-debian-720:     - install version 1.1.26-14.1 of package libxslt-dev[0m
-I, [2014-01-17T16:14:51.821369 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:14:51.821396 #22370]  INFO -- default-debian-720: Recipe: xml::ruby[0m
-I, [2014-01-17T16:14:51.821414 #22370]  INFO -- default-debian-720:   * chef_gem[nokogiri] action install[0m[2014-01-17T22:14:50+00:00] INFO: Processing chef_gem[nokogiri] action install (xml::ruby line 32)
-I, [2014-01-17T16:16:18.737941 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:16:18.738017 #22370]  INFO -- default-debian-720:     - install version 1.6.1 of package nokogiri[0m
-I, [2014-01-17T16:16:18.738039 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:16:18.738058 #22370]  INFO -- default-debian-720: Recipe: rackspace_cloudmonitoring::default[0m
-I, [2014-01-17T16:16:18.738075 #22370]  INFO -- default-debian-720:   * chef_gem[fog] action install[0m[2014-01-17T22:16:17+00:00] INFO: Processing chef_gem[fog] action install (rackspace_cloudmonitoring::default line 23)
-[32mI, [2014-01-17T16:16:45.903655 #22370]  INFO -- default-debian-720: 
-    - install version >= 1.16.0 of package fog[0mI, [2014-01-17T16:16:45.903892 #22370]  INFO -- default-debian-720: 
-[0mI, [2014-01-17T16:16:45.904054 #22370]  INFO -- default-debian-720: 
-Converging 19 resources[0mI, [2014-01-17T16:16:46.626976 #22370]  INFO -- default-debian-720: 
-Recipe: rackspace_apt::default[0mI, [2014-01-17T16:16:46.627544 #22370]  INFO -- default-debian-720: 
-  * execute[apt-get-update] action run[0m[2014-01-17T22:16:45+00:00] INFO: Processing execute[apt-get-update] action run (rackspace_apt::default line 34)I, [2014-01-17T16:16:46.627972 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy Release.gpgI, [2014-01-17T16:16:51.852566 #22370]  INFO -- default-debian-720: 
-Hit http://security.debian.org wheezy/updates Release.gpgI, [2014-01-17T16:16:51.852947 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates Release.gpgI, [2014-01-17T16:16:51.916481 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:16:51.946932 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates Release
-I, [2014-01-17T16:16:52.014329 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy Release
-I, [2014-01-17T16:16:52.044593 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main Sources
-I, [2014-01-17T16:16:52.102515 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main amd64 Packages
-Hit http://mirrors.kernel.org wheezy-updates ReleaseI, [2014-01-17T16:16:52.143096 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:16:52.157726 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main Translation-en
-I, [2014-01-17T16:16:52.224587 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy/main Sources
-Hit http://mirrors.kernel.org wheezy/main amd64 PackagesI, [2014-01-17T16:16:52.312810 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy/main Translation-enI, [2014-01-17T16:16:52.403951 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main SourcesI, [2014-01-17T16:16:52.501115 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main amd64 Packages/DiffIndexI, [2014-01-17T16:16:52.572474 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main Translation-en/DiffIndexI, [2014-01-17T16:16:52.643655 #22370]  INFO -- default-debian-720: 
-Reading package lists...I, [2014-01-17T16:16:53.794753 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:16:53.822024 #22370]  INFO -- default-debian-720: [2014-01-17T22:16:52+00:00] INFO: execute[apt-get-update] ran successfully
-I, [2014-01-17T16:16:53.822117 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:16:53.822162 #22370]  INFO -- default-debian-720:     - execute apt-get update[0m
-I, [2014-01-17T16:16:53.822201 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:16:53.822240 #22370]  INFO -- default-debian-720:   * execute[apt-get update] action nothing[0m[2014-01-17T22:16:52+00:00] INFO: Processing execute[apt-get update] action nothing (rackspace_apt::default line 42)
-I, [2014-01-17T16:16:53.822293 #22370]  INFO -- default-debian-720:  (skipped due to action :nothing)[0m
-I, [2014-01-17T16:16:53.822338 #22370]  INFO -- default-debian-720:   * execute[apt-get autoremove] action nothing[0m[2014-01-17T22:16:52+00:00] INFO: Processing execute[apt-get autoremove] action nothing (rackspace_apt::default line 50)
-I, [2014-01-17T16:16:53.822379 #22370]  INFO -- default-debian-720:  (skipped due to action :nothing)[0m
-I, [2014-01-17T16:16:53.822419 #22370]  INFO -- default-debian-720:   * execute[apt-get autoclean] action nothing[0m[2014-01-17T22:16:52+00:00] INFO: Processing execute[apt-get autoclean] action nothing (rackspace_apt::default line 57)
-I, [2014-01-17T16:16:53.822458 #22370]  INFO -- default-debian-720:  (skipped due to action :nothing)[0m
-I, [2014-01-17T16:16:53.822499 #22370]  INFO -- default-debian-720:   * package[update-notifier-common] action install[0m[2014-01-17T22:16:52+00:00] INFO: Processing package[update-notifier-common] action install (rackspace_apt::default line 64)
-I, [2014-01-17T16:17:00.319758 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:17:00.319826 #22370]  INFO -- default-debian-720:     - install version 0.99.3debian11 of package update-notifier-common[0m
-I, [2014-01-17T16:17:00.319847 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:17:00.319865 #22370]  INFO -- default-debian-720: [2014-01-17T22:16:59+00:00] INFO: package[update-notifier-common] sending run action to execute[apt-get-update] (immediate)
-I, [2014-01-17T16:17:00.319883 #22370]  INFO -- default-debian-720:   * execute[apt-get-update] action run[0m[2014-01-17T22:16:59+00:00] INFO: Processing execute[apt-get-update] action run (rackspace_apt::default line 34)
-Hit http://mirrors.kernel.org wheezy Release.gpgI, [2014-01-17T16:17:05.510844 #22370]  INFO -- default-debian-720: 
-Hit http://security.debian.org wheezy/updates Release.gpgI, [2014-01-17T16:17:05.531141 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:05.594489 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates Release
-I, [2014-01-17T16:17:05.594585 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy-updates Release.gpg
-I, [2014-01-17T16:17:05.683058 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy Release
-I, [2014-01-17T16:17:05.683149 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main Sources
-I, [2014-01-17T16:17:05.758724 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main amd64 Packages
-I, [2014-01-17T16:17:05.762396 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy-updates Release
-I, [2014-01-17T16:17:05.834521 #22370]  INFO -- default-debian-720: Hit http://mirrors.kernel.org wheezy/main Sources
-I, [2014-01-17T16:17:05.836406 #22370]  INFO -- default-debian-720: Hit http://security.debian.org wheezy/updates/main Translation-en
-Hit http://mirrors.kernel.org wheezy/main amd64 PackagesI, [2014-01-17T16:17:05.923965 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy/main Translation-enI, [2014-01-17T16:17:06.027429 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main SourcesI, [2014-01-17T16:17:06.109835 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main amd64 Packages/DiffIndexI, [2014-01-17T16:17:06.208090 #22370]  INFO -- default-debian-720: 
-Hit http://mirrors.kernel.org wheezy-updates/main Translation-en/DiffIndexI, [2014-01-17T16:17:06.289298 #22370]  INFO -- default-debian-720: 
-Reading package lists...I, [2014-01-17T16:17:07.179680 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.194757 #22370]  INFO -- default-debian-720: [2014-01-17T22:17:06+00:00] INFO: execute[apt-get-update] ran successfully
-I, [2014-01-17T16:17:07.194817 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:17:07.194837 #22370]  INFO -- default-debian-720:     - execute apt-get update[0m
-I, [2014-01-17T16:17:07.194855 #22370]  INFO -- default-debian-720: [0m
-I, [2014-01-17T16:17:07.194873 #22370]  INFO -- default-debian-720:   * execute[apt-get-update-periodic] action run[0m[2014-01-17T22:17:06+00:00] INFO: Processing execute[apt-get-update-periodic] action run (rackspace_apt::default line 69)
-I, [2014-01-17T16:17:07.195823 #22370]  INFO -- default-debian-720:  (skipped due to only_if)[0m
-I, [2014-01-17T16:17:07.195856 #22370]  INFO -- default-debian-720:   * directory[/var/cache/local] action create[0m[2014-01-17T22:17:06+00:00] INFO: Processing directory[/var/cache/local] action create (rackspace_apt::default line 80)
-I, [2014-01-17T16:17:07.195877 #22370]  INFO -- default-debian-720: [2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local] created directory /var/cache/local
-I, [2014-01-17T16:17:07.195896 #22370]  INFO -- default-debian-720: [32m
-I, [2014-01-17T16:17:07.195915 #22370]  INFO -- default-debian-720:     - create new directory /var/cache/local[0m
-[2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local] owner changed to 0I, [2014-01-17T16:17:07.196486 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local] group changed to 0I, [2014-01-17T16:17:07.196889 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local] mode changed to 755I, [2014-01-17T16:17:07.197273 #22370]  INFO -- default-debian-720: 
-[32mI, [2014-01-17T16:17:07.197446 #22370]  INFO -- default-debian-720: 
-    - change mode from '' to '0755'[0m[32mI, [2014-01-17T16:17:07.197767 #22370]  INFO -- default-debian-720: 
-    - change owner from '' to 'root'[0m[32mI, [2014-01-17T16:17:07.198072 #22370]  INFO -- default-debian-720: 
-    - change group from '' to 'root'[0mI, [2014-01-17T16:17:07.203860 #22370]  INFO -- default-debian-720: 
-[0mI, [2014-01-17T16:17:07.204298 #22370]  INFO -- default-debian-720: 
-  * directory[/var/cache/local/preseeding] action create[0m[2014-01-17T22:17:06+00:00] INFO: Processing directory[/var/cache/local/preseeding] action create (rackspace_apt::default line 80)I, [2014-01-17T16:17:07.205483 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local/preseeding] created directory /var/cache/local/preseedingI, [2014-01-17T16:17:07.206448 #22370]  INFO -- default-debian-720: 
-[32mI, [2014-01-17T16:17:07.207061 #22370]  INFO -- default-debian-720: 
-    - create new directory /var/cache/local/preseeding[0m[2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local/preseeding] owner changed to 0I, [2014-01-17T16:17:07.208440 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local/preseeding] group changed to 0I, [2014-01-17T16:17:07.209114 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: directory[/var/cache/local/preseeding] mode changed to 755I, [2014-01-17T16:17:07.209687 #22370]  INFO -- default-debian-720: 
-[32mI, [2014-01-17T16:17:07.210189 #22370]  INFO -- default-debian-720: 
-    - change mode from '' to '0755'[0m[32mI, [2014-01-17T16:17:07.210642 #22370]  INFO -- default-debian-720: 
-    - change owner from '' to 'root'[0m[32mI, [2014-01-17T16:17:07.211042 #22370]  INFO -- default-debian-720: 
-    - change group from '' to 'root'[0mI, [2014-01-17T16:17:07.211469 #22370]  INFO -- default-debian-720: 
-[0mI, [2014-01-17T16:17:07.211669 #22370]  INFO -- default-debian-720: 
-Recipe: xml::ruby[0mI, [2014-01-17T16:17:07.211926 #22370]  INFO -- default-debian-720: 
-  * execute[apt-get update] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing execute[apt-get update] action nothing (xml::ruby line 22)I, [2014-01-17T16:17:07.212303 #22370]  INFO -- default-debian-720: 
- (skipped due to action :nothing)[0mI, [2014-01-17T16:17:07.212516 #22370]  INFO -- default-debian-720: 
-Recipe: build-essential::debian[0mI, [2014-01-17T16:17:07.212733 #22370]  INFO -- default-debian-720: 
-  * execute[apt-get-update-build-essentials] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing execute[apt-get-update-build-essentials] action nothing (build-essential::debian line 22)I, [2014-01-17T16:17:07.213120 #22370]  INFO -- default-debian-720: 
- (skipped due to action :nothing)[0mI, [2014-01-17T16:17:07.213314 #22370]  INFO -- default-debian-720: 
-  * package[autoconf] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing package[autoconf] action nothing (build-essential::debian line 40)I, [2014-01-17T16:17:07.213760 #22370]  INFO -- default-debian-720: 
- (skipped due to action :nothing)[0mI, [2014-01-17T16:17:07.213974 #22370]  INFO -- default-debian-720: 
-  * package[binutils-doc] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing package[binutils-doc] action nothing (build-essential::debian line 40)I, [2014-01-17T16:17:07.214473 #22370]  INFO -- default-debian-720: 
- (skipped due to action :nothing)[0mI, [2014-01-17T16:17:07.214724 #22370]  INFO -- default-debian-720: 
-  * package[bison] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing package[bison] action nothing (build-essential::debian line 40)I, [2014-01-17T16:17:07.215056 #22370]  INFO -- default-debian-720: 
- (skipped due to action :nothing)[0mI, [2014-01-17T16:17:07.215258 #22370]  INFO -- default-debian-720: 
-  * package[build-essential] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing package[build-essential] action nothing (build-essential::debian line 40)I, [2014-01-17T16:17:07.215660 #22370]  INFO -- default-debian-720: 
- (skipped due to action :nothing)[0mI, [2014-01-17T16:17:07.215950 #22370]  INFO -- default-debian-720: 
-  * package[flex] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing package[flex] action nothing (build-essential::debian line 40)I, [2014-01-17T16:17:07.216380 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.216556 #22370]  INFO -- default-debian-720:  (skipped due to action :nothing)[0m
-I, [2014-01-17T16:17:07.216582 #22370]  INFO -- default-debian-720: Recipe: xml::default[0m
-I, [2014-01-17T16:17:07.216768 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.216794 #22370]  INFO -- default-debian-720:   * package[libxml2-dev] action nothing[0m[2014-01-17T22:17:06+00:00] INFO: Processing package[libxml2-dev] action nothing (xml::default line 21)
-I, [2014-01-17T16:17:07.216926 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.216952 #22370]  INFO -- default-debian-720:  (skipped due to action :nothing)[0m
-I, [2014-01-17T16:17:07.216971 #22370]  INFO -- default-debian-720:   * package[libxslt-dev] action nothing[0m
-[2014-01-17T22:17:06+00:00] INFO: Processing package[libxslt-dev] action nothing (xml::default line 21)I, [2014-01-17T16:17:07.217272 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.217298 #22370]  INFO -- default-debian-720:  (skipped due to action :nothing)[0m
-I, [2014-01-17T16:17:07.217318 #22370]  INFO -- default-debian-720: Recipe: xml::ruby[0m
-I, [2014-01-17T16:17:07.217464 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.217489 #22370]  INFO -- default-debian-720:   * chef_gem[nokogiri] action install[0m[2014-01-17T22:17:06+00:00] INFO: Processing chef_gem[nokogiri] action install (xml::ruby line 32)
-I, [2014-01-17T16:17:07.218217 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.218243 #22370]  INFO -- default-debian-720:  (up to date)[0m
-I, [2014-01-17T16:17:07.218377 #22370]  INFO -- default-debian-720: 
-Recipe: rackspace_cloudmonitoring::default[0mI, [2014-01-17T16:17:07.218573 #22370]  INFO -- default-debian-720: 
-  * chef_gem[fog] action install[0m[2014-01-17T22:17:06+00:00] INFO: Processing chef_gem[fog] action install (rackspace_cloudmonitoring::default line 23)I, [2014-01-17T16:17:07.218915 #22370]  INFO -- default-debian-720: 
- (up to date)[0mI, [2014-01-17T16:17:07.219547 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: Chef Run complete in 206.585577587 secondsI, [2014-01-17T16:17:07.221349 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: Running report handlersI, [2014-01-17T16:17:07.221697 #22370]  INFO -- default-debian-720: 
-[2014-01-17T22:17:06+00:00] INFO: Report handlers completeI, [2014-01-17T16:17:07.221947 #22370]  INFO -- default-debian-720: 
-Chef Client finished, 16 resources updated[0mI, [2014-01-17T16:17:07.222157 #22370]  INFO -- default-debian-720: 
-I, [2014-01-17T16:17:07.850027 #22370]  INFO -- default-debian-720: Finished converging <default-debian-720> (3m56.83s).
-I, [2014-01-17T16:17:07.850139 #22370]  INFO -- default-debian-720: -----> Setting up <default-debian-720>...
-I, [2014-01-17T16:17:07.852354 #22370]  INFO -- default-debian-720: Finished setting up <default-debian-720> (0m0.00s).
-I, [2014-01-17T16:17:07.852453 #22370]  INFO -- default-debian-720: -----> Verifying <default-debian-720>...
-I, [2014-01-17T16:17:07.854380 #22370]  INFO -- default-debian-720: Finished verifying <default-debian-720> (0m0.00s).
-I, [2014-01-17T16:17:07.855890 #22370]  INFO -- default-debian-720: -----> Destroying <default-debian-720>...
-I, [2014-01-17T16:17:12.928272 #22370]  INFO -- default-debian-720: [default] Forcing shutdown of VM...
-I, [2014-01-17T16:17:15.409007 #22370]  INFO -- default-debian-720: [default] Destroying VM and associated drives...
-I, [2014-01-17T16:17:16.182616 #22370]  INFO -- default-debian-720: Vagrant instance <default-debian-720> destroyed.
-I, [2014-01-17T16:17:16.183525 #22370]  INFO -- default-debian-720: Finished destroying <default-debian-720> (0m8.33s).
-I, [2014-01-17T16:17:16.183730 #22370]  INFO -- default-debian-720: Finished testing <default-debian-720> (6m0.25s).

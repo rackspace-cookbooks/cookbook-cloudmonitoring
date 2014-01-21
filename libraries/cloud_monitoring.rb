@@ -129,12 +129,12 @@ module Opscode
             },
             auth_url: {
               resource: 'rackspace_auth_url',
-              node:     'default[:rackspace_cloudmonitoring][:agent][:token]',
+              node:     '[:rackspace_cloudmonitoring][:auth][:url]',
               databag:  'auth_url',
             },
             token: {
               resource: nil,
-              node:     nil,
+              node:     '[:rackspace_cloudmonitoring][:agent][:token]',
               databag:  'agent_token',
             },
           }

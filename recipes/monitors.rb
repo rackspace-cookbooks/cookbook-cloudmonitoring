@@ -21,7 +21,7 @@
 #
 
 # Include dependency recipes
-include_recipe 'rackspace_cloudmonitoring'
+include_recipe 'rackspace_cloudmonitoring::default'
 include_recipe 'rackspace_cloudmonitoring::agent'
 
 rackspace_cloudmonitoring_entity node[:rackspace_cloudmonitoring][:monitors_defaults][:entity][:label] do

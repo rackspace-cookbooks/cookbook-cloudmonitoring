@@ -20,6 +20,9 @@
 # limitations under the License.
 #
 
+# Include dependency recipes
+include_recipe 'rackspace_cloudmonitoring::default'
+
 if platform_family?('debian')
   rackspace_apt_repository 'cloud-monitoring' do
 
@@ -68,17 +71,25 @@ class Chef::Recipe
   include Opscode::Rackspace::Monitoring
 end
 
+# Pull the token using the CM_credentials class, which handles node and databag varialbles
 credentials = CM_credentials.new(node, nil)
 node.set[:rackspace_cloudmonitoring][:agent][:token] = credentials.get_attribute(:token)
 
-# Call the agent_token LWRP to ensure we have a token in the API
-rackspace_cloudmonitoring_agent_token "#{node.hostname}" do
-  token               node[:rackspace_cloudmonitoring][:agent][:token]
-  action :create
-end
+# If the token or id was not specified, call the API to generate/locate it.
+if node[:rackspace_cloudmonitoring][:agent][:token].nil? or node[:rackspace_cloudmonitoring][:agent][:id].nil?
+  rackspace_cloudmonitoring_agent_token "#{node.hostname}" do
+    token               node[:rackspace_cloudmonitoring][:agent][:token]
+    action :create
+  end
 
-my_token_obj = CM_agent_token.new(credentials, node[:rackspace_cloudmonitoring][:agent][:token], "#{node.hostname}")
-my_token = my_token_obj.get_obj
+  my_token_obj = CM_agent_token.new(credentials, node[:rackspace_cloudmonitoring][:agent][:token], "#{node.hostname}")
+  my_token = my_token_obj.get_obj
+
+  node.set[:rackspace_cloudmonitoring][:agent][:token] = my_token.token
+  # So the API calls it label, and the config calls it ID
+  # Clear as mud.
+  node.set[:rackspace_cloudmonitoring][:agent][:id] = my_token.label
+end
 
 # Generate the config template
 template '/etc/rackspace-monitoring-agent.cfg' do
@@ -88,17 +99,11 @@ template '/etc/rackspace-monitoring-agent.cfg' do
   group 'root'
   mode 0600
   variables(
-            # So the API calls it label, and the config calls it ID
-            # Clear as mud.
-            monitoring_id:    my_token.label,
-            monitoring_token: my_token.token,
+            monitoring_id:    node[:rackspace_cloudmonitoring][:agent][:id],
+            monitoring_token: node[:rackspace_cloudmonitoring][:agent][:token],
             )
   action :create
 end
-
-# Save the token label into the node attributes for use by the entity recipe
-# Note that, like the agent, the entity API calls it ID.
-node.default[:rackspace_cloudmonitoring][:agent][:id] = my_token.label
 
 package 'rackspace-monitoring-agent' do
   if node[:rackspace_cloudmonitoring][:agent][:version] == 'latest'
