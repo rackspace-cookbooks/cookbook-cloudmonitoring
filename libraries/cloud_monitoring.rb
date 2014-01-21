@@ -637,6 +637,7 @@ module Opscode
         end
       end # END CMChild class
 
+      # CMCheck: Class for handling Cloud Monitoring Check objects
       class CMCheck < CMChild
         # Note that this initializer DOES NOT LOAD ANY CHECKS!
         # User must call a lookup function before calling update
@@ -645,6 +646,7 @@ module Opscode
         end
       end
 
+      # CMAlarm: Class for handling Cloud Monitoring Alarm objects
       class CMAlarm < CMChild
         # Note that this initializer DOES NOT LOAD ANY ALARMS!
         # User must call a lookup function before calling update
@@ -675,6 +677,7 @@ module Opscode
         end
       end
 
+      # CMAgentToken: Class for handling Cloud Monitoring Agent Token objects
       class CMAgentToken < CMObjBase
         def initialize(credentials, token, label)
           @cm = CMApi.new(credentials).cm
