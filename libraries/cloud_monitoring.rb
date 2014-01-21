@@ -38,7 +38,7 @@ module Opscode
         def get(*keys)
           unless keys.length == @num_keys
             arg_count = keys.length
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
+            fail "Opscode::Rackspace::Monitoring::CM_cache.get: Key count mismatch (#{@num_keys}:#{arg_count})"
           end
 
           unless defined?(@cache)
@@ -67,7 +67,7 @@ module Opscode
         def save(value, *keys)
           unless keys.length == @num_keys
             arg_count = keys.length
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.save: Key count mismatch (#{@num_keys}:#{arg_count})"
+            fail "Opscode::Rackspace::Monitoring::CM_cache.save: Key count mismatch (#{@num_keys}:#{arg_count})"
           end
 
           unless defined?(@cache)
@@ -78,11 +78,11 @@ module Opscode
           for i in 0...@num_keys
             key = keys[i]
             if key.nil?
-              raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.save: Nil key at index #{i})"
+              fail "Opscode::Rackspace::Monitoring::CM_cache.save: Nil key at index #{i})"
             end
 
             if key.length <= 0
-              raise Exception, "Opscode::Rackspace::Monitoring::CM_cache.save: Empty key at index #{i})"
+              fail "Opscode::Rackspace::Monitoring::CM_cache.save: Empty key at index #{i})"
             end
 
             cval = eval(eval_str)
@@ -145,7 +145,7 @@ module Opscode
         # POST: None
         def get_attribute(attribute_name)
           unless @attribute_map.key? attribute_name
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
+            fail "Opscode::Rackspace::Monitoring::CM_credentials.get_attribute: Attribute #{attribute_name} not defined in @attribute_map"
           end
 
           unless @attribute_map[attribute_name][:resource].nil?
@@ -239,7 +239,7 @@ module Opscode
                                                )
 
           if @cm.nil?
-            raise Exception, 'Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog'
+            fail 'Opscode::Rackspace::Monitoring::cm_api.initialize: ERROR: Unable to connect to Fog'
           end
           Chef::Log.debug('Opscode::Rackspace::Monitoring::cm_api.initialize: Fog connection successful')
           
@@ -268,7 +268,7 @@ module Opscode
         # RETURN VALUE: returns looked up obj
         def obj_lookup_by_id(obj, parent_obj, debug_name, id)
           if id.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: ERROR: Passed nil id"
+            fail "Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_id: ERROR: Passed nil id"
             return nil
           end
 
@@ -295,7 +295,7 @@ module Opscode
         # RETURN VALUE: returns looked up obj
         def obj_lookup_by_label(obj, parent_obj, debug_name, label)
           if label.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: ERROR: Passed nil label"
+            fail "Opscode::Rackspace::Monitoring::CM_Api(#{debug_name}).lookup_by_label: ERROR: Passed nil label"
           end
 
           unless obj.nil?
@@ -460,7 +460,7 @@ module Opscode
           end
 
           if ip.nil?
-            raise Exception, 'Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip'
+            fail 'Opscode::Rackspace::Monitoring::CM_entity.lookup_entity_by_ip: ERROR: Passed nil ip'
           end
 
           unless @entity_obj.nil?
@@ -524,7 +524,7 @@ module Opscode
 
           @entity = CM_entity.new(credentials, entity_chef_label)
           if @entity.get_entity_obj.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
+            fail "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
           end
           
           @username = credentials.get_attribute(:username)
@@ -604,7 +604,7 @@ module Opscode
           orig_obj = @obj
           return _update_obj(obj_update(@obj, _get_target, @debug_name, attributes))
           if @obj.nil?
-            raise Exception, "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: obj_update returned nil"
+            fail "Opscode::Rackspace::Monitoring::CM_child(#{@debug_name}).update: obj_update returned nil"
           end
 
           if orig_obj.nil?
@@ -688,7 +688,7 @@ module Opscode
           end
 
           if label.nil?
-            raise Exception, 'Opscode::Rackspace::Monitoring::CM_agent_token.initialize: ERROR: Passed nil label'
+            fail 'Opscode::Rackspace::Monitoring::CM_agent_token.initialize: ERROR: Passed nil label'
           end
 
           @obj = obj_lookup_by_label(nil, @cm.agent_tokens, 'Agent_Token', label)
@@ -723,7 +723,7 @@ module Opscode
           orig_obj = @obj
           @obj = obj_update(@obj, @cm.agent_tokens, 'Agent_Token', attributes)
           if @obj.nil?
-            raise Exception, 'Opscode::Rackspace::Monitoring::CM_agent_token.update obj_update returned nil'
+            fail 'Opscode::Rackspace::Monitoring::CM_agent_token.update obj_update returned nil'
           end
 
           if orig_obj.nil?

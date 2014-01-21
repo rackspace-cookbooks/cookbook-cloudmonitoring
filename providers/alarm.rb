@@ -26,19 +26,19 @@ action :create do
   check_id = new_resource.check_id
 
   if new_resource.example_id then
-    raise Exception, 'Cannot specify example_id and criteria' unless new_resource.criteria.nil?
+    fail 'Cannot specify example_id and criteria' unless new_resource.criteria.nil?
 
     criteria = @current_resource.get_example_alarm(new_resource.example_id, new_resource.example_values)
   end
 
   if new_resource.check_label then
-    raise Exception, 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
+    fail 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
     
     check_obj = CM_check.new(@current_resource.get_credentials, @new_resource.entity_chef_label, @new_resource.check_label)
     check_obj.lookup_by_label(new_resource.check_label)
 
     if check_obj.get_obj.nil?
-      raise Exception, "Unable to lookup check #{new_resource.check_label} on for alarm #{@new_resource.label} on entity #{@new_resource.entity_chef_label}"
+      fail "Unable to lookup check #{new_resource.check_label} on for alarm #{@new_resource.label} on entity #{@new_resource.entity_chef_label}"
     end
     
     check_id = check_obj.get_obj.id
