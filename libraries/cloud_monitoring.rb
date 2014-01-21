@@ -27,12 +27,19 @@ module Opscode
         # PRE: my_num_keys: Number of keys this cache will use
         # POST: None
         # RETURN VALUE: None
+
+        # Disable rubocop eval warnings
+        # This class uses eval to metaprogram, but all the keys should come from inside the code.
+        # User data should not be used for keys, documented in PRE conditions.
+        # rubocop:disable Eval
+
         def initialize(my_num_keys)
           @num_keys = my_num_keys
         end
 
         # get: Get a value from the cache
         # PRE: Keys must be strings, not symbols
+        #      Keys must be defined in code and not come from user input for security
         # POST: None
         # RETURN VALUE: None
         def get(*keys)
@@ -62,6 +69,7 @@ module Opscode
 
         # get: Save a value to the cache
         # PRE: Keys must be strings, not symbols
+        #      Keys must be defined in code and not come from user input for security
         # POST: None
         # RETURN VALUE: Data or nil
         def save(value, *keys)
@@ -95,6 +103,9 @@ module Opscode
 
           Chef::Log.debug("Opscode::Rackspace::Monitoring::CMCache.save: Saving #{value} to #{eval_str}")
           eval("#{eval_str} = value")
+
+          # Re-enable eval checks
+          # rubocop:enable Eval
         end
 
         # dump: Return the internal cache dictionary
@@ -141,7 +152,7 @@ module Opscode
         end
 
         # get_attribute: get an attribute
-        # PRE: None
+        # PRE: attribute_name must be defined in code and not come from user input for security
         # POST: None
         def get_attribute(attribute_name)
           unless @attribute_map.key? attribute_name
@@ -157,7 +168,12 @@ module Opscode
           unless @attribute_map[attribute_name][:node].nil?
             # Note is a hash, so use eval to tack on the indexes
             begin
+              # Disable rubocop eval warnings
+              # The @attribute_map[attribute_name][:node] variable is set in the constructor
+              #   Security for attribute_name documented in PRE conditions
+              # rubocop:disable Eval
               node_val = eval("@node#{@attribute_map[attribute_name][:node]}")
+              # rubocop:enable Eval
             rescue NoMethodError
               node_val = nil
             end
@@ -220,6 +236,11 @@ module Opscode
         # RETURN VALUE: None
         # Opens @cm class variable
         def initialize(credentials)
+          # This class intentionally uses a class method to share Fog connections across class instances
+          # The class variable is guraded by use of the CMCache class which ensures proper connections are utilized
+          #    across different class instances.
+          # Basically we're in a corner case where class variables are called for.
+          # rubocop:disable ClassVars
           username = credentials.get_attribute(:username)
           unless defined? @@cm_cache
             @@cm_cache = CMCache.new(1)
@@ -244,6 +265,9 @@ module Opscode
           Chef::Log.debug('Opscode::Rackspace::Monitoring::CMApi.initialize: Fog connection successful')
 
           @@cm_cache.save(@cm, username)
+
+          # Re-enable ClassVars rubocop errors
+          # rubocop:enable ClassVars
         end
 
         # cm: Getter for the @@cm class variable
@@ -358,6 +382,12 @@ module Opscode
         # POST: None
         # RETURN VALUE: None
         def initialize(credentials, my_chef_label)
+          # This class intentionally uses a class method to share entity IDs across class instances
+          # The class variable is guraded by use of the CMCache class which ensures IDs are utilized
+          #    properly across different class instances.
+          # Basically we're in a corner case where class variables are called for.
+          # rubocop:disable ClassVars
+
           @chef_label = my_chef_label
           @cm = CMApi.new(credentials).cm
           @username = credentials.get_attribute(:username)
@@ -370,6 +400,7 @@ module Opscode
           unless @entity_obj.nil?
             Chef::Log.debug('Opscode::Rackspace::Monitoring::CMEntity: Using entity saved in local cache')
           end
+          # rubocop:enable ClassVars
         end
 
         # entity_obj: Return the entity object
@@ -413,7 +444,8 @@ module Opscode
 
           unless new_entity.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CMEntity._update_entity_obj: Caching entity with ID #{new_entity.id}")
-            @@entity_cache.save(@entity_obj, @username, @chef_label)
+            @@entity_cache.save(@entity_obj, @username, @chef_label) # rubocop:disable ClassVars
+                                                                     # See comment in constructor
           end
 
           return new_entity
@@ -498,7 +530,8 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def delete_entity
-          orig_obj = @entity_obj
+          orig_obj = @entity_obj # rubocop:disable UselessAssignment
+                                 # rubocop falsely flags this as useless, it's used via interpolation in the info log
           if obj_delete(@entity_obj, @cm.entities, 'Entity')
             _update_entity_obj(nil)
             Chef::Log.info("Opscode::Rackspace::Monitoring::CMEntity.delete: Deleted entity #{@orig_obj.label} (#{@orig_obj.id})")
@@ -516,6 +549,12 @@ module Opscode
         # POST: None
         # RETURN VALUE: None
         def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_label)
+          # This class intentionally uses a class method to share object IDs across class instances
+          # The class variable is guraded by use of the CMCache class which ensures IDs are utilized
+          #    properly across different class instances.
+          # Basically we're in a corner case where class variables are called for.
+          # rubocop:disable ClassVars
+
           @target_name = my_target_name
           @debug_name = my_debug_name
           @entity_chef_label = entity_chef_label
@@ -531,6 +570,7 @@ module Opscode
             @@obj_cache = CMCache.new(4)
           end
           @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @label)
+          # rubocop:enable ClassVars
         end
 
         # _get_target: Call send on the entity to get the target object
@@ -571,7 +611,8 @@ module Opscode
 
           unless new_entity.nil?
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name})._update_obj: Caching entity with ID #{new_entity.id}")
-            @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @label)
+            @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @label)  # rubocop:disable ClassVars
+                                                                                         # See comment in constructor
           end
 
           return new_entity
@@ -605,6 +646,8 @@ module Opscode
             fail "Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: obj_update returned nil"
           end
 
+          # Disable long line warnings for the info logs, no simple way to shorten them
+          # rubocop:disable LineLength
           if orig_obj.nil?
             entity_id = @entity.entity_obj_id
             Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: Created new #{@debug_name} #{@obj.label} (#{@obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
@@ -617,6 +660,8 @@ module Opscode
             return true
           end
 
+          # rubocop:enable LineLength
+
           return false
         end
 
@@ -625,12 +670,18 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def delete
-          orig_obj = obj
+          orig_obj = obj # rubocop:disable UselessAssignment
+                         # rubocop falsely flags this as useless, it's used via interpolation in the info log
           if obj_delete(@obj, _get_target, @target_name)
             _update_obj(nil)
 
             entity_id = @entity.entity_obj_id
+
+            # Disable long line warnings for the info logs, no simple way to shorten them
+            # rubocop:disable LineLength
             Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).delete: Deleted #{@debug_name} #{@orig_obj.label} (#{@orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
+            # rubocop:enable LineLength
+
             return true
           end
           return false
@@ -745,7 +796,8 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def delete_
-          orig_obj = obj
+          orig_obj = obj # rubocop:disable UselessAssignment
+                         # rubocop falsely flags this as useless, it's used via interpolation in the info log
           if obj_delete(@obj, @cm.agent_tokens, @target_name)
             @obj = nil
             Chef::Log.info("Opscode::Rackspace::Monitoring::CMAgentToken.delete: Deleted token #{@orig_obj.id}")
