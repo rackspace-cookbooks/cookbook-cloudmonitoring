@@ -269,7 +269,6 @@ module Opscode
         def obj_lookup_by_id(obj, parent_obj, debug_name, id)
           if id.nil?
             fail "Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: ERROR: Passed nil id"
-            return nil
           end
 
           unless obj.nil?
@@ -601,7 +600,7 @@ module Opscode
         # Idempotent: Does not update entities unless required
         def update(attributes = {})
           orig_obj = @obj
-          return _update_obj(obj_update(@obj, _get_target, @debug_name, attributes))
+          _update_obj(obj_update(@obj, _get_target, @debug_name, attributes))
           if @obj.nil?
             fail "Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).update: obj_update returned nil"
           end
