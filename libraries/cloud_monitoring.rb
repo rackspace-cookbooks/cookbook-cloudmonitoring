@@ -242,7 +242,7 @@ module Opscode
         # Opens @cm class variable
         def initialize(credentials)
           # This class intentionally uses a class method to share Fog connections across class instances
-          # The class variable is guraded by use of the CMCache class which ensures proper connections are utilized
+          # The class variable is guarded by use of the CMCache class which ensures proper connections are utilized
           #    across different class instances.
           # Basically we're in a corner case where class variables are called for.
           # rubocop:disable ClassVars
@@ -388,7 +388,7 @@ module Opscode
         # RETURN VALUE: None
         def initialize(credentials, my_chef_label)
           # This class intentionally uses a class method to share entity IDs across class instances
-          # The class variable is guraded by use of the CMCache class which ensures IDs are utilized
+          # The class variable is guarded by use of the CMCache class which ensures IDs are utilized
           #    properly across different class instances.
           # Basically we're in a corner case where class variables are called for.
           # rubocop:disable ClassVars
@@ -555,7 +555,7 @@ module Opscode
         # RETURN VALUE: None
         def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_label)
           # This class intentionally uses a class method to share object IDs across class instances
-          # The class variable is guraded by use of the CMCache class which ensures IDs are utilized
+          # The class variable is guarded by use of the CMCache class which ensures IDs are utilized
           #    properly across different class instances.
           # Basically we're in a corner case where class variables are called for.
           # rubocop:disable ClassVars
