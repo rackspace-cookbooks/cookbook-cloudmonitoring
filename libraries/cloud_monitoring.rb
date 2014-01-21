@@ -56,7 +56,7 @@ module Opscode
           (0...@num_keys).each do |i|
             key = keys[i]
             cval = eval(eval_str)
-            unless cval.key?(key)
+            unless cval.key?("#{key}")
               return nil
             end
 
@@ -89,12 +89,8 @@ module Opscode
               fail "Opscode::Rackspace::Monitoring::CMCache.save: Nil key at index #{i})"
             end
 
-            if key.length <= 0
-              fail "Opscode::Rackspace::Monitoring::CMCache.save: Empty key at index #{i})"
-            end
-
             cval = eval(eval_str)
-            unless cval.key?(key)
+            unless cval.key?("#{key}")
               eval("#{eval_str}[\"#{key}\"] = {}")
             end
 
