@@ -52,26 +52,28 @@ class TestData
   # Node data: Dummy node data
   # Set only_databag to true to test databags without any other node attributes
   def self.node_data(only_databag = false)
+    # Per https://github.com/rackspace-cookbooks/contributing/blob/master/CONTRIBUTING.md
+    # use strings for hash keys (:key != 'key')
     data = {
-      rackspace_cloudmonitoring: {
-        auth: {
-          databag: {
-            name: 'rackspace',
-            item: 'cloud'
+      'rackspace_cloudmonitoring' => {
+        'auth' => {
+          'databag' => {
+            'name' => 'rackspace',
+            'item' => 'cloud'
           }
         }
       }
     }
 
     unless only_databag
-      data[:rackspace] = {
-        cloud_credentials: {
-          username: 'node username',
-          api_key:  'node apikey'
+      data['rackspace'] = {
+        'cloud_credentials' => {
+          'username' => 'node username',
+          'api_key'  => 'node apikey'
         }
       }
-      data[:rackspace_cloudmonitoring][:auth][:url] = 'node authurl'
-      data[:rackspace_cloudmonitoring][:agent] = { token: 'node token' }
+      data['rackspace_cloudmonitoring']['auth']['url'] = 'node authurl'
+      data['rackspace_cloudmonitoring']['agent'] = { 'token' => 'node token' }
     end
 
     return data
@@ -90,7 +92,7 @@ class TestData
   # Databag data: Dummy data to be returned from the databag
   def self.databag_data
     return {
-      apikey:     'databag apikey',
+      apikey:      'databag apikey',
       username:    'databag username',
       auth_url:    'databag authurl',
       agent_token: 'databag token',

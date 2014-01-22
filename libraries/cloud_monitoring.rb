@@ -126,22 +126,22 @@ module Opscode
           @attribute_map = {
             api_key: {
               resource: 'rackspace_api_key',
-              node:     '[:rackspace][:cloud_credentials][:api_key]',
+              node:     '["rackspace"]["cloud_credentials"]["api_key"]',
               databag:  'apikey',
             },
             username: {
               resource: 'rackspace_username',
-              node:     '[:rackspace][:cloud_credentials][:username]',
+              node:     '["rackspace"]["cloud_credentials"]["username"]',
               databag:  'username',
             },
             auth_url: {
               resource: 'rackspace_auth_url',
-              node:     '[:rackspace_cloudmonitoring][:auth][:url]',
+              node:     '["rackspace_cloudmonitoring"]["auth"]["url"]',
               databag:  'auth_url',
             },
             token: {
               resource:  'monitoring_agent_token',
-              node:     '[:rackspace_cloudmonitoring][:agent][:token]',
+              node:     '["rackspace_cloudmonitoring"]["agent"]["token"]',
               databag:  'agent_token',
             },
           }
@@ -220,23 +220,23 @@ module Opscode
         end
 
         # load_databag: Load credentials from the databag
-        # PRE: Databag details defined in node[:rackspace_cloudmonitoring][:auth][:databag] attributes
+        # PRE: Databag details defined in node['rackspace_cloudmonitoring']['auth']['databag'] attributes
         # POST: None
         # RETURN VALUE: Data on success, empty hash on error
         # DOES NOT SET @databag_data
         def load_databag
           # Ignore the databag if the values aren't set
           begin
-            @node[:rackspace_cloudmonitoring][:auth][:databag][:name]
-            @node[:rackspace_cloudmonitoring][:auth][:databag][:item]
+            @node['rackspace_cloudmonitoring']['auth']['databag']['name']
+            @node['rackspace_cloudmonitoring']['auth']['databag']['item']
           rescue NoMethodError
             return {}
           end
 
           # Access the Rackspace Cloud encrypted data_bag
           begin
-            return Chef::EncryptedDataBagItem.load(@node[:rackspace_cloudmonitoring][:auth][:databag][:name],
-                                                   @node[:rackspace_cloudmonitoring][:auth][:databag][:item])
+            return Chef::EncryptedDataBagItem.load(@node['rackspace_cloudmonitoring']['auth']['databag']['name'],
+                                                   @node['rackspace_cloudmonitoring']['auth']['databag']['item'])
             # Chef::Exceptions::ValidationFailed is thrown in real use when the databag is not in use
             # Chef::Exceptions::InvalidDataBagPath is thrown by test kitchen when there are no databags
           rescue Chef::Exceptions::ValidationFailed, Chef::Exceptions::InvalidDataBagPath
