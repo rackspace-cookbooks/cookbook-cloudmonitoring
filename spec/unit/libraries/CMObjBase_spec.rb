@@ -28,27 +28,27 @@ include Opscode::Rackspace::Monitoring
 #
 class DummyObject
   attr_accessor :id, :label, :saved, :destroyed
-  
+
   def initialize(arg_hash)
     @id = arg_hash[:id]
     @label = arg_hash[:label]
     @saved = false
     @destroyed = false
   end
-  
+
   #
   # Methods mimicing Fog
   #
   def save
     @saved = true
   end
-  
+
   def destroy
     @destroyed = true
   end
 
   def compare?(other_obj)
-    if @destroyed or other_obj.destroyed
+    if @destroyed || other_obj.destroyed
       return false
     end
 
@@ -62,7 +62,6 @@ class DummyObject
 
     return true
   end
-
 end
 
 # Dummy parent object for testing: Behave like an array, except for a new method
@@ -72,9 +71,9 @@ end
 # created (not on DummyObject.save) but it will suffice for our needs.
 class DummyParentObject < Array
   def new(*args)
-    newObj = DummyObject.new(*args)
-    self.push(newObj)
-    return newObj
+    new_obj = DummyObject.new(*args)
+    push(new_obj)
+    return new_obj
   end
 end
 
@@ -86,9 +85,9 @@ describe 'CMObjBase' do
   describe 'Dummy Object Sanity Checks' do
     describe 'DummyObject' do
       it 'creates a dummy object properly' do
-        target_obj = DummyObject.new({id: 'id1', label: 'label1'})
+        target_obj = DummyObject.new(id: 'id1', label: 'label1')
         target_obj.id.should eql 'id1'
-        target_obj.label.should eql "label1"
+        target_obj.label.should eql 'label1'
         target_obj.saved.should eql false
         target_obj.destroyed.should eql false
       end
@@ -98,20 +97,20 @@ describe 'CMObjBase' do
       before :all do
         @parent_obj = DummyParentObject.new
       end
-      
+
       it 'is initially an empty array' do
         @parent_obj.should == []
       end
 
       it 'allows creation of DummyObjects' do
-        @parent_obj.new({id: 'id1', label: 'label1'})
+        @parent_obj.new(id: 'id1', label: 'label1')
         @parent_obj[0].id.should eql 'id1'
-        @parent_obj[0].label.should eql "label1"
+        @parent_obj[0].label.should eql 'label1'
         @parent_obj[0].saved.should eql false
         @parent_obj[0].destroyed.should eql false
       end
     end
-  end     
+  end
 
   #
   # Actual tests
@@ -120,28 +119,29 @@ describe 'CMObjBase' do
     before :each do
       @test_obj = CMObjBase.new
       @parent_obj = DummyParentObject.new
+      if @parent_obj != []
+        fail '@parent_obj not empty after initialization'
+      end
     end
 
     it 'returns nil when there are no objects in the parent' do
-      @parent_obj.should == [] # Sanity
-      @test_obj.obj_lookup_by_id(nil, @parent_obj, 'empty parent test', "foo").should eql nil
+      @test_obj.obj_lookup_by_id(nil, @parent_obj, 'empty parent test', 'foo').should eql nil
     end
 
     it 'finds objects in the parent' do
-      target_obj = @parent_obj.new({id: 'id1', label: 'label1'})
+      target_obj = @parent_obj.new(id: 'id1', label: 'label1')
       @test_obj.obj_lookup_by_id(nil, @parent_obj, 'obj find test', 'id1').should eql target_obj
     end
 
     it 'returns nil when an object is not found' do
       8.times do |i|
-                                           @parent_obj.new({id: "id#{i}", label: "label#{i}"})
+        @parent_obj.new(id: "id#{i}", label: "label#{i}")
       end
-      @test_obj.obj_lookup_by_id(nil, @parent_obj, 'obj not found test', "id9").should eql nil
+      @test_obj.obj_lookup_by_id(nil, @parent_obj, 'obj not found test', 'id9').should eql nil
     end
 
     it 'does not search the parent when the target is passed' do
-      target_obj = DummyObject.new({id: 'id1', label: 'label1'})
-      @parent_obj.should == [] # Sanity
+      target_obj = DummyObject.new(id: 'id1', label: 'label1')
       # Note target_obj is NOT in the parent array and the parent array is empty
       # If obj_lookup_by_id fails to return target_obj it should return nil per
       #  earlier test 'returns nil when there are no objects in the parent'
@@ -153,28 +153,29 @@ describe 'CMObjBase' do
     before :each do
       @test_obj = CMObjBase.new
       @parent_obj = DummyParentObject.new
+      if @parent_obj != []
+        fail '@parent_obj not empty after initialization'
+      end
     end
 
     it 'returns nil when there are no objects in the parent' do
-      @parent_obj.should == [] # Sanity
-      @test_obj.obj_lookup_by_label(nil, @parent_obj, 'empty parent test', "foo").should eql nil
+      @test_obj.obj_lookup_by_label(nil, @parent_obj, 'empty parent test', 'foo').should eql nil
     end
 
     it 'finds objects in the parent' do
-      target_obj = @parent_obj.new({id: 'id1', label: 'label1'})
+      target_obj = @parent_obj.new(id: 'id1', label: 'label1')
       @test_obj.obj_lookup_by_label(nil, @parent_obj, 'obj find test', 'label1').should eql target_obj
     end
 
     it 'returns nil when an object is not found' do
       8.times do |i|
-        @parent_obj.new({id: "id#{i}", label: "label#{i}"})
+        @parent_obj.new(id: "id#{i}", label: "label#{i}")
       end
-      @test_obj.obj_lookup_by_label(nil, @parent_obj, 'obj not found test', "label9").should eql nil
+      @test_obj.obj_lookup_by_label(nil, @parent_obj, 'obj not found test', 'label9').should eql nil
     end
 
     it 'does not search the parent when the target is passed' do
-      target_obj = DummyObject.new({id: 'id1', label: 'label1'})
-      @parent_obj.should == [] # Sanity
+      target_obj = DummyObject.new(id: 'id1', label: 'label1')
       # Note target_obj is NOT in the parent array and the parent array is empty
       # If obj_lookup_by_label fails to return target_obj it should return nil per
       #  earlier test 'returns nil when there are no objects in the parent'
@@ -189,7 +190,7 @@ describe 'CMObjBase' do
     end
 
     it 'creates a new object when obj is nil' do
-      target_obj = @test_obj.obj_update(nil, @parent_obj, "new obj test", {id: 'id1', label: 'label1'})
+      target_obj = @test_obj.obj_update(nil, @parent_obj, 'new obj test', id: 'id1', label: 'label1')
       target_obj.id.should eql 'id1'
       target_obj.label.should eql 'label1'
       target_obj.saved.should eql true
@@ -197,19 +198,19 @@ describe 'CMObjBase' do
     end
 
     it 'replaces an object when the object exists' do
-      orig_target_obj = @parent_obj.new({id: 'id1', label: 'label1'})
-      target_obj = @test_obj.obj_update(orig_target_obj, @parent_obj, "obj replacement test", {id: 'id1', label: "label2"})
+      orig_target_obj = @parent_obj.new(id: 'id1', label: 'label1')
+      target_obj = @test_obj.obj_update(orig_target_obj, @parent_obj, 'obj replacement test', id: 'id1', label: 'label2')
       # This test is flawed in that it doesn't test for replacement.
       # However the current framework doesn't allow for that
       target_obj.id.should eql 'id1'
-      target_obj.label.should eql "label2"
+      target_obj.label.should eql 'label2'
       target_obj.saved.should eql true
       target_obj.destroyed.should eql false
     end
 
     it 'does not modify if not required' do
-      orig_target_obj = @parent_obj.new({id: 'id1', label: 'label1'})
-      @test_obj.obj_update(orig_target_obj, @parent_obj, "obj modification test", {id: 'id1', label: 'label1'}).should eql orig_target_obj
+      orig_target_obj = @parent_obj.new(id: 'id1', label: 'label1')
+      @test_obj.obj_update(orig_target_obj, @parent_obj, 'obj modification test', id: 'id1', label: 'label1').should eql orig_target_obj
     end
   end
 
@@ -217,7 +218,7 @@ describe 'CMObjBase' do
     before :each do
       @test_obj = CMObjBase.new
       @parent_obj = DummyParentObject.new
-      @target_obj = @parent_obj.new({id: 'id1', label: 'label1'})
+      @target_obj = @parent_obj.new(id: 'id1', label: 'label1')
     end
 
     it 'destroys obj' do
@@ -228,5 +229,5 @@ describe 'CMObjBase' do
     it 'does not try and destroy nil objects' do
       @test_obj.obj_delete(nil, @parent_obj, 'destruction test').should eql false
     end
-  end   
+  end
 end

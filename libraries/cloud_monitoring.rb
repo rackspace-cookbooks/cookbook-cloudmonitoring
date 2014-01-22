@@ -330,21 +330,21 @@ module Opscode
         # RETURN VALUE: returns looked up obj
         def obj_lookup_by_id(obj, parent_obj, debug_name, id)
           if id.nil?
-            fail "Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: ERROR: Passed nil id"
+            fail "Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_id: ERROR: Passed nil id"
           end
 
           unless obj.nil?
             if obj.id == id
-              Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: Existing object hit for #{id}")
+              Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_id: Existing object hit for #{id}")
               return obj
             end
           end
 
           obj = parent_obj.find { |sobj| sobj.id == id }
           if obj.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: No object found for #{id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_id: No object found for #{id}")
           else
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: New object found for #{id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_id: New object found for #{id}")
           end
 
           return obj
@@ -356,21 +356,21 @@ module Opscode
         # RETURN VALUE: returns looked up obj
         def obj_lookup_by_label(obj, parent_obj, debug_name, label)
           if label.nil?
-            fail "Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_label: ERROR: Passed nil label"
+            fail "Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_label: ERROR: Passed nil label"
           end
 
           unless obj.nil?
             if obj.label == label
-              Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_label: Existing object hit for #{label}")
+              Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_label: Existing object hit for #{label}")
               return obj
             end
           end
 
           obj = parent_obj.find { |sobj| sobj.label == label }
           if obj.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_label: No object found for #{label}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_label: No object found for #{label}")
           else
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi(#{debug_name}).lookup_by_id: New object found for #{label}.  ID: #{obj.id}")
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).lookup_by_id: New object found for #{label}.  ID: #{obj.id}")
           end
 
           return obj
@@ -404,14 +404,14 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def obj_delete(obj, parent_obj, debug_name)
-          if @obj.nil?
+          if obj.nil?
             return false
           end
 
-          @obj.destroy
+          obj.destroy
           return true
         end
-      end # END CMApi class
+      end # END CMObjBase class
 
       # CMEntity: Class handling entity operations
       class CMEntity < CMObjBase
