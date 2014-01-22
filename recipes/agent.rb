@@ -77,12 +77,12 @@ node.set[:rackspace_cloudmonitoring][:agent][:token] = credentials.get_attribute
 
 # If the token or id was not specified, call the API to generate/locate it.
 if node[:rackspace_cloudmonitoring][:agent][:token].nil? || node[:rackspace_cloudmonitoring][:agent][:id].nil?
-  rackspace_cloudmonitoring_agent_token "#{node.hostname}" do
+  rackspace_cloudmonitoring_agent_token node.hostname do
     token               node[:rackspace_cloudmonitoring][:agent][:token]
     action :create
   end
 
-  my_token_obj = CMAgentToken.new(credentials, node[:rackspace_cloudmonitoring][:agent][:token], "#{node.hostname}")
+  my_token_obj = CMAgentToken.new(credentials, node[:rackspace_cloudmonitoring][:agent][:token], node.hostname)
   my_token = my_token_obj.obj
 
   node.set[:rackspace_cloudmonitoring][:agent][:token] = my_token.token
@@ -145,5 +145,5 @@ service 'rackspace-monitoring-agent' do
   end
 
   action [:enable, :start]
-  subscribes :restart, resources(template: '/etc/rackspace-monitoring-agent.cfg'), :delayed
+  subscribes :restart, "template['/etc/rackspace-monitoring-agent.cfg']", :delayed
 end

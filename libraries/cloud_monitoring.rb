@@ -56,7 +56,7 @@ module Opscode
           (0...@num_keys).each do |i|
             key = keys[i]
             cval = eval(eval_str)
-            unless cval.key?("#{key}")
+            unless cval.key?(key.to_s)
               return nil
             end
 
@@ -90,7 +90,7 @@ module Opscode
             end
 
             cval = eval(eval_str)
-            unless cval.key?("#{key}")
+            unless cval.key?(key.to_s)
               eval("#{eval_str}[\"#{key}\"] = {}")
             end
 
