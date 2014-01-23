@@ -1,3 +1,15 @@
+v2.0.0
+------
+* Refactor cloud_monitoring library to use classes and object-oriented methodology
+* Change the Entities LWRP to allow search criteria, deprecating the entities.rb recipe
+* Change check and alarm LWRPs to use the Chef label for the associated entity, deprecate the entity_id and entity_label arguments
+* Add delete functionality to the LWRPs
+* Modify the configuration hash to not prepend "agent." to the checks
+* Add functionality to the config hash
+* Modify node attribute namespace to meet rackspace-cookbooks standards
+* General code cleanup and style changes
+* Added tests
+
 v1.1.0
 ------
 * Add entity.rb to auto-select an existing entity by IP (Credit to Thomas Cate for this code)
