@@ -54,7 +54,8 @@ action :create do
     metadata:             new_resource.metadata,
     check:                check_id,
     criteria:             criteria,
-    notification_plan_id: new_resource.notification_plan_id
+    notification_plan_id: new_resource.notification_plan_id,
+    disabled:             new_resource.disabled,                                                               
   ))
 end
 
