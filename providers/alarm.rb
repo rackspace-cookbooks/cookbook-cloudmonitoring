@@ -50,9 +50,8 @@ action :create do
 
   new_resource.updated_by_last_action(@current_resource.update(
     label:                new_resource.label,
-    check_type:           new_resource.check_type,
     metadata:             new_resource.metadata,
-    check:                check_id,
+    check_id:             check_id,
     criteria:             criteria,
     notification_plan_id: new_resource.notification_plan_id,
     disabled:             new_resource.disabled,

@@ -14,7 +14,6 @@ attribute :timeout, kind_of: Integer
 attribute :disabled, kind_of: [TrueClass, FalseClass]
 attribute :monitoring_zones_poll, kind_of: Array
 attribute :entity_chef_label, kind_of: String, required: true
-attribute :disabled, kind_of: [TrueClass, FalseClass]
 
 attribute :rackspace_api_key, kind_of: String
 attribute :rackspace_username, kind_of: String

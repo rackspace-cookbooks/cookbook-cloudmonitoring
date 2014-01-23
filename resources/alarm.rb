@@ -3,7 +3,6 @@ actions :create, :delete
 default_action :create
 
 attribute :label, kind_of:  String, name_attribute:  true
-attribute :check_type, kind_of:  String
 attribute :check_id, kind_of:  String
 attribute :metadata, kind_of:  Hash
 attribute :criteria, kind_of:  String
