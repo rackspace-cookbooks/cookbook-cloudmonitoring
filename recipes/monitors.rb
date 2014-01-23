@@ -34,7 +34,7 @@ end
 node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
   rackspace_cloudmonitoring_check check do
     entity_chef_label node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
-    type              {check_value['type']}
+    type              check_value['type']
     period            check_value.key?('period') ? check_value['period'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']
     timeout           check_value.key?('timeout') ? check_value['timeout'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']
     details           check_value.key?('details') ? check_value['details'] : nil
