@@ -80,9 +80,11 @@ Vagrant.configure("2") do |config|
 
     chef.json = {
       :rackspace_cloudmonitoring => {
-        :agent => {
-          :id    => "rackspacerules",
-          :token => "kittenmittens",
+        :config => {
+          :agent => {
+            :id    => "rackspacerules",
+            :token => "kittenmittens",
+          },
         },
       },
     }

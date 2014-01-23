@@ -27,6 +27,7 @@ suites:
       - recipe[rackspace_cloudmonitoring::agent]
     attributes:
       rackspace_cloudmonitoring:
-        agent:
-          id:    "rackspacerules"
-          token: "kittenmittens"
+        config:
+          agent:
+            id:    "rackspacerules"
+            token: "kittenmittens"
