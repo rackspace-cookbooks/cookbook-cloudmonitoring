@@ -32,7 +32,7 @@ action :create do
   end
 
   new_resource.updated_by_last_action(@current_resource.update_entity(
-    label:        new_resource.label,
+    label:        new_resource.api_label ? new_resource.api_label : new_resource.label,
     ip_addresses: new_resource.ip_addresses,
     metadata:     new_resource.metadata,
     agent_id:     new_resource.agent_id
@@ -51,7 +51,7 @@ def load_current_resource
   when 'ip'
     @current_resource.lookup_entity_by_ip(@new_resource.search_ip)
   when 'id'
-    @current_resource.lookup_entity_by_id(@new_resource.id)
+    @current_resource.lookup_entity_by_id(@new_resource.search_id)
   when 'api_label'
     @current_resource.lookup_entity_by_label(@new_resource.api_label)
   else

@@ -55,7 +55,7 @@ action :create do
     check:                check_id,
     criteria:             criteria,
     notification_plan_id: new_resource.notification_plan_id,
-    disabled:             new_resource.disabled,                                                               
+    disabled:             new_resource.disabled,
   ))
 end
 

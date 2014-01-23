@@ -237,9 +237,10 @@ module Opscode
           begin
             return Chef::EncryptedDataBagItem.load(@node['rackspace_cloudmonitoring']['auth']['databag']['name'],
                                                    @node['rackspace_cloudmonitoring']['auth']['databag']['item'])
-            # Chef::Exceptions::ValidationFailed is thrown in real use when the databag is not in use
-            # Chef::Exceptions::InvalidDataBagPath is thrown by test kitchen when there are no databags
-          rescue Chef::Exceptions::ValidationFailed, Chef::Exceptions::InvalidDataBagPath
+
+          # Every different incantation of Chef, be it ChefSpec, ChefSolo, or full Chef, throws a different exception when the databag is missing
+          #   It unfortunately isn't practical to try and target this.
+          rescue Exception # rubocop:disable RescueException
             return {}
           end
         end

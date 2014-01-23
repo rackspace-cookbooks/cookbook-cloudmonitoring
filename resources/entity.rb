@@ -10,6 +10,7 @@ attribute :agent_id, kind_of: String
 
 attribute :search_method, kind_of: String
 attribute :search_ip, kind_of: String
+attribute :search_id, kind_of: String
 
 attribute :rackspace_api_key, kind_of: String
 attribute :rackspace_username, kind_of: String
