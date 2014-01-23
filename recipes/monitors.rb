@@ -42,7 +42,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
     action            :create
   end
 
-  if check_value.check?('alarm')
+  if check_value.key?('alarm')
     check_value['alarm'].each do |alarm, alarm_value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{check} is past #{alarm} threshold' }"
