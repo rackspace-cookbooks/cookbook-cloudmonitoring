@@ -32,7 +32,7 @@ default['rackspace_cloudmonitoring']['monitors'] = {}
 # TODO: Verify revisions
 # TODO: Look into forking fog cookbook
 default['rackspace_cloudmonitoring']['dependency_versions']['rackspace_monitoring_version'] = '0.2.18'
-default['rackspace_cloudmonitoring']['dependency_versions']['fog_version'] = '1.16.0' # 1.19
+default['rackspace_cloudmonitoring']['dependency_versions']['fog_version'] = '1.19.0'
 
 # Credential Values
 # default['rackspace_cloudmonitoring']['auth']['url'] = nil
