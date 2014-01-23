@@ -112,10 +112,6 @@ Checks and Alarms need to reference the entity and will use the Chef label to do
 The following example configures CPU, load, disk, and filesystem monitors, with alarms enabled on the 5 minute load average:
 
 ```
-#
-# Configure monitors to suit our app
-#
-
 # Calculate default values
 # Critical at x4 CPU count
 cpu_critical_threshold = (node['cpu']['total'] * 4)
@@ -133,11 +129,11 @@ node.default['rackspace_cloudmonitoring']['monitors'] = {
   },
 
   'disk' => {
-    'type' => 'disk',
+    'type' => 'agent.disk',
     'details' => { 'target' => '/dev/xvda1'},
   },
   'root_filesystem' => {
-    'type' => 'filesystem',
+    'type' => 'agent.filesystem',
     'details' => { 'target' => '/'},
   },
 }
@@ -145,7 +141,7 @@ node.default['rackspace_cloudmonitoring']['monitors'] = {
 #
 # Call the monitoring cookbook with our changes
 #
-include_recipe "cloud_monitoring::monitors"
+include_recipe "rackspace_cloudmonitoring::monitors"
 ```
 
 The previous example assumes that the API key and API username are set via the node attributes or a databag, and that node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] is set.
