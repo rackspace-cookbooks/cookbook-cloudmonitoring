@@ -156,7 +156,15 @@ It is called by the monitors recipe so the agent is installed automatically when
 With the API key and username set it is essentially standalone, it will call the agent_token LWRP to generate a token.
 
 However, the following attributes can be set to bypass API calls and configure the agent completely from node attributes:
-TODO: These are currently named wrong.  Fix the code and update here
+
+| Attribute | Description |
+| --------- | ----------- |
+| node['rackspace_cloudmonitoring']['config']['agent']['token'] | Agent Token |
+| node['rackspace_cloudmonitoring']['config']['agent']['id']    | Agent ID    |
+
+Note that BOTH must be set to bypass API calls.
+The ID will be overwritten if only the token is passed.
+See the API docs for exact details of these values.
 
 The agent recipe also supports a configuration hash for pulling in plugins.
 Plugin directories can be added to the node['rackspace_cloudmonitoring']['agent']['plugins'] hash to install plugins for the agent.
