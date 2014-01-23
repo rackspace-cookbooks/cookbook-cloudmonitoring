@@ -38,6 +38,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
     period            check_value.key?('period') ? check_value['period'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']
     timeout           check_value.key?('timeout') ? check_value['timeout'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']
     details           check_value.key?('details') ? check_value['details'] : nil
+    disabled          check_value.key?('disabled') ? check_value['details'] : false
     action            :create
   end
 
@@ -50,6 +51,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
         entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
         check_label          check
         criteria             criteria
+        disabled             alarm_value.key?('disabled') ? alarm_value['details'] : false
         # Line length disabled on the next line as it is long due to long variable names, not complexity.
         notification_plan_id check_value.key?('notification_plan_id') ? check_value['notification_plan_id'] : node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] # rubocop:disable LineLength
         action               :create
