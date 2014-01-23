@@ -31,27 +31,27 @@ rackspace_cloudmonitoring_entity node['rackspace_cloudmonitoring']['monitors_def
   action        :create
 end
 
-node['rackspace_cloudmonitoring']['monitors'].each do |key, value|
-  rackspace_cloudmonitoring_check key do
+node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
+  rackspace_cloudmonitoring_check check do
     entity_chef_label node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
-    type              "agent.#{value['type']}"
-    period            value.key?('period') ? value['period'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']
-    timeout           value.key?('timeout') ? value['timeout'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']
-    details           value.key?('details') ? value['details'] : nil
+    type              "agent.#{check_value['type']}"
+    period            check_value.key?('period') ? check_value['period'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']
+    timeout           check_value.key?('timeout') ? check_value['timeout'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']
+    details           check_value.key?('details') ? check_value['details'] : nil
     action            :create
   end
 
-  if value.key?('alarm')
-    value['alarm'].each do |alarm, alarm_value|
+  if check_value.check?('alarm')
+    check_value['alarm'].each do |alarm, alarm_value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
-      criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{key} is past #{alarm} threshold' }"
+      criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{check} is past #{alarm} threshold' }"
 
-      rackspace_cloudmonitoring_alarm  "#{value['type']} #{alarm} alarm" do
+      rackspace_cloudmonitoring_alarm  "#{check_value['type']} #{alarm} alarm" do
         entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
-        check_label          key
+        check_label          check
         criteria             criteria
         # Line length disabled on the next line as it is long due to long variable names, not complexity.
-        notification_plan_id value.key?('notification_plan_id') ? value['notification_plan_id'] : node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] # rubocop:disable LineLength
+        notification_plan_id check_value.key?('notification_plan_id') ? check_value['notification_plan_id'] : node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] # rubocop:disable LineLength
         action               :create
       end
 
