@@ -28,7 +28,7 @@ These credentials can be passed to the LWRPs, loaded from an encrypted databag, 
 | API Key    | Yes      | NONE    | node['rackspace"]['cloud_credentials']['api_key'] | apikey |
 | API Username | Yes    | NONE    | node['rackspace"]['cloud_credentials']['username'] | username |
 | API Auth URL | No     | Defined in attributes.rb | node['rackspace_cloudmonitoring']['auth']['url'] | auth_url |
-| Agent Token | No      | Generated via API | node['rackspace_cloudmonitoring']['agent']['token'] | agent_token |
+| Agent Token | No      | Generated via API | node['rackspace_cloudmonitoring']['config']['agent']['token'] | agent_token |
 
 Note that the API Key and API Username use the shared node['rackspace"]['cloud_credentials'] namespace, not the node['rackspace_cloudmonitoring'] namespace.
 Passing values in via LWRPs will be covered in the LWRP section.

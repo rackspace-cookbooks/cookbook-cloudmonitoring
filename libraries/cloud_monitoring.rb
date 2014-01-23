@@ -141,7 +141,7 @@ module Opscode
             },
             token: {
               resource:  'monitoring_agent_token',
-              node:     '["rackspace_cloudmonitoring"]["agent"]["token"]',
+              node:     '["rackspace_cloudmonitoring"]["config"]["agent"]["token"]',
               databag:  'agent_token',
             },
           }

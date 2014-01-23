@@ -73,7 +73,7 @@ class TestData
         }
       }
       data['rackspace_cloudmonitoring']['auth']['url'] = 'node authurl'
-      data['rackspace_cloudmonitoring']['agent'] = { 'token' => 'node token' }
+      data['rackspace_cloudmonitoring']['config'] = { 'agent' => { 'token' => 'node token' } }
     end
 
     return data

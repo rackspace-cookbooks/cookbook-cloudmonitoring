@@ -28,8 +28,6 @@
 # http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-rsource-limits.html
 default['rackspace_cloudmonitoring']['monitors'] = {}
 
-# TODO: Add :config namespace for config file
-
 # Versions of dependency packages
 # TODO: Verify revisions
 # TODO: Look into forking fog cookbook
@@ -41,13 +39,13 @@ default['rackspace_cloudmonitoring']['dependency_versions']['fog_version'] = '1.
 default['rackspace_cloudmonitoring']['auth']['databag']['name'] = 'rackspace'
 default['rackspace_cloudmonitoring']['auth']['databag']['item'] = 'cloud'
 
+# Arguments passed into the agent config file
+# default['rackspace_cloudmonitoring']['config']['agent']['token'] = nil
+# default['rackspace_cloudmonitoring']['config']['agent']['id'] = nil
+default['rackspace_cloudmonitoring']['config']['agent']['monitoring_endpoints'] = [] # This should be a list of strings like 'x.x.x.x:port'
+                                                                                     # This is used in the agent configuratuon
+                                                                                     # TODO: See if this can be populated from Fog
 default['rackspace_cloudmonitoring']['agent']['version'] = 'latest'
-# default['rackspace_cloudmonitoring']['agent']['token'] = nil
-# default['rackspace_cloudmonitoring']['agent']['id'] = nil
-default['rackspace_cloudmonitoring']['agent']['monitoring_endpoints'] = [] # This should be a list of strings like 'x.x.x.x:port'
-                                                                        # This is used in the agent configuratuon
-                                                                        # TODO: See if this can be populated from Fog
-
 default['rackspace_cloudmonitoring']['agent']['plugin_path'] = '/usr/lib/rackspace-monitoring-agent/plugins'
 
 # Plugins is a hash of [cookbook] = plugin_dir values

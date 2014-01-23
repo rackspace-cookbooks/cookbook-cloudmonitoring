@@ -73,22 +73,22 @@ end
 
 # Pull the token using the CMCredentials class, which handles node and databag varialbles
 credentials = CMCredentials.new(node, nil)
-node.set['rackspace_cloudmonitoring']['agent']['token'] = credentials.get_attribute(:token)
+node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = credentials.get_attribute(:token)
 
 # If the token or id was not specified, call the API to generate/locate it.
-if node['rackspace_cloudmonitoring']['agent']['token'].nil? || node['rackspace_cloudmonitoring']['agent']['id'].nil?
+if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['rackspace_cloudmonitoring']['config']['agent']['id'].nil?
   rackspace_cloudmonitoring_agent_token node['hostname'] do
-    token               node['rackspace_cloudmonitoring']['agent']['token']
+    token               node['rackspace_cloudmonitoring']['config']['agent']['token']
     action :create
   end
 
-  my_token_obj = CMAgentToken.new(credentials, node['rackspace_cloudmonitoring']['agent']['token'], node['hostname'])
+  my_token_obj = CMAgentToken.new(credentials, node['rackspace_cloudmonitoring']['config']['agent']['token'], node['hostname'])
   my_token = my_token_obj.obj
 
-  node.set['rackspace_cloudmonitoring']['agent']['token'] = my_token.token
+  node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = my_token.token
   # So the API calls it label, and the config calls it ID
   # Clear as mud.
-  node.set['rackspace_cloudmonitoring']['agent']['id'] = my_token.label
+  node.set['rackspace_cloudmonitoring']['config']['agent']['id'] = my_token.label
 end
 
 # Generate the config template
@@ -99,8 +99,8 @@ template '/etc/rackspace-monitoring-agent.cfg' do
   group 'root'
   mode 0600
   variables(
-            monitoring_id:    node['rackspace_cloudmonitoring']['agent']['id'],
-            monitoring_token: node['rackspace_cloudmonitoring']['agent']['token'],
+            monitoring_id:    node['rackspace_cloudmonitoring']['config']['agent']['id'],
+            monitoring_token: node['rackspace_cloudmonitoring']['config']['agent']['token'],
             )
   action :create
 end
