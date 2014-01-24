@@ -43,6 +43,6 @@ action :delete do
 end
 
 def load_current_resource
-  @current_check = CMCheck.new(CMCredentials.new(node, @new_resource), @new_resource.entity_chef_label, @new_resource.label)
-  @current_check.lookup_by_label(@new_resource.label)
+  @current_check = CMCheck.new(CMCredentials.new(node, new_resource), new_resource.entity_chef_label, new_resource.label)
+  @current_check.lookup_by_label(new_resource.label)
 end

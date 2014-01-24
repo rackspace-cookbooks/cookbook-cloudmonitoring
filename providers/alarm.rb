@@ -34,11 +34,11 @@ action :create do
   if new_resource.check_label
     fail 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
 
-    check_obj = CMCheck.new(@current_alarm.credentials, @new_resource.entity_chef_label, @new_resource.check_label)
+    check_obj = CMCheck.new(@current_alarm.credentials, new_resource.entity_chef_label, new_resource.check_label)
     check_obj.lookup_by_label(new_resource.check_label)
 
     if check_obj.obj.nil?
-      fail "Unable to lookup check #{new_resource.check_label} on for alarm #{@new_resource.label} on entity #{@new_resource.entity_chef_label}"
+      fail "Unable to lookup check #{new_resource.check_label} on for alarm #{new_resource.label} on entity #{new_resource.entity_chef_label}"
     end
 
     check_id = check_obj.obj.id
@@ -65,6 +65,6 @@ action :delete do
 end
 
 def load_current_resource
-  @current_alarm = CMAlarm.new(CMCredentials.new(node, @new_resource), @new_resource.entity_chef_label, @new_resource.label)
-  @current_alarm.lookup_by_label(@new_resource.label)
+  @current_alarm = CMAlarm.new(CMCredentials.new(node, new_resource), new_resource.entity_chef_label, new_resource.label)
+  @current_alarm.lookup_by_label(new_resource.label)
 end

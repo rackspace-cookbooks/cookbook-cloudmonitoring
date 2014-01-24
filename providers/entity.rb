@@ -23,67 +23,67 @@ include Opscode::Rackspace::Monitoring
 require 'ipaddr'
 
 action :create do
-  Chef::Log.debug("Beginning action[:create] for #{@new_resource}")
+  Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   if @current_entity.entity_obj.nil?
-    @new_resource.updated_by_last_action(create_entity)
+    new_resource.updated_by_last_action(create_entity)
   else
-    @new_resource.updated_by_last_action(false)
+    new_resource.updated_by_last_action(false)
   end
 end
 
 action :update do
-  Chef::Log.debug("Beginning action[:update] for #{@new_resource}")
+  Chef::Log.debug("Beginning action[:update] for #{new_resource}")
   if @current_entity.entity_obj.nil?
-    @new_resource.updated_by_last_action(create_entity)
+    new_resource.updated_by_last_action(create_entity)
   else
-    @new_resource.updated_by_last_action(update_entity)
+    new_resource.updated_by_last_action(update_entity)
   end
 end
 
 action :delete do
-  Chef::Log.debug("Beginning action[:delete] for #{@new_resource}")
-  @new_resource.updated_by_last_action(@current_entity.delete_entity)
+  Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
+  new_resource.updated_by_last_action(@current_entity.delete_entity)
 end
 
 def load_current_resource
-  @current_entity = CMEntity.new(CMCredentials.new(node, @new_resource), @new_resource.label)
-  Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: Using search method #{@new_resource.search_method}")
-  case @new_resource.search_method
+  @current_entity = CMEntity.new(CMCredentials.new(node, new_resource), new_resource.label)
+  Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: Using search method #{new_resource.search_method}")
+  case new_resource.search_method
   when 'ip'
-    fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: ERROR: ip search specified but search_ip nil" if @new_resource.search_ip.nil?
-    @current_entity.lookup_entity_by_ip(@new_resource.search_ip)
+    fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: ERROR: ip search specified but search_ip nil" if new_resource.search_ip.nil?
+    @current_entity.lookup_entity_by_ip(new_resource.search_ip)
   when 'id'
-    fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: ERROR: id search specified but search_id nil" if @new_resource.search_id.nil?
-    @current_entity.lookup_entity_by_id(@new_resource.search_id)
+    fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: ERROR: id search specified but search_id nil" if new_resource.search_id.nil?
+    @current_entity.lookup_entity_by_id(new_resource.search_id)
   when 'api_label'
-    fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: ERROR: api_label search specified but api_label nil" if @new_resource.api_label.nil?
-    @current_entity.lookup_entity_by_label(@new_resource.api_label)
+    fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: ERROR: api_label search specified but api_label nil" if new_resource.api_label.nil?
+    @current_entity.lookup_entity_by_label(new_resource.api_label)
   else
-    @current_entity.lookup_entity_by_label(@new_resource.label)
+    @current_entity.lookup_entity_by_label(new_resource.label)
   end
 end
 
 # create_entity: Create a new entity with all the things
 def create_entity
   # normalize the ip's
-  if @new_resource.ip_addresses
+  if new_resource.ip_addresses
     new_ips = {}
-    @new_resource.ip_addresses.each do |k, v| 
+    new_resource.ip_addresses.each do |k, v| 
       new_ips[k] = IPAddr.new(v).to_string
-      Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{@new_resource} create_entity: Adding IP #{k}: #{new_ips}")
+      Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{new_resource} create_entity: Adding IP #{k}: #{new_ips}")
     end
   else
     new_ips = nil
-    if @new_resource.search_method == 'ip'
-      fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} :create ERROR: About to create an entity with no IPs when using ip search method.  Cowardly refusing to continue" 
+    if new_resource.search_method == 'ip'
+      fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} :create ERROR: About to create an entity with no IPs when using ip search method.  Cowardly refusing to continue" 
     end
   end
   
   return @current_entity.update_entity(
-                                       label:        @new_resource.api_label ? @new_resource.api_label : @new_resource.label,
+                                       label:        new_resource.api_label ? new_resource.api_label : new_resource.label,
                                        ip_addresses: new_ips,
-                                       metadata:     @new_resource.metadata,
-                                       agent_id:     @new_resource.agent_id
+                                       metadata:     new_resource.metadata,
+                                       agent_id:     new_resource.agent_id
                                        )
 end
 
@@ -91,7 +91,7 @@ end
 # metadata, agent_id
 def update_entity
   return @current_entity.update_entity(
-                                       metadata:     @new_resource.metadata,
-                                       agent_id:     @new_resource.agent_id
+                                       metadata:     new_resource.metadata,
+                                       agent_id:     new_resource.agent_id
                                        )
 end
