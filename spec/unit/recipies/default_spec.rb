@@ -16,7 +16,6 @@
 # limitations under the License.
 
 require 'spec_helper'
-include Opscode::Rackspace::Monitoring
 
 describe 'rackspace_cloudmonitoring::default' do
   $RACKSPACE_CLOUDMONITORING_TEST_PLATFORMS.each do |platform, versions|
