@@ -27,9 +27,10 @@
 # No checks are defined by default as there is an account-wide limit and each check incurrs billing
 # http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-rsource-limits.html
 default['rackspace_cloudmonitoring']['monitors'] = {}
+# The following value must be specified
+# default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']
 
 # Versions of dependency packages
-# TODO: Verify revisions
 # TODO: Look into forking fog cookbook
 default['rackspace_cloudmonitoring']['dependency_versions']['rackspace_monitoring_version'] = '0.2.18'
 default['rackspace_cloudmonitoring']['dependency_versions']['fog_version'] = '1.19.0'
@@ -54,10 +55,8 @@ default['rackspace_cloudmonitoring']['agent']['plugins'] = {}
 # Add our plugin directory to the hash
 default['rackspace_cloudmonitoring']['agent']['plugins']['rackspace_cloudmonitoring'] = 'plugins'
 
-# Check values
+# Default values for monitors.rb
 default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']     = node['hostname']
-# TODO(BUG): node['cloud']['local_ipv4'] is a bad default as it fails on non-cloud
-default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] = node['cloud']['local_ipv4']
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']     = 30
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']    = 10
 # default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = nil

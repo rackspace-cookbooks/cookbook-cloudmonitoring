@@ -49,10 +49,13 @@ def load_current_resource
   Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: Using search method #{new_resource.search_method}")
   case new_resource.search_method
   when 'ip'
+    fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: ERROR: ip search specified but search_ip nil" if @new_resource.search_ip.nil?
     @current_resource.lookup_entity_by_ip(@new_resource.search_ip)
   when 'id'
+    fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: ERROR: id search specified but search_id nil" if @new_resource.search_id.nil?
     @current_resource.lookup_entity_by_id(@new_resource.search_id)
   when 'api_label'
+    fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} load_current_resource: ERROR: api_label search specified but api_label nil" if @new_resource.api_label.nil?
     @current_resource.lookup_entity_by_label(@new_resource.api_label)
   else
     @current_resource.lookup_entity_by_label(@new_resource.label)
