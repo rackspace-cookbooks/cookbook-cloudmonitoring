@@ -142,6 +142,10 @@ node.default['rackspace_cloudmonitoring']['monitors'] = {
   },
 }
 
+# Set the entity search IP to our IPv4 Cloud IP
+# (Adjust as appropriate for your platform)
+node.default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] = node['cloud']['local_ipv4']
+
 #
 # Call the monitoring cookbook with our changes
 #
