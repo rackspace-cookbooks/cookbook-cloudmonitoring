@@ -1,7 +1,8 @@
-Rackspace_Clouddmonitoring Cookbook
+rackspace_cloudmonitoring Cookbook
 ===================================
 
-**NOTE: v2.0.0 is a major rewrite with breaking changes.  Please review this readme for new usage and the changelog for breaking changes ***
+NOTE: v2.0.0 is a major rewrite with breaking changes.  Please review this readme for new usage and check the changelog
+-----------------------------------------------------------------------------------------------------------------------
 
 # Description
 
