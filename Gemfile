@@ -10,6 +10,9 @@ group :testing do
   gem 'chef',       '~> 11.0'
   gem 'rspec',      '~> 2.14'
   gem 'rubocop',    '~> 0.16' 
+
+  # Required for this cookbook's ChefSpec tests
+  gem 'fog',        '~> 1.19'
 end
  
 group :integration do

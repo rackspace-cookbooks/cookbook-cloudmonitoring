@@ -20,7 +20,10 @@
 # Originally from https://github.com/customink-webops/hostsfile/blob/master/spec/spec_helper.rb
 
 require 'chefspec'
+require 'chefspec/berkshelf'
+
 require_relative '../libraries/cloud_monitoring.rb'
+require_relative 'supported_platforms.rb'
 
 RSpec.configure do |c|
   c.filter_run(focus: true)

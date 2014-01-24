@@ -11,3 +11,5 @@ depends 'rackspace_apt', '~> 3.0'
 depends 'rackspace_yum', '~> 4.0'
 # TODO: Update these to rackspace-* cookbooks
 depends 'xml', '~> 1.2'
+# Dep of xml
+depends 'build-essential'

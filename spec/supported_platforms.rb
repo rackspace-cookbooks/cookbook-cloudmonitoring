@@ -1,7 +1,5 @@
-# encoding: UTF-8
 #
 # Cookbook Name:: rackspace_cloudmonitoring
-# Recipe:: default
 #
 # Copyright 2014, Rackspace, US, Inc.
 #
@@ -16,16 +14,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# Required to install fog
-include_recipe 'xml::ruby'
+# This helper file defines the platforms to test in ChefSpec
 
-chef_gem 'fog' do
-  version ">= #{node['rackspace_cloudmonitoring']['dependency_versions']['fog_version']}"
-  action :install
-end
-
-# Load fog for the cloud_monitoring library
-# https://sethvargo.com/using-gems-with-chef/
-require 'fog'
+$RACKSPACE_CLOUDMONITORING_TEST_PLATFORMS = {
+  ubuntu: %w(12.04),
+  debian: %w(7.1),
+  redhat: %w(6.3),
+  centos: %w(6.4),
+}
