@@ -24,23 +24,20 @@ require 'ipaddr'
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{@new_resource}")
-  # normalize the ip's
-  if @new_resource.ip_addresses
-    new_ips = {}
-    @new_resource.ip_addresses.each { |k, v| new_ips[k] = IPAddr.new(v).to_string }
-    @new_resource.ip_addresses.update new_ips
+  if @current_resource.entity_obj.nil?
+    @new_resource.updated_by_last_action(create_entity)
   else
-    if @new_resource.search_method == 'ip'
-      fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} :create ERROR: About to create an entity with no IPs when using ip search method.  Cowardly refusing to continue" 
-    end
+    @new_resource.updated_by_last_action(false)
   end
+end
 
-  @new_resource.updated_by_last_action(@current_resource.update_entity(
-    label:        @new_resource.api_label ? @new_resource.api_label : @new_resource.label,
-    ip_addresses: @new_resource.ip_addresses,
-    metadata:     @new_resource.metadata,
-    agent_id:     @new_resource.agent_id
-  ))
+action :update do
+  Chef::Log.debug("Beginning action[:update] for #{@new_resource}")
+  if @current_resource.entity_obj.nil?
+    @new_resource.updated_by_last_action(create_entity)
+  else
+    @new_resource.updated_by_last_action(update_entity)
+  end
 end
 
 action :delete do
@@ -64,4 +61,34 @@ def load_current_resource
   else
     @current_resource.lookup_entity_by_label(@new_resource.label)
   end
+end
+
+# create_entity: Create a new entity with all the things
+def create_entity
+  # normalize the ip's
+  if @new_resource.ip_addresses
+    new_ips = {}
+    @new_resource.ip_addresses.each { |k, v| new_ips[k] = IPAddr.new(v).to_string }
+  else
+    new_ips = nil
+    if @new_resource.search_method == 'ip'
+      fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} :create ERROR: About to create an entity with no IPs when using ip search method.  Cowardly refusing to continue" 
+    end
+  end
+  
+  return @current_resource.update_entity(
+                                         label:        @new_resource.api_label ? @new_resource.api_label : @new_resource.label,
+                                         ip_addresses: new_ips,
+                                         metadata:     @new_resource.metadata,
+                                         agent_id:     @new_resource.agent_id
+                                         )
+end
+
+# update_entity: Only the following fields are updatable:
+# metadata, agent_id
+def update_entity
+  return @current_resource.update_entity(
+                                         metadata:     @new_resource.metadata,
+                                         agent_id:     @new_resource.agent_id
+                                         )
 end

@@ -29,7 +29,7 @@ rackspace_cloudmonitoring_entity node['rackspace_cloudmonitoring']['monitors_def
   search_method node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_method']
   search_ip     node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']
   ip_addresses  node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']
-  action        :create
+  action        :update
 end
 
 node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|

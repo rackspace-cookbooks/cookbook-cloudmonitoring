@@ -64,7 +64,7 @@ else
 end
   
 default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']     = node['ipaddress']
-default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']  = [node['ipaddress']]
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']  = {default: node['ipaddress']}
 
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']         = 30
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']        = 10
