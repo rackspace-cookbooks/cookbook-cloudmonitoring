@@ -112,7 +112,7 @@ Checks and Alarms need to reference the entity and will use the Chef label to do
 
 The following example configures CPU, load, disk, and filesystem monitors, with alarms enabled on the 5 minute load average:
 
-```
+```ruby
 # Calculate default values
 # Critical at x4 CPU count
 cpu_critical_threshold = (node['cpu']['total'] * 4)
