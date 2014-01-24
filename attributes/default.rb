@@ -54,10 +54,20 @@ default['rackspace_cloudmonitoring']['agent']['plugins'] = {}
 default['rackspace_cloudmonitoring']['agent']['plugins']['rackspace_cloudmonitoring'] = 'plugins'
 
 # Default values for monitors.rb
-default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']     = node['hostname']
-default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] = node['ipaddress']
-default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']     = 30
-default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']    = 10
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']         = node['hostname']
+
+# Search by IP in Rackspace public cloud, search by label elsewhere
+if node.key?('cloud')
+  default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_method'] = node['cloud']['provider'] == 'rackspace' ? 'ip' : 'label'
+else
+  default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_method'] = 'label'
+end
+  
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']     = node['ipaddress']
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']  = [node['ipaddress']]
+
+default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']         = 30
+default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']        = 10
 # default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = nil
 
 # Configuration template overrides
