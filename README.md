@@ -107,7 +107,7 @@ As mentioned above the monitoring entity will automatically be created or update
 For Rackspace Cloud Servers this will result in the existing, automatically generated entity being reused.
 By default the entity's label will be node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'], set in attributes.rb to the hostname.
 Existing entities will be reused, monitors.rb performs an ip search against node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'].
-node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] does not have a default and must be specified.
+The default for node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] is set in attributes/default.rb.
 See the entity LWRP description below for details about the search method.
 Checks and Alarms need to reference the entity and will use the Chef label to do so.
 
@@ -141,10 +141,6 @@ node.default['rackspace_cloudmonitoring']['monitors'] = {
     'details' => { 'target' => '/'},
   },
 }
-
-# Set the entity search IP to our IPv4 Cloud IP
-# (Adjust as appropriate for your platform)
-node.default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] = node['cloud']['local_ipv4']
 
 #
 # Call the monitoring cookbook with our changes

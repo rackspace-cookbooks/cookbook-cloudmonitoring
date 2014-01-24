@@ -27,8 +27,6 @@
 # No checks are defined by default as there is an account-wide limit and each check incurrs billing
 # http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-rsource-limits.html
 default['rackspace_cloudmonitoring']['monitors'] = {}
-# The following value must be specified
-# default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']
 
 # Versions of dependency packages
 # TODO: Look into forking fog cookbook
@@ -57,6 +55,7 @@ default['rackspace_cloudmonitoring']['agent']['plugins']['rackspace_cloudmonitor
 
 # Default values for monitors.rb
 default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']     = node['hostname']
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] = node['ipaddress']
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']     = 30
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']    = 10
 # default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = nil
