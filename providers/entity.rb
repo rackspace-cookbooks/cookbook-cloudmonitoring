@@ -24,7 +24,7 @@ require 'ipaddr'
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{@new_resource}")
-  if @current_resource.entity_obj.nil?
+  if @current_entity.entity_obj.nil?
     @new_resource.updated_by_last_action(create_entity)
   else
     @new_resource.updated_by_last_action(false)
@@ -33,7 +33,7 @@ end
 
 action :update do
   Chef::Log.debug("Beginning action[:update] for #{@new_resource}")
-  if @current_resource.entity_obj.nil?
+  if @current_entity.entity_obj.nil?
     @new_resource.updated_by_last_action(create_entity)
   else
     @new_resource.updated_by_last_action(update_entity)
@@ -42,24 +42,24 @@ end
 
 action :delete do
   Chef::Log.debug("Beginning action[:delete] for #{@new_resource}")
-  @new_resource.updated_by_last_action(@current_resource.delete_entity)
+  @new_resource.updated_by_last_action(@current_entity.delete_entity)
 end
 
 def load_current_resource
-  @current_resource = CMEntity.new(CMCredentials.new(node, @new_resource), @new_resource.label)
+  @current_entity = CMEntity.new(CMCredentials.new(node, @new_resource), @new_resource.label)
   Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: Using search method #{@new_resource.search_method}")
   case @new_resource.search_method
   when 'ip'
     fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: ERROR: ip search specified but search_ip nil" if @new_resource.search_ip.nil?
-    @current_resource.lookup_entity_by_ip(@new_resource.search_ip)
+    @current_entity.lookup_entity_by_ip(@new_resource.search_ip)
   when 'id'
     fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: ERROR: id search specified but search_id nil" if @new_resource.search_id.nil?
-    @current_resource.lookup_entity_by_id(@new_resource.search_id)
+    @current_entity.lookup_entity_by_id(@new_resource.search_id)
   when 'api_label'
     fail "Opscode::Rackspace::Monitoring::Entity #{@new_resource} load_current_resource: ERROR: api_label search specified but api_label nil" if @new_resource.api_label.nil?
-    @current_resource.lookup_entity_by_label(@new_resource.api_label)
+    @current_entity.lookup_entity_by_label(@new_resource.api_label)
   else
-    @current_resource.lookup_entity_by_label(@new_resource.label)
+    @current_entity.lookup_entity_by_label(@new_resource.label)
   end
 end
 
@@ -68,7 +68,10 @@ def create_entity
   # normalize the ip's
   if @new_resource.ip_addresses
     new_ips = {}
-    @new_resource.ip_addresses.each { |k, v| new_ips[k] = IPAddr.new(v).to_string }
+    @new_resource.ip_addresses.each do |k, v| 
+      new_ips[k] = IPAddr.new(v).to_string
+      Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{@new_resource} create_entity: Adding IP #{k}: #{new_ips}")
+    end
   else
     new_ips = nil
     if @new_resource.search_method == 'ip'
@@ -76,19 +79,19 @@ def create_entity
     end
   end
   
-  return @current_resource.update_entity(
-                                         label:        @new_resource.api_label ? @new_resource.api_label : @new_resource.label,
-                                         ip_addresses: new_ips,
-                                         metadata:     @new_resource.metadata,
-                                         agent_id:     @new_resource.agent_id
-                                         )
+  return @current_entity.update_entity(
+                                       label:        @new_resource.api_label ? @new_resource.api_label : @new_resource.label,
+                                       ip_addresses: new_ips,
+                                       metadata:     @new_resource.metadata,
+                                       agent_id:     @new_resource.agent_id
+                                       )
 end
 
 # update_entity: Only the following fields are updatable:
 # metadata, agent_id
 def update_entity
-  return @current_resource.update_entity(
-                                         metadata:     @new_resource.metadata,
-                                         agent_id:     @new_resource.agent_id
-                                         )
+  return @current_entity.update_entity(
+                                       metadata:     @new_resource.metadata,
+                                       agent_id:     @new_resource.agent_id
+                                       )
 end

@@ -22,7 +22,7 @@ include Opscode::Rackspace::Monitoring
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.update(
+  new_resource.updated_by_last_action(@current_check.update(
     label:                 new_resource.label,
     type:                  new_resource.type,
     details:               new_resource.details,
@@ -39,10 +39,10 @@ end
 
 action :delete do
   Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.delete)
+  new_resource.updated_by_last_action(@current_check.delete)
 end
 
 def load_current_resource
-  @current_resource = CMCheck.new(CMCredentials.new(node, @new_resource), @new_resource.entity_chef_label, @new_resource.label)
-  @current_resource.lookup_by_label(@new_resource.label)
+  @current_check = CMCheck.new(CMCredentials.new(node, @new_resource), @new_resource.entity_chef_label, @new_resource.label)
+  @current_check.lookup_by_label(@new_resource.label)
 end

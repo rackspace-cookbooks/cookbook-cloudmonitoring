@@ -22,16 +22,16 @@ include Opscode::Rackspace::Monitoring
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.update(label: new_resource.label))
+  new_resource.updated_by_last_action(@current_agent_token.update(label: new_resource.label))
 end
 
 action :delete do
   Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.delete)
+  new_resource.updated_by_last_action(@current_agent_token.delete)
 end
 
 def load_current_resource
-  @current_resource = CMAgentToken.new(CMCredentials.new(node, @new_resource),
+  @current_agent_token = CMAgentToken.new(CMCredentials.new(node, @new_resource),
                                        @new_resource.token,
                                        @new_resource.label)
 end

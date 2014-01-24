@@ -28,13 +28,13 @@ action :create do
   if new_resource.example_id
     fail 'Cannot specify example_id and criteria' unless new_resource.criteria.nil?
 
-    criteria = @current_resource.example_alarm(new_resource.example_id, new_resource.example_values)
+    criteria = @current_alarm.example_alarm(new_resource.example_id, new_resource.example_values)
   end
 
   if new_resource.check_label
     fail 'Cannot specify check_label and check_id' unless new_resource.check_id.nil?
 
-    check_obj = CMCheck.new(@current_resource.credentials, @new_resource.entity_chef_label, @new_resource.check_label)
+    check_obj = CMCheck.new(@current_alarm.credentials, @new_resource.entity_chef_label, @new_resource.check_label)
     check_obj.lookup_by_label(new_resource.check_label)
 
     if check_obj.obj.nil?
@@ -48,7 +48,7 @@ action :create do
     fail ValueError, 'Must specify notification_plan_id in alarm resource'
   end
 
-  new_resource.updated_by_last_action(@current_resource.update(
+  new_resource.updated_by_last_action(@current_alarm.update(
     label:                new_resource.label,
     metadata:             new_resource.metadata,
     # Fog calls check_id check apparently?
@@ -61,10 +61,10 @@ end
 
 action :delete do
   Chef::Log.debug("Beginning action[:delete] for #{new_resource}")
-  new_resource.updated_by_last_action(@current_resource.delete)
+  new_resource.updated_by_last_action(@current_alarm.delete)
 end
 
 def load_current_resource
-  @current_resource = CMAlarm.new(CMCredentials.new(node, @new_resource), @new_resource.entity_chef_label, @new_resource.label)
-  @current_resource.lookup_by_label(@new_resource.label)
+  @current_alarm = CMAlarm.new(CMCredentials.new(node, @new_resource), @new_resource.entity_chef_label, @new_resource.label)
+  @current_alarm.lookup_by_label(@new_resource.label)
 end
