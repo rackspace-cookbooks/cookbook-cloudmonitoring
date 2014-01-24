@@ -55,9 +55,11 @@ default['rackspace_cloudmonitoring']['agent']['plugins'] = {}
 default['rackspace_cloudmonitoring']['agent']['plugins']['rackspace_cloudmonitoring'] = 'plugins'
 
 # Check values
-default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] = node['hostname']
-default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period'] = 30
-default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] = 10
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']     = node['hostname']
+# TODO(BUG): node['cloud']['local_ipv4'] is a bad default as it fails on non-cloud
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] = node['cloud']['local_ipv4']
+default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']     = 30
+default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']    = 10
 # default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = nil
 
 # Configuration template overrides

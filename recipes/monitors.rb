@@ -27,7 +27,7 @@ include_recipe 'rackspace_cloudmonitoring::agent'
 rackspace_cloudmonitoring_entity node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] do
   agent_id      node['rackspace_cloudmonitoring']['config']['agent']['id']
   search_method 'ip'
-  search_ip     node['cloud']['local_ipv4']
+  search_ip     node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']
   action        :create
 end
 
