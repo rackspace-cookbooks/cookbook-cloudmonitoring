@@ -103,12 +103,19 @@ The alarm threshold conditional need only be specified and will be used directly
 The body of the criteria conditional is handled by the cookbook.
 See recipes/monitors.rb for the exact abstraction and body used.
 
-As mentioned above the monitoring entity will automatically be created or updated, and matched by server IP.
-For Rackspace Cloud Servers this will result in the existing, automatically generated entity being reused.
-By default the entity's label will be node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'], set in attributes.rb to the hostname.
-Existing entities will be reused, monitors.rb performs an ip search against node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'].
-The default for node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip'] is set in attributes/default.rb.
+As mentioned above the monitoring entity will automatically be created or updated.
+The entity behavior is configured by the following node variables:
+
+| variable | Description |
+| -------- | ----------- |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']         | Label for the entity   |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']  | IP addresses to set in the API |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_method'] | Method to use to search for existing entities |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']     | IP to use when searching by IP |
+
+Defaults for all are in attributes/default.rb.
 See the entity LWRP description below for details about the search method.
+For Rackspace Cloud Servers the defaults will result in the existing, automatically generated entity being reused.
 Checks and Alarms need to reference the entity and will use the Chef label to do so.
 
 ### Configuration Hash Example

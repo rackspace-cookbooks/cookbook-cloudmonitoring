@@ -55,6 +55,7 @@ default['rackspace_cloudmonitoring']['agent']['plugins']['rackspace_cloudmonitor
 
 # Default values for monitors.rb
 default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']         = node['hostname']
+default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']  = {default: node['ipaddress']}
 
 # Search by IP in Rackspace public cloud, search by label elsewhere
 if node.key?('cloud')
@@ -64,7 +65,6 @@ else
 end
   
 default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']     = node['ipaddress']
-default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']  = {default: node['ipaddress']}
 
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']         = 30
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']        = 10
