@@ -5,7 +5,7 @@ license          'Apache 2.0'
 description      'Installs/Configures Rackspace Cloud Monitoring'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 
-version          '2.0.3'
+version          '2.0.4'
 
 depends 'rackspace_apt', '~> 3.0'
 depends 'rackspace_yum', '~> 4.0'
@@ -13,3 +13,6 @@ depends 'rackspace_yum', '~> 4.0'
 depends 'xml', '~> 1.2'
 # Dep of xml
 depends 'build-essential'
+
+# Conflict with the earlier version we forked from, we will conflict
+conflicts 'cloud_monitoring'
