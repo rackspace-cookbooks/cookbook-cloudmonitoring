@@ -95,7 +95,7 @@ class TestData
       apikey:      'databag apikey',
       username:    'databag username',
       auth_url:    'databag authurl',
-      agent_token: 'databag token',
+      agent_token: 'databag token'
     }
   end
 

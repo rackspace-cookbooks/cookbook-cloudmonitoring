@@ -33,7 +33,7 @@ action :create do
     target_resolver:       new_resource.target_resolver,
     timeout:               new_resource.timeout,
     period:                new_resource.period,
-    disabled:             new_resource.disabled,
+    disabled:              new_resource.disabled
   ))
 end
 

@@ -17,9 +17,11 @@
 
 # This helper file defines the platforms to test in ChefSpec
 
-$RACKSPACE_CLOUDMONITORING_TEST_PLATFORMS = {
-  ubuntu: %w(12.04),
-  debian: %w(7.1),
-  redhat: %w(6.3),
-  centos: %w(6.4),
-}
+def rackspace_cloudmonitoring_test_platforms
+  return {
+    ubuntu: %w(12.04),
+    debian: %w(7.1),
+    redhat: %w(6.3),
+    centos: %w(6.4)
+  }
+end

@@ -68,17 +68,17 @@ def create_entity
   # normalize the ip's
   if new_resource.ip_addresses
     new_ips = {}
-    new_resource.ip_addresses.each do |k, v| 
+    new_resource.ip_addresses.each do |k, v|
       new_ips[k] = IPAddr.new(v).to_string
       Chef::Log.debug("Opscode::Rackspace::Monitoring::Entity #{new_resource} create_entity: Adding IP #{k}: #{new_ips}")
     end
   else
     new_ips = nil
     if new_resource.search_method == 'ip'
-      fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} :create ERROR: About to create an entity with no IPs when using ip search method.  Cowardly refusing to continue" 
+      fail "Opscode::Rackspace::Monitoring::Entity #{new_resource} :create ERROR: About to create an entity with no IPs when using ip search method.  Cowardly refusing to continue"
     end
   end
-  
+
   return @current_entity.update_entity(
                                        label:        new_resource.api_label ? new_resource.api_label : new_resource.label,
                                        ip_addresses: new_ips,

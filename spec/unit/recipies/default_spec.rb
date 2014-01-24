@@ -18,15 +18,15 @@
 require 'spec_helper'
 
 describe 'rackspace_cloudmonitoring::default' do
-  $RACKSPACE_CLOUDMONITORING_TEST_PLATFORMS.each do |platform, versions|
+  rackspace_cloudmonitoring_test_platforms.each do |platform, versions|
     describe "on #{platform}" do
       versions.each do |version|
         describe version do
-          let(:chef_run) { ChefSpec::Runner.new({
-                                                  :platform=>platform.to_s,
-                                                  :version=>version.to_s
-                                                }).converge('rackspace_cloudmonitoring::default') }
-          
+          let(:chef_run) do
+            runner = ChefSpec::Runner.new(platform: platform.to_s, version: version.to_s)
+            runner.converge('rackspace_cloudmonitoring::default')
+          end
+
           it 'install the Fog chef_gem' do
             expect(chef_run).to install_chef_gem 'fog'
           end
@@ -35,4 +35,3 @@ describe 'rackspace_cloudmonitoring::default' do
     end
   end
 end
-

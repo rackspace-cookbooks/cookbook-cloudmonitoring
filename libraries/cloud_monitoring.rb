@@ -127,23 +127,23 @@ module Opscode
             api_key: {
               resource: 'rackspace_api_key',
               node:     '["rackspace"]["cloud_credentials"]["api_key"]',
-              databag:  'apikey',
+              databag:  'apikey'
             },
             username: {
               resource: 'rackspace_username',
               node:     '["rackspace"]["cloud_credentials"]["username"]',
-              databag:  'username',
+              databag:  'username'
             },
             auth_url: {
               resource: 'rackspace_auth_url',
               node:     '["rackspace_cloudmonitoring"]["auth"]["url"]',
-              databag:  'auth_url',
+              databag:  'auth_url'
             },
             token: {
               resource:  'monitoring_agent_token',
               node:     '["rackspace_cloudmonitoring"]["config"]["agent"]["token"]',
-              databag:  'agent_token',
-            },
+              databag:  'agent_token'
+            }
           }
         end
 

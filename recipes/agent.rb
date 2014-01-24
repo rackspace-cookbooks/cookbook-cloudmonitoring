@@ -100,7 +100,7 @@ template '/etc/rackspace-monitoring-agent.cfg' do
   mode 0600
   variables(
             monitoring_id:    node['rackspace_cloudmonitoring']['config']['agent']['id'],
-            monitoring_token: node['rackspace_cloudmonitoring']['config']['agent']['token'],
+            monitoring_token: node['rackspace_cloudmonitoring']['config']['agent']['token']
             )
   action :create
 end
