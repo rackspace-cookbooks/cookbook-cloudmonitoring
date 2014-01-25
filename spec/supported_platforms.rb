@@ -19,6 +19,8 @@
 
 def rackspace_cloudmonitoring_test_platforms
   return {
+    # TODO: Ensure this matches kitchen.yml
+    # May need some fauxhai chicanery
     ubuntu: %w(12.04),
     debian: %w(7.1),
     redhat: %w(6.3),
