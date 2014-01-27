@@ -30,7 +30,6 @@ default['rackspace_cloudmonitoring']['monitors'] = {}
 
 # Versions of dependency packages
 # TODO: Look into forking fog cookbook
-default['rackspace_cloudmonitoring']['dependency_versions']['rackspace_monitoring_version'] = '0.2.18'
 default['rackspace_cloudmonitoring']['dependency_versions']['fog_version'] = '1.19.0'
 
 # Credential Values
