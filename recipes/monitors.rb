@@ -40,6 +40,9 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
     timeout           check_value.key?('timeout') ? check_value['timeout'] : node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']
     details           check_value.key?('details') ? check_value['details'] : nil
     disabled          check_value.key?('disabled') ? check_value['details'] : false
+    target_alias      check_value.key?('target_alias') ? check_value['target_alias'] : nil
+    target_hostname   check_value.key?('target_hostname') ? check_value['target_hostname'] : nil
+    monitoring_zones_poll check_value.key?('monitoring_zones_poll') ? check_value['monitoring_zones_poll'] : nil
     action            :create
   end
 
