@@ -17,6 +17,7 @@
 
 require 'spec_helper'
 
+require_relative '../../../libraries/CMCredentials.rb'
 include Opscode::Rackspace::Monitoring
 
 #

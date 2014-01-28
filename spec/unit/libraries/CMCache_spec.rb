@@ -16,21 +16,22 @@
 # limitations under the License.
 
 require 'spec_helper'
-include Opscode::Rackspace::Monitoring
 
-describe CMCache do
+require_relative '../../../libraries/CMCache.rb'
+
+describe 'CMCache' do
   before :each do
     # Test a 3 level cache, which should be quite sufficient to exercise the code.
-    @test_cache = CMCache.new(3)
+    @test_cache = Opscode::Rackspace::Monitoring::CMCache.new(3)
 
     # Create a second cache to test for crosstalk due to some unforseen insanity
     # (We *are* allowing class variables, after all)
-    @second_cache = CMCache.new(3)
+    @second_cache = Opscode::Rackspace::Monitoring::CMCache.new(3)
   end
 
   describe '#new' do
     it 'takes a parameter and is a CMCache object' do
-      @test_cache.should be_an_instance_of CMCache
+      @test_cache.should be_an_instance_of Opscode::Rackspace::Monitoring::CMCache
     end
   end
 

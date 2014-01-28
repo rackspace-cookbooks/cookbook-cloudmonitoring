@@ -16,6 +16,7 @@
 # limitations under the License.
 
 require 'spec_helper'
+require_relative '../../../libraries/CMObjBase.rb'
 include Opscode::Rackspace::Monitoring
 
 #
