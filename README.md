@@ -147,6 +147,20 @@ node.default['rackspace_cloudmonitoring']['monitors'] = {
     'type' => 'agent.filesystem',
     'details' => { 'target' => '/'},
   },
+
+  'web_check' => {
+    'type' => 'remote.http',
+    'target_alias' => 'default',
+    'monitoring_zones_poll' => [
+      'mzdfw',
+      'mziad',
+      'mzord'
+    ],
+    'details' => {
+      "url" => "http://#{node['ipaddress']}/",
+      "method" => "GET"
+    }
+  }
 }
 
 #
