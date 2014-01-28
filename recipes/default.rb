@@ -29,3 +29,8 @@ end
 # Load fog for the cloud_monitoring library
 # https://sethvargo.com/using-gems-with-chef/
 require 'fog'
+
+# Mock out fog: THis code path is for testing
+if node['rackspace_cloudmonitoring']['mock']
+  Fog.mock!
+end

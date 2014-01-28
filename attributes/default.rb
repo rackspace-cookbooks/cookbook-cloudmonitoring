@@ -71,3 +71,7 @@ default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']   
 
 # Configuration template overrides
 default['rackspace_cloudmonitoring']['templates_cookbook']['rackspace-monitoring-agent'] = 'rackspace_cloudmonitoring'
+
+# Testing option, not intended to be set in actual use
+default['rackspace_cloudmonitoring']['mock'] = false
+

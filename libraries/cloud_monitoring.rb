@@ -310,11 +310,19 @@ module Opscode
         end
 
         # cm: Getter for the @@cm class variable
-        # PRE: Class initialized
-        # POST: none
+        # PRE: None
+        # POST: None
         # RETURN VALUE: Fog::Rackspace::Monitoring class
         def cm
           return @cm
+        end
+
+        # mock?: Return if we are mocked
+        # PRE: None
+        # POST: None
+        # RETURN VALUE: Boolean
+        def mock?
+          Fog.mock?
         end
       end # END CMApi class
 
