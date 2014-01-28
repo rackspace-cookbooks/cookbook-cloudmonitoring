@@ -29,7 +29,7 @@ describe 'rackspace_cloudmonitoring::agent' do
             end.converge('rackspace_cloudmonitoring::agent')
           end
 
-          it "include the default recipe" do
+          it 'include the default recipe' do
             expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::default'
           end
 

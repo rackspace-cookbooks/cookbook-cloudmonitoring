@@ -34,11 +34,11 @@ describe 'rackspace_cloudmonitoring::monitors' do
             end.converge('rackspace_cloudmonitoring::monitors')
           end
 
-          it "include the default recipe" do
+          it 'include the default recipe' do
             expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::default'
           end
 
-          it "include the agent recipe" do
+          it 'include the agent recipe' do
             expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::agent'
           end
 
