@@ -67,6 +67,19 @@ def generate_alarm(entity, label = "Testing Alarm", check_id = "Test Check", not
   return alarm
 end
 
+def generate_check(entity, label = "Testing Check", type = "DUmmy Type")
+  fail 'ERROR: nil entity' if entity.nil?
+  check = entity.checks.find { |x| x.label == label }
+  if check.nil?
+    check = entity.checks.new(
+                              "label" => label,
+                              "type"  => type,
+                              )
+    check.save
+  end
+  return check
+end
+
 def seed_CMEntity(credentials = test_credentials, label = "Testing Entity")
   entity_obj = CMEntity.new(credentials, label)
   entity_obj.update_entity('label' => label)
