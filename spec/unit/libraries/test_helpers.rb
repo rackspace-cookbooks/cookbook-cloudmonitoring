@@ -43,7 +43,6 @@ def generate_token(credentials, label)
 end
 
 def generate_entity(credentials = test_credentials, label = "Testing Entity")
-  fail 'ERROR: nil credentials' if credentials.nil?
   cm = CMApi.new(credentials).cm
   entity = cm.entities.find { |e| e.label == label }
   if entity.nil?
@@ -66,4 +65,11 @@ def generate_alarm(entity, label = "Testing Alarm", check_id = "Test Check", not
     alarm.save
   end
   return alarm
+end
+
+def seed_CMEntity(credentials = test_credentials, label = "Testing Entity")
+  entity_obj = CMEntity.new(credentials, label)
+  entity_obj.update_entity('label' => label)
+  fail 'ERROR: Entity obj update failed' if entity_obj.entity_obj.nil?
+  return entity_obj
 end

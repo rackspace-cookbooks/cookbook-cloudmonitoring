@@ -19,6 +19,8 @@
 #
 
 require_relative 'CMObjBase.rb'
+require_relative 'CMEntity.rb'
+require_relative 'CMCache.rb'
 
 module Opscode
   module Rackspace
@@ -41,7 +43,7 @@ module Opscode
           @debug_name = my_debug_name
           @entity_chef_label = entity_chef_label
 
-          @entity = CMEntity.new(credentials, entity_chef_label)
+          @entity = Opscode::Rackspace::Monitoring::CMEntity.new(credentials, entity_chef_label)
           if @entity.entity_obj.nil?
             fail "Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).initialize: Unable to lookup entity with Chef label #{entity_chef_label}"
           end
@@ -49,7 +51,7 @@ module Opscode
           @username = credentials.get_attribute(:username)
           @label = my_label
           unless defined? @@obj_cache
-            @@obj_cache = CMCache.new(4)
+            @@obj_cache = Opscode::Rackspace::Monitoring::CMCache.new(4)
           end
           @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @label)
           # rubocop:enable ClassVars
@@ -88,16 +90,21 @@ module Opscode
         # PRE: new_entity is a valid Fog::Rackspace::Monitoring::#{foo} object
         # POST: None
         # RETURN VALUE: new_entity
-        def _update_obj(new_entity)
-          @obj = new_entity
-
-          unless new_entity.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name})._update_obj: Caching entity with ID #{new_entity.id}")
-            @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @label)  # rubocop:disable ClassVars
-                                                                                         # See comment in constructor
+        def _update_obj(new_obj)
+          @obj = new_obj
+          
+          @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @label)  # rubocop:disable ClassVars
+                                                                                       # See comment in constructor
+          # Disable long line warnings for the logs, no simple way to shorten them
+          # rubocop:disable LineLength
+          if new_obj.nil?
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name})._update_obj: Clearing object cache for #{@label} #{@debug_name} ")
+          else
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name})._update_obj: Caching #{@debug_name} object with ID #{new_obj.id} for #{@label} #{@debug_name}")
           end
+          # rubocop:enable LineLength
 
-          return new_entity
+          return new_obj
         end
 
         # lookup_by_id: Lookup a child by label
@@ -152,16 +159,15 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def delete
-          orig_obj = obj # rubocop:disable UselessAssignment
-                         # rubocop falsely flags this as useless, it's used via interpolation in the info log
+          orig_obj = @obj.dup unless @obj.nil?
           if obj_delete(@obj, _get_target, @target_name)
             _update_obj(nil)
-
+            
             entity_id = @entity.entity_obj_id
 
             # Disable long line warnings for the info logs, no simple way to shorten them
             # rubocop:disable LineLength
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).delete: Deleted #{@debug_name} #{@orig_obj.label} (#{@orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMChild(#{@debug_name}).delete: Deleted #{@debug_name} #{orig_obj.label} (#{orig_obj.id})[Entity #{@entity_chef_label}(#{entity_id})]")
             # rubocop:enable LineLength
 
             return true

@@ -73,6 +73,14 @@ module Opscode
           return @entity_obj.id
         end
 
+        # chef_label: Return the chef label
+        # PRE: None
+        # POST: None
+        # Returns a Fog::Rackspace::Monitoring::Entity object or nil
+        def chef_label
+          return @chef_label
+        end
+
         # to_s: Print the class as a string
         # PRE: None
         # POST: None
