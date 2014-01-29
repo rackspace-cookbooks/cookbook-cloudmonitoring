@@ -47,9 +47,14 @@ module Opscode
               databag:  'auth_url'
             },
             token: {
-              resource:  'monitoring_agent_token',
+              resource: 'monitoring_agent_token',
               node:     '["rackspace_cloudmonitoring"]["config"]["agent"]["token"]',
               databag:  'agent_token'
+            },
+            mocking: {
+              resource: 'monitoing_mock_api',
+              node:     '["rackspace_cloudmonitoring"]["mock"]',
+              databag:  nil
             }
           }
         end

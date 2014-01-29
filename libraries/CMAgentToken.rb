@@ -19,6 +19,7 @@
 #
 
 require_relative 'CMObjBase.rb'
+require_relative 'CMApi.rb'
 
 module Opscode
   module Rackspace
@@ -26,7 +27,7 @@ module Opscode
       # CMAgentToken: Class for handling Cloud Monitoring Agent Token objects
       class CMAgentToken < Opscode::Rackspace::Monitoring::CMObjBase
         def initialize(credentials, token, label)
-          @cm = CMApi.new(credentials).cm
+          @cm = Opscode::Rackspace::Monitoring::CMApi.new(credentials).cm
           unless token.nil?
             @obj = obj_lookup_by_id(nil, @cm.agent_tokens, 'Agent_Token', token)
             unless @obj.nil?
@@ -90,12 +91,11 @@ module Opscode
         # PRE: None
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
-        def delete_
-          orig_obj = obj # rubocop:disable UselessAssignment
-                         # rubocop falsely flags this as useless, it's used via interpolation in the info log
+        def delete
+          orig_obj_id = @obj.id unless @obj.nil?
           if obj_delete(@obj, @cm.agent_tokens, @target_name)
             @obj = nil
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CMAgentToken.delete: Deleted token #{@orig_obj.id}")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMAgentToken.delete: Deleted token #{orig_obj_id}")
             return true
           end
           return false

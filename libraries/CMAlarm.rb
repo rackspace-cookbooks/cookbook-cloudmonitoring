@@ -19,6 +19,7 @@
 #
 
 require_relative 'CMChild.rb'
+require_relative 'CMApi.rb'
 
 module Opscode
   module Rackspace
@@ -43,14 +44,14 @@ module Opscode
           return @credentials
         end
 
-        # example_alarm: Look up an alarm definition from the example API and return its criteria
-        # This does not modify the current alarm object, but it does require the inherited CMApi class
+        # example_alarm: Look up an alarm definition from the example API
+        # This does not modify the current alarm object, but it does require use of the CMApi class
         # PRE: None
         # POST: None
-        # Return Value: bound_criteria string
+        # Return Value: Example alarm object
         def example_alarm(example_id, example_values)
-          @cm = CMApi.new(@credentials).cm
-          return @cm.alarm_examples.evaluate(example_id, example_values).bound_criteria
+          @cm = Opscode::Rackspace::Monitoring::CMApi.new(@credentials).cm
+          return @cm.alarm_examples.evaluate(example_id, example_values)
         end
       end
     end # END MODULE
