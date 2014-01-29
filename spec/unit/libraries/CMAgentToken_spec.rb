@@ -18,28 +18,9 @@
 require 'spec_helper'
 
 require_relative '../../../libraries/CMAgentToken.rb'
-require_relative '../../../libraries/CMCredentials.rb'
-require_relative '../../../libraries/CMApi.rb'
+require_relative 'test_helpers.rb'
+
 include Opscode::Rackspace::Monitoring
-
-def generate_token(credentials, label)
-  fail 'ERROR: nil credentials' if credentials.nil?
-  cm = CMApi.new(credentials).cm
-  token = cm.agent_tokens.new
-  token.label = label
-  token.save
-  return token
-end
-
-def test_credentials
-  return CMCredentials.new({
-                             'rackspace_cloudmonitoring' => { 'mock' => true },
-                             'rackspace' => { 'cloud_credentials' => {
-                                 'username' => 'Mr. Mockson',
-                                 'api_key'  => 'Woodruff'
-                               } }
-                           }, nil)
-end
 
 describe 'CMAgentToken' do
   describe '#new' do
