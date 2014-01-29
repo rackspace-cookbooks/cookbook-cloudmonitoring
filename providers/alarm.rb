@@ -28,7 +28,7 @@ action :create do
   if new_resource.example_id
     fail 'Cannot specify example_id and criteria' unless new_resource.criteria.nil?
 
-    criteria = @current_alarm.example_alarm(new_resource.example_id, new_resource.example_values)
+    criteria = @current_alarm.example_alarm(new_resource.example_id, new_resource.example_values).bound_criteria
   end
 
   if new_resource.check_label

@@ -204,4 +204,30 @@ describe 'CMAlarm' do
     end
   end
 
+  #
+  # Alarm Specific Methods
+  #
+  describe "#credentials" do
+    before :all do
+      @credentials  = test_credentials
+      @cmentity_obj = seed_CMEntity(@credentials, "Valid Alarm Test Entity")
+    end
+
+    it 'returns the credentials it was passed' do
+      test_obj = CMAlarm.new(@credentials, @cmentity_obj.chef_label, "Credentials Test Alarm Label")
+      test_obj.credentials.should eql @credentials
+    end
+  end
+
+  describe "example_alarm" do
+    before :all do
+      @credentials  = test_credentials
+      @cmentity_obj = seed_CMEntity(@credentials, "Valid Alarm Test Entity")
+    end
+    
+    it 'looks up example alarms' do
+      test_obj = CMAlarm.new(@credentials, @cmentity_obj.chef_label, "Credentials Test Alarm Label")
+      test_obj.example_alarm('remote.http_body_match_1', { "string" => "Some search thing" }).should be_an_instance_of MockMonitoringAlarmExample
+    end
+  end
 end
