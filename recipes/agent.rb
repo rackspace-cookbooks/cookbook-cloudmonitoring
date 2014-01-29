@@ -77,10 +77,12 @@ node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = credentials.
 
 # If the token or id was not specified, call the API to generate/locate it.
 if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['rackspace_cloudmonitoring']['config']['agent']['id'].nil?
-  rackspace_cloudmonitoring_agent_token node['hostname'] do
+  e = rackspace_cloudmonitoring_agent_token node['hostname'] do
     token               node['rackspace_cloudmonitoring']['config']['agent']['token']
-    action :create
+    action :nothing
   end
+
+  e.run_action(:create)
 
   my_token_obj = CMAgentToken.new(credentials, node['rackspace_cloudmonitoring']['config']['agent']['token'], node['hostname'])
   my_token = my_token_obj.obj
