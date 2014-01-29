@@ -9,6 +9,7 @@ group :testing do
   gem 'strainer',   '~> 3.3'
   gem 'chef',       '~> 11.0'
   gem 'rspec',      '~> 2.14'
+  gem 'vagrant-wrapper', '~> 1.2'
 
   # Rubocop 0.16 is recently broken
 #  gem 'rubocop',    '~> 0.16' 
