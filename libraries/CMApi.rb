@@ -32,6 +32,10 @@ module Opscode
         # RETURN VALUE: None
         # Opens @cm class variable
         def initialize(my_credentials)
+          if my_credentials.nil?
+            fail 'Opscode::Rackspace::Monitoring::CMApi.initialize: ERROR: Mandatory argument my_credentials nil'
+          end
+
           @credentials = my_credentials
 
           @mocking = @credentials.get_attribute(:mocking)
