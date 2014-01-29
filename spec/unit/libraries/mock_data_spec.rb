@@ -20,6 +20,9 @@ require 'spec_helper'
 require_relative '../../../libraries/mock_data.rb'
 include Opscode::Rackspace::Monitoring::MockData
 
+#
+# TODO: This code is not DRY.
+#
 describe 'mock_data' do
   describe MockMonitoring do
     describe '#new' do
@@ -392,7 +395,42 @@ describe 'mock_data' do
           end
         end
       end
-
     end
+
+    describe '#alarm_examples' do
+      before :all do
+        @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
+                                       rackspace_username: 'sandwitches')
+      end
+      
+      it 'should contain seed data' do
+        @mock_obj.alarm_examples.length.should eql 3
+      end
+
+      it 'should contain MockMonitoringAlarmExample classes' do
+        @mock_obj.alarm_examples[0].should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoringAlarmExample
+      end
+
+      describe '#evaluate' do
+        before :all do
+          @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
+                                         rackspace_username: 'sandwitches')
+        end
+
+        it 'should error with a bad id' do
+          expect {@mock_obj.alarm_examples.evaluate('Bad Data') }.to raise_exception
+        end
+
+        it 'should error with option mismatches' do
+          expect {@mock_obj.alarm_examples.evaluate('remote.http_body_match_1', { "Bad Option" => "Bad Data" }) }.to raise_exception
+        end
+
+        it 'should return a MockMonitoringAlarmExample when the options are correct' do
+          ret_val = @mock_obj.alarm_examples.evaluate('remote.http_body_match_1', { "string" => "Some search thing" })
+          ret_val.should be_an_instance_of MockMonitoringAlarmExample
+          ret_val.bound_criteria.should be_an_instance_of String
+        end
+      end
+    end     
   end
 end

@@ -24,7 +24,7 @@ module Opscode
       module MockData
         # MockMonitoring: provide an object mimicing Fog::Rackspace::Monitoring
         class MockMonitoring
-          attr_accessor :entities, :agent_tokens
+          attr_accessor :entities, :agent_tokens, :alarm_examples
 
           def initialize(options = {})
             if options[:rackspace_api_key].nil?
@@ -36,6 +36,7 @@ module Opscode
 
             @entities = MockMonitoringParent.new(MockMonitoringEntity)
             @agent_tokens = MockMonitoringParent.new(MockMonitoringAgentToken)
+            @alarm_examples = MockMonitoringAlarmExamples.new
           end
         end
 
@@ -200,6 +201,74 @@ module Opscode
 
           def compare?(other_obj)
             _compare_helper(other_obj, [:id, :label])
+          end
+        end
+
+        # MockMonitoringAlarmExample: Mimic a Alarm Example object
+        class MockMonitoringAlarmExample
+          attr_accessor :id, :label, :description, :check_type, :criteria, :fields, :bound_criteria
+          attr_writer   :id, :label, :description, :check_type, :criteria, :fields, :bound_criteria
+          # Oh the complexity!
+        end
+
+        # MockMonitoringAlarmExamples: Mimic the Fog alarm examples object
+        class MockMonitoringAlarmExamples < Array
+          def initialize
+            # Seed ourself with some data
+            _seed(id:    "remote.http_body_match_1",
+                  label: "Body match - string found",
+                  description: "Alarm which returns CRITICAL if the provided string is found in the body",
+                  check_type: "remote.http",
+                  criteria: "if (metric['body_match'] regex '${string}') {\n  return new AlarmStatus(CRITICAL, '${string} found, returning CRITICAL.');\n}\n",
+                  fields: [{"name"=>"string", "description"=>"String to check for in the body", "type"=>"string"}])
+            _seed(id: "remote.http_body_match_missing_string",
+                  label: "Body match - string not found",
+                  description: "Alarm which returns CRITICAL if the provided string is not found in the body",
+                  check_type: "remote.http",
+                  criteria: "if (metric['body_match'] == '') {\n  return new AlarmStatus(CRITICAL, 'HTTP response did not contain the correct content.');\n}\n\nreturn new AlarmStatus(OK, 'HTTP response contains the correct content');\n",
+                  fields: [])
+            _seed(id: "remote.http_connection_time",
+                  label: "Connection time",
+                  description: "Alarm which returns WARNING or CRITICAL based on the connection time",
+                  check_type: "remote.http",
+                  criteria: "if (metric['duration'] > ${critical_threshold}) {\n  return new AlarmStatus(CRITICAL, 'HTTP request took more than ${critical_threshold} milliseconds.');\n}\n\nif (metric['duration'] > ${warning_threshold}) {\n  return new AlarmStatus(WARNING, 'HTTP request took more than ${warning_threshold} milliseconds.');\n}\n\nreturn new AlarmStatus(OK, 'HTTP connection time is normal');\n",
+                  fields: [{"name"=>"warning_threshold",                                                          
+                             "description"=>"Warning threshold (in milliseconds) for the connection time",
+                             "type"=>"integer"},
+                           {"name"=>"critical_threshold",
+                             "description"=>
+                             "Critical threshold (in milliseconds) for the connection time",
+                             "type"=>"integer"}]
+                  )
+          end
+
+          # _seed: Seed ourselves with data
+          def _seed(options)
+            obj = MockMonitoringAlarmExample.new
+            obj.id             = options[:id]
+            obj.label          = options[:label]
+            obj.description    = options[:description]
+            obj.check_type     = options[:check_type]
+            obj.criteria       = options[:criteria]
+            obj.fields         = options[:fields]
+            obj.bound_criteria = options[:bound_criteria]
+            push(obj)
+          end
+
+          # evaluate: Mimic the fog evaluate method
+          def evaluate(id, options = {})
+            example = find { |e| e.id == id }
+            if example.nil?
+              fail "ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringAgentToken.evaluate: No match for id #{id}"
+            end
+
+            if example.fields.map { |f| f["name"] } != options.keys
+              fail "ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringAgentToken.evaluate: Options mismatch for id #{id}"
+            end
+            
+            ret_val = example.dup
+            ret_val.bound_criteria = "# This is dummy data"
+            return ret_val
           end
         end
       end
