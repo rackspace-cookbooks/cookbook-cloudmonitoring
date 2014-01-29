@@ -19,6 +19,8 @@
 #
 
 require_relative 'CMObjBase.rb'
+require_relative 'CMApi.rb'
+require_relative 'CMCache.rb'
 
 module Opscode
   module Rackspace
@@ -37,12 +39,12 @@ module Opscode
           # rubocop:disable ClassVars
 
           @chef_label = my_chef_label
-          @cm = CMApi.new(credentials).cm
+          @cm = Opscode::Rackspace::Monitoring::CMApi.new(credentials).cm
           @username = credentials.get_attribute(:username)
 
           # Reuse an existing entity from our local cache, if present
           unless defined? @@entity_cache
-            @@entity_cache = CMCache.new(2)
+            @@entity_cache = Opscode::Rackspace::Monitoring::CMCache.new(2)
           end
           @entity_obj = @@entity_cache.get(@username, @chef_label)
           unless @entity_obj.nil?
@@ -89,11 +91,15 @@ module Opscode
         # RETURN VALUE: new_entity
         def _update_entity_obj(new_entity)
           @entity_obj = new_entity
+          
+          # Cache nill values, important for delete
+          @@entity_cache.save(@entity_obj, @username, @chef_label) # rubocop:disable ClassVars
+                                                                   # See comment in constructor
 
-          unless new_entity.nil?
-            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMEntity._update_entity_obj: Caching entity with ID #{new_entity.id}")
-            @@entity_cache.save(@entity_obj, @username, @chef_label) # rubocop:disable ClassVars
-                                                                     # See comment in constructor
+          if new_entity.nil?
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMEntity._update_entity_obj: Clearing cached entity for Chef entity #{@chef_label}")
+          else
+            Chef::Log.debug("Opscode::Rackspace::Monitoring::CMEntity._update_entity_obj: Caching entity with ID #{new_entity.id} for Chef entity #{@chef_label}")
           end
 
           return new_entity
@@ -178,11 +184,10 @@ module Opscode
         # POST: None
         # RETURN VALUE: Returns true if the entity was deleted, false otherwise
         def delete_entity
-          orig_obj = @entity_obj # rubocop:disable UselessAssignment
-                                 # rubocop falsely flags this as useless, it's used via interpolation in the info log
+          orig_obj = @entity_obj.dup unless @entity_obj.nil?
           if obj_delete(@entity_obj, @cm.entities, 'Entity')
             _update_entity_obj(nil)
-            Chef::Log.info("Opscode::Rackspace::Monitoring::CMEntity.delete: Deleted entity #{@orig_obj.label} (#{@orig_obj.id})")
+            Chef::Log.info("Opscode::Rackspace::Monitoring::CMEntity.delete: Deleted entity #{orig_obj.label} (#{orig_obj.id})")
             return true
           end
           return false
