@@ -92,7 +92,7 @@ module Opscode
         # RETURN VALUE: new_entity
         def _update_obj(new_obj)
           @obj = new_obj
-          
+
           @@obj_cache.save(@obj, @username, @entity_chef_label, @target_name, @label)  # rubocop:disable ClassVars
                                                                                        # See comment in constructor
           # Disable long line warnings for the logs, no simple way to shorten them
@@ -162,7 +162,7 @@ module Opscode
           orig_obj = @obj.dup unless @obj.nil?
           if obj_delete(@obj, _get_target, @target_name)
             _update_obj(nil)
-            
+
             entity_id = @entity.entity_obj_id
 
             # Disable long line warnings for the info logs, no simple way to shorten them

@@ -42,7 +42,7 @@ def generate_token(credentials, label)
   return token
 end
 
-def generate_entity(credentials = test_credentials, label = "Testing Entity")
+def generate_entity(credentials = test_credentials, label = 'Testing Entity')
   cm = CMApi.new(credentials).cm
   entity = cm.entities.find { |e| e.label == label }
   if entity.nil?
@@ -53,34 +53,34 @@ def generate_entity(credentials = test_credentials, label = "Testing Entity")
   return entity
 end
 
-def generate_alarm(entity, label = "Testing Alarm", check_id = "Test Check", notification_plan_id = "Test Notification Plan")
+def generate_alarm(entity, label = 'Testing Alarm', check_id = 'Test Check', notification_plan_id = 'Test Notification Plan')
   fail 'ERROR: nil entity' if entity.nil?
   alarm = entity.alarms.find { |x| x.label == label }
   if alarm.nil?
     alarm = entity.alarms.new(
-                              "label" => label,
-                              "check" => check_id,
-                              "notification_plan_id" => notification_plan_id,
+                              'label' => label,
+                              'check' => check_id,
+                              'notification_plan_id' => notification_plan_id
                               )
     alarm.save
   end
   return alarm
 end
 
-def generate_check(entity, label = "Testing Check", type = "DUmmy Type")
+def generate_check(entity, label = 'Testing Check', type = 'DUmmy Type')
   fail 'ERROR: nil entity' if entity.nil?
   check = entity.checks.find { |x| x.label == label }
   if check.nil?
     check = entity.checks.new(
-                              "label" => label,
-                              "type"  => type,
+                              'label' => label,
+                              'type'  => type
                               )
     check.save
   end
   return check
 end
 
-def seed_CMEntity(credentials = test_credentials, label = "Testing Entity")
+def seed_cmentity(credentials = test_credentials, label = 'Testing Entity')
   entity_obj = CMEntity.new(credentials, label)
   entity_obj.update_entity('label' => label)
   fail 'ERROR: Entity obj update failed' if entity_obj.entity_obj.nil?

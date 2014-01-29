@@ -99,7 +99,7 @@ module Opscode
         # RETURN VALUE: new_entity
         def _update_entity_obj(new_entity)
           @entity_obj = new_entity
-          
+
           # Cache nill values, important for delete
           @@entity_cache.save(@entity_obj, @username, @chef_label) # rubocop:disable ClassVars
                                                                    # See comment in constructor

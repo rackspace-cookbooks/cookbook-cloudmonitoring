@@ -402,7 +402,7 @@ describe 'mock_data' do
         @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
                                        rackspace_username: 'sandwitches')
       end
-      
+
       it 'should contain seed data' do
         @mock_obj.alarm_examples.length.should eql 3
       end
@@ -418,19 +418,19 @@ describe 'mock_data' do
         end
 
         it 'should error with a bad id' do
-          expect {@mock_obj.alarm_examples.evaluate('Bad Data') }.to raise_exception
+          expect { @mock_obj.alarm_examples.evaluate('Bad Data') }.to raise_exception
         end
 
         it 'should error with option mismatches' do
-          expect {@mock_obj.alarm_examples.evaluate('remote.http_body_match_1', { "Bad Option" => "Bad Data" }) }.to raise_exception
+          expect { @mock_obj.alarm_examples.evaluate('remote.http_body_match_1',  'Bad Option' => 'Bad Data') }.to raise_exception
         end
 
         it 'should return a MockMonitoringAlarmExample when the options are correct' do
-          ret_val = @mock_obj.alarm_examples.evaluate('remote.http_body_match_1', { "string" => "Some search thing" })
+          ret_val = @mock_obj.alarm_examples.evaluate('remote.http_body_match_1',  'string' => 'Some search thing')
           ret_val.should be_an_instance_of MockMonitoringAlarmExample
           ret_val.bound_criteria.should be_an_instance_of String
         end
       end
-    end     
+    end
   end
 end

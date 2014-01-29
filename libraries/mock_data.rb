@@ -215,31 +215,34 @@ module Opscode
         class MockMonitoringAlarmExamples < Array
           def initialize
             # Seed ourself with some data
-            _seed(id:    "remote.http_body_match_1",
-                  label: "Body match - string found",
-                  description: "Alarm which returns CRITICAL if the provided string is found in the body",
-                  check_type: "remote.http",
+            # This data is straight from the API, keep rubocop from complaining about it
+            # rubocop:disable LineLength
+            _seed(id:    'remote.http_body_match_1',
+                  label: 'Body match - string found',
+                  description: 'Alarm which returns CRITICAL if the provided string is found in the body',
+                  check_type: 'remote.http',
                   criteria: "if (metric['body_match'] regex '${string}') {\n  return new AlarmStatus(CRITICAL, '${string} found, returning CRITICAL.');\n}\n",
-                  fields: [{"name"=>"string", "description"=>"String to check for in the body", "type"=>"string"}])
-            _seed(id: "remote.http_body_match_missing_string",
-                  label: "Body match - string not found",
-                  description: "Alarm which returns CRITICAL if the provided string is not found in the body",
-                  check_type: "remote.http",
+                  fields: [{ 'name' => 'string', 'description' => 'String to check for in the body', 'type' => 'string' }])
+            _seed(id: 'remote.http_body_match_missing_string',
+                  label: 'Body match - string not found',
+                  description: 'Alarm which returns CRITICAL if the provided string is not found in the body',
+                  check_type: 'remote.http',
                   criteria: "if (metric['body_match'] == '') {\n  return new AlarmStatus(CRITICAL, 'HTTP response did not contain the correct content.');\n}\n\nreturn new AlarmStatus(OK, 'HTTP response contains the correct content');\n",
                   fields: [])
-            _seed(id: "remote.http_connection_time",
-                  label: "Connection time",
-                  description: "Alarm which returns WARNING or CRITICAL based on the connection time",
-                  check_type: "remote.http",
+            _seed(id: 'remote.http_connection_time',
+                  label: 'Connection time',
+                  description: 'Alarm which returns WARNING or CRITICAL based on the connection time',
+                  check_type: 'remote.http',
                   criteria: "if (metric['duration'] > ${critical_threshold}) {\n  return new AlarmStatus(CRITICAL, 'HTTP request took more than ${critical_threshold} milliseconds.');\n}\n\nif (metric['duration'] > ${warning_threshold}) {\n  return new AlarmStatus(WARNING, 'HTTP request took more than ${warning_threshold} milliseconds.');\n}\n\nreturn new AlarmStatus(OK, 'HTTP connection time is normal');\n",
-                  fields: [{"name"=>"warning_threshold",                                                          
-                             "description"=>"Warning threshold (in milliseconds) for the connection time",
-                             "type"=>"integer"},
-                           {"name"=>"critical_threshold",
-                             "description"=>
-                             "Critical threshold (in milliseconds) for the connection time",
-                             "type"=>"integer"}]
+                  fields: [{ 'name' => 'warning_threshold',
+                             'description' => 'Warning threshold (in milliseconds) for the connection time',
+                             'type' => 'integer' },
+                           { 'name' => 'critical_threshold',
+                             'description' =>
+                             'Critical threshold (in milliseconds) for the connection time',
+                             'type' => 'integer' }]
                   )
+            # rubocop:enable LineLength
           end
 
           # _seed: Seed ourselves with data
@@ -262,12 +265,12 @@ module Opscode
               fail "ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringAgentToken.evaluate: No match for id #{id}"
             end
 
-            if example.fields.map { |f| f["name"] } != options.keys
+            if example.fields.map { |f| f['name'] } != options.keys
               fail "ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringAgentToken.evaluate: Options mismatch for id #{id}"
             end
-            
+
             ret_val = example.dup
-            ret_val.bound_criteria = "# This is dummy data"
+            ret_val.bound_criteria = '# This is dummy data'
             return ret_val
           end
         end
