@@ -24,24 +24,24 @@ describe 'mock_data' do
   describe MockMonitoring do
     describe '#new' do
       it 'takes parameters and is a Opscode::Rackspace::Monitoring::MockData::MockMonitoring object' do
-        @mock_obj = MockMonitoring.new(rackspace_api_key:  "porkchop",
-                                       rackspace_username: "sandwitches")
+        @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
+                                       rackspace_username: 'sandwitches')
         @mock_obj.should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoring
       end
-      
+
       it 'fails if rackspace_api_key is missing' do
-        expect { MockMonitoring.new(rackspace_username: "sandwitches") }.to raise_error
+        expect { MockMonitoring.new(rackspace_username: 'sandwitches') }.to raise_error
       end
-      
+
       it 'fails if rackspace_username is missing' do
-        expect { MockMonitoring.new(rackspace_api_key: "porkchop") }.to raise_error
+        expect { MockMonitoring.new(rackspace_api_key: 'porkchop') }.to raise_error
       end
     end
-    
+
     describe '#agent_tokens' do
       before :all do
-        @mock_obj = MockMonitoring.new(rackspace_api_key:  "porkchop",
-                                       rackspace_username: "sandwitches")
+        @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
+                                       rackspace_username: 'sandwitches')
       end
 
       it 'should be empty initially' do
@@ -52,18 +52,18 @@ describe 'mock_data' do
         it 'should return a Opscode::Rackspace::Monitoring::MockData::MockMonitoringAgentToken object' do
           @mock_obj.agent_tokens.new.should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoringAgentToken
         end
-        
+
         [:label].each do |arg|
           it "should accept #{arg} as an option" do
-            test_obj = @mock_obj.agent_tokens.new( { arg.to_s => "foobar" } )
+            test_obj = @mock_obj.agent_tokens.new(arg.to_s => 'foobar')
             test_obj.send(arg).should_not eql nil
           end
         end
 
         it 'should not accept bogus arguments' do
-          expect { @mock_obj.agent_tokens.new( { bogus: "data" }) }.to raise_error
+          expect { @mock_obj.agent_tokens.new(bogus: 'data') }.to raise_error
         end
-        
+
         it 'should not modify the parent array' do
           @mock_obj.agent_tokens.length.should eql 0
         end
@@ -72,39 +72,39 @@ describe 'mock_data' do
       [:label].each do |arg|
         describe "##{arg}" do
           it 'should be a getter and a setter' do
-            test_obj = @mock_obj.agent_tokens.new()
+            test_obj = @mock_obj.agent_tokens.new
             test_obj.send(arg).should eql nil
-            test_obj.send("#{arg}=", "Test Data")
-            test_obj.send(arg).should eql "Test Data"
+            test_obj.send("#{arg}=", 'Test Data')
+            test_obj.send(arg).should eql 'Test Data'
           end
         end
       end
-      
-      describe "#id" do
+
+      describe '#id' do
         it 'should not be nil' do
-          test_obj = @mock_obj.agent_tokens.new()
+          test_obj = @mock_obj.agent_tokens.new
           test_obj.id.should_not eql nil
         end
       end
 
-      describe "#token" do
+      describe '#token' do
         it 'should not be nil' do
-          test_obj = @mock_obj.agent_tokens.new()
+          test_obj = @mock_obj.agent_tokens.new
           test_obj.token.should_not eql nil
         end
       end
 
-      describe "#save" do
+      describe '#save' do
         it 'should save the entity into the parent' do
           @mock_obj.agent_tokens.length.should eql 0
-          test_obj = @mock_obj.agent_tokens.new()
+          test_obj = @mock_obj.agent_tokens.new
           test_obj.save
           @mock_obj.agent_tokens.length.should eql 1
           @mock_obj.agent_tokens[0].should eql test_obj
         end
       end
 
-      describe "#destroy" do
+      describe '#destroy' do
         it 'should remove the entity from the parent' do
           @mock_obj.agent_tokens.length.should eql 1
           target = @mock_obj.agent_tokens[0]
@@ -113,16 +113,16 @@ describe 'mock_data' do
         end
       end
 
-      describe "#compare?" do
+      describe '#compare?' do
         it 'should return true if the objects are the same' do
-          test_obj  = @mock_obj.agent_tokens.new()
+          test_obj  = @mock_obj.agent_tokens.new
           test_obj2 = test_obj.dup
           test_obj.compare?(test_obj2).should eql true
         end
 
         it 'should return false if the objects are different' do
-          test_obj  = @mock_obj.agent_tokens.new()
-          test_obj2 = @mock_obj.agent_tokens.new()
+          test_obj  = @mock_obj.agent_tokens.new
+          test_obj2 = @mock_obj.agent_tokens.new
           test_obj.compare?(test_obj2).should eql false
         end
       end
@@ -130,8 +130,8 @@ describe 'mock_data' do
 
     describe '#entities' do
       before :all do
-        @mock_obj = MockMonitoring.new(rackspace_api_key:  "porkchop",
-                                       rackspace_username: "sandwitches")
+        @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
+                                       rackspace_username: 'sandwitches')
       end
 
       it 'should be empty initially' do
@@ -145,13 +145,13 @@ describe 'mock_data' do
 
         [:label, :metadata, :ip_addresses, :agent_id, :managed, :uri].each do |arg|
           it "should accept #{arg} as an option" do
-            test_entity = @mock_obj.entities.new( { arg.to_s => "foobar" } )
+            test_entity = @mock_obj.entities.new(arg.to_s => 'foobar')
             test_entity.send(arg).should_not eql nil
           end
         end
 
         it 'should not accept bogus arguments' do
-          expect { @mock_obj.entities.new( { bogus: "data" }) }.to raise_error
+          expect { @mock_obj.entities.new(bogus: 'data') }.to raise_error
         end
 
         it 'should not modify the parent array' do
@@ -162,38 +162,37 @@ describe 'mock_data' do
       [:label, :metadata, :ip_addresses, :agent_id, :managed, :uri].each do |arg|
         describe "##{arg}" do
           it 'should be a getter and a setter' do
-            test_entity = @mock_obj.entities.new()
+            test_entity = @mock_obj.entities.new
             test_entity.send(arg).should eql nil
-            test_entity.send("#{arg}=", "Test Data")
-            test_entity.send(arg).should eql "Test Data"
+            test_entity.send("#{arg}=", 'Test Data')
+            test_entity.send(arg).should eql 'Test Data'
           end
         end
       end
-      
+
       # ID: Special case: preset by new()
       [:id].each do |arg|
         describe "##{arg}" do
           it 'should be a getter and a setter' do
-            test_entity = @mock_obj.entities.new()
-            test_entity.send(arg).should_not eql "Test Data"
-            test_entity.send("#{arg}=", "Test Data")
-            test_entity.send(arg).should eql "Test Data"
+            test_entity = @mock_obj.entities.new
+            test_entity.send(arg).should_not eql 'Test Data'
+            test_entity.send("#{arg}=", 'Test Data')
+            test_entity.send(arg).should eql 'Test Data'
           end
         end
       end
 
-
-      describe "#save" do
+      describe '#save' do
         it 'should save the entity into the parent' do
           @mock_obj.entities.length.should eql 0
-          test_entity = @mock_obj.entities.new()
+          test_entity = @mock_obj.entities.new
           test_entity.save
           @mock_obj.entities.length.should eql 1
           @mock_obj.entities[0].should eql test_entity
         end
       end
 
-      describe "#destroy" do
+      describe '#destroy' do
         it 'should remove the entity from the parent' do
           @mock_obj.entities.length.should eql 1
           target = @mock_obj.entities[0]
@@ -202,84 +201,84 @@ describe 'mock_data' do
         end
       end
 
-      describe "#compare?" do
+      describe '#compare?' do
         it 'should return true if the objects are the same' do
-          test_entity = @mock_obj.entities.new()
+          test_entity = @mock_obj.entities.new
           test_entity2 = test_entity.dup
           test_entity.compare?(test_entity2).should eql true
         end
 
         it 'should return false if the objects are different' do
-          test_entity  =  @mock_obj.entities.new()
-          test_entity2 = @mock_obj.entities.new()
+          test_entity  =  @mock_obj.entities.new
+          test_entity2 = @mock_obj.entities.new
           test_entity.compare?(test_entity2).should eql false
         end
       end
-     
+
       describe '#checks' do
         before :all do
-          @test_entity = @mock_obj.entities.new()
+          @test_entity = @mock_obj.entities.new
         end
-        
+
         describe '#new' do
           it 'should fail without type argument' do
             expect { @test_entity.checks.new }.to raise_error
           end
 
           it 'should return a Opscode::Rackspace::Monitoring::MockData::MockMonitoringCheck object' do
-            @test_entity.checks.new({"type" => "dummy"}).should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoringCheck
+            @test_entity.checks.new('type' => 'dummy ').should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoringCheck
           end
-          
+
           [:label, :metadata, :target_alias, :target_resolver, :target_hostname, :period, :timeout, :details, :disabled, :monitoring_zones_poll].each do |arg|
             it "should accept #{arg} as an option" do
-              test_check = @test_entity.checks.new( { "type" => "dummy", arg.to_s => "foobar" } )
+              test_check = @test_entity.checks.new('type' => 'dummy', arg.to_s => 'foobar')
               test_check.send(arg).should_not eql nil
             end
           end
-          
+
           it 'should not accept bogus arguments' do
-            expect { @test_entity.checks.new({ "type" => "dummy", bogus: "data" }) }.to raise_error
+            expect { @test_entity.checks.new('type' => 'dummy', bogus: 'data') }.to raise_error
           end
-          
+
           it 'should not modify the parent array' do
             @test_entity.checks.length.should eql 0
           end
         end
-        
+
         [:label, :metadata, :target_alias, :target_resolver, :target_hostname, :period, :timeout, :details, :disabled, :monitoring_zones_poll].each do |arg|
           describe "##{arg}" do
             it 'should be a getter and a setter' do
-              test_check = @test_entity.checks.new({"type" => "dummy"})
+              test_check = @test_entity.checks.new('type' => 'dummy ')
               test_check.send(arg).should eql nil
-              test_check.send("#{arg}=", "Test Data")
-              test_check.send(arg).should eql "Test Data"
+              test_check.send("#{arg}=", 'Test Data')
+              test_check.send(arg).should eql 'Test Data'
             end
           end
         end
 
         # Special cases: preset by new()
         [:id, :entity, :type].each do |arg|
-           describe "##{arg}" do
-             it 'should be a getter and a setter' do
-               test_check = @test_entity.checks.new({"type" => "dummy"})
-               test_check.send(arg).should_not eql "Test Data"
-               test_check.send("#{arg}=", "Test Data")
-               test_check.send(arg).should eql "Test Data"
-             end
-           end
-         end
-         
-        describe "#save" do
+          describe "##{arg}" do
+            it 'should be a getter and a setter' do
+              test_check = @test_entity.checks.new('type' => 'dummy ')
+              test_check.send(arg).should_not eql 'Test Data'
+              test_check.send("#{arg}=", 'Test Data')
+              test_check.send(arg).should eql 'Test Data'
+            end
+          end
+        end
+
+        describe '#save' do
           it 'should save the entity into the parent' do
             @test_entity.checks.length.should eql 0
-            test_check = @test_entity.checks.new({"type" => "dummy"})
+            test_check = @test_entity.checks.new('type' => 'dummy ')
             test_check.save
             @test_entity.checks.length.should eql 1
             @test_entity.checks[0].should eql test_check
           end
         end
-        
-        describe "#destroy" do
+
+        describe '#destroy' do
           it 'should remove the entity from the parent' do
             @test_entity.checks.length.should eql 1
             target = @test_entity.checks[0]
@@ -287,17 +286,17 @@ describe 'mock_data' do
             @test_entity.checks.length.should eql 0
           end
         end
-        
-        describe "#compare?" do
+
+        describe '#compare?' do
           it 'should return true if the objects are the same' do
-            test_check = @test_entity.checks.new({"type" => "dummy"})
+            test_check = @test_entity.checks.new('type' => 'dummy ')
             test_check2 = test_check.dup
             test_check.compare?(test_check2).should eql true
           end
-          
+
           it 'should return false if the objects are different' do
-            test_check =  @test_entity.checks.new({"type" => "dummy"})
-            test_check2 = @test_entity.checks.new({"type" => "dummy"})
+            test_check =  @test_entity.checks.new('type' => 'dummy ')
+            test_check2 = @test_entity.checks.new('type' => 'dummy ')
             test_check.compare?(test_check2).should eql false
           end
         end
@@ -305,72 +304,72 @@ describe 'mock_data' do
 
       describe '#alarms' do
         before :all do
-          @test_entity = @mock_obj.entities.new()
+          @test_entity = @mock_obj.entities.new
         end
-        
+
         describe '#new' do
           it 'should fail without check_id argument' do
-            expect { @test_entity.alarms.new({ "notification_plan_id" => "seven"}) }.to raise_error
+            expect { @test_entity.alarms.new('notification_plan_id' => 'seven ') }.to raise_error
           end
 
           it 'should fail without notification_plan_id argument' do
-            expect { @test_entity.alarms.new({ "check" => "three"}) }.to raise_error
+            expect { @test_entity.alarms.new('check' => 'three ') }.to raise_error
           end
 
           it 'should return a Opscode::Rackspace::Monitoring::MockData::MockMonitoringAlarm object' do
-            @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven"}).should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoringAlarm
+            @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ').should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoringAlarm
           end
-          
+
           [:check, :label, :criteria, :check_type, :notification_plan_id].each do |arg|
             it "should accept #{arg} as an option" do
-              test_check = @test_entity.alarms.new( { "check" => "three", "notification_plan_id" => "seven", arg.to_s => "foobar" } )
+              test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven', arg.to_s => 'foobar')
               test_check.send(arg).should_not eql nil
             end
           end
-          
+
           it 'should not accept bogus arguments' do
-            expect { @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven", bogus: "data" }) }.to raise_error
+            expect { @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven', bogus: 'data') }.to raise_error
           end
-          
+
           it 'should not modify the parent array' do
             @test_entity.alarms.length.should eql 0
           end
         end
-        
+
         [:label, :criteria, :check_type].each do |arg|
           describe "##{arg}" do
             it 'should be a getter and a setter' do
-              test_check = @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven"})
+              test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
               test_check.send(arg).should eql nil
-              test_check.send("#{arg}=", "Test Data")
-              test_check.send(arg).should eql "Test Data"
+              test_check.send("#{arg}=", 'Test Data')
+              test_check.send(arg).should eql 'Test Data'
             end
           end
         end
 
         # Special cases: preset by new()
         [:id, :entity, :check, :notification_plan_id].each do |arg|
-           describe "##{arg}" do
-             it 'should be a getter and a setter' do
-               test_check = @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven"})
-               test_check.send(arg).should_not eql "Test Data"
-               test_check.send("#{arg}=", "Test Data")
-               test_check.send(arg).should eql "Test Data"
-             end
-           end
-         end
-         
-        describe "#save" do
+          describe "##{arg}" do
+            it 'should be a getter and a setter' do
+              test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
+              test_check.send(arg).should_not eql 'Test Data'
+              test_check.send("#{arg}=", 'Test Data')
+              test_check.send(arg).should eql 'Test Data'
+            end
+          end
+        end
+
+        describe '#save' do
           it 'should save the entity into the parent' do
             @test_entity.alarms.length.should eql 0
-            test_check = @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven"})
+            test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
             test_check.save
             @test_entity.alarms.length.should eql 1
             @test_entity.alarms[0].should eql test_check
           end
         end
-        
-        describe "#destroy" do
+
+        describe '#destroy' do
           it 'should remove the entity from the parent' do
             @test_entity.alarms.length.should eql 1
             target = @test_entity.alarms[0]
@@ -378,22 +377,21 @@ describe 'mock_data' do
             @test_entity.alarms.length.should eql 0
           end
         end
-        
-        describe "#compare?" do
+
+        describe '#compare?' do
           it 'should return true if the objects are the same' do
-            test_check = @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven"})
+            test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
             test_check2 = test_check.dup
             test_check.compare?(test_check2).should eql true
           end
-          
+
           it 'should return false if the objects are different' do
-            test_check =  @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven"})
-            test_check2 = @test_entity.alarms.new({ "check" => "three", "notification_plan_id" => "seven"})
+            test_check =  @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
+            test_check2 = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
             test_check.compare?(test_check2).should eql false
           end
         end
       end
-
 
     end
   end

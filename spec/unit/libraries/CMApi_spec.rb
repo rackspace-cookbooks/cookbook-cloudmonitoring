@@ -24,11 +24,11 @@ include Opscode::Rackspace::Monitoring
 
 describe 'CMApi' do
   before :each do
-    credentials = CMCredentials.new( {
+    credentials = CMCredentials.new({
                                        'rackspace_cloudmonitoring' => { 'mock' => true },
                                        'rackspace' => { 'cloud_credentials' => {
-                                           'username' => "Mr. Mockson",
-                                           'api_key'  => "Woodruff",
+                                           'username' => 'Mr. Mockson',
+                                           'api_key'  => 'Woodruff'
                                          } }
                                      }, nil)
     @api_obj = CMApi.new(credentials)
@@ -44,9 +44,9 @@ describe 'CMApi' do
     it 'does not return nil' do
       @api_obj.cm.should_not be nil
     end
-    
+
     it 'should be a mock class' do
       @api_obj.cm.should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoring
     end
-  end    
+  end
 end

@@ -85,7 +85,7 @@ module Opscode
             fail 'Opscode::Rackspace::Monitoring::CMApi._open_fog_api: ERROR: Unable to connect to Fog'
           end
           Chef::Log.debug('Opscode::Rackspace::Monitoring::CMApi._open_fog_api: Fog connection successful')
-        end          
+        end
 
         # _open_mock_api: Mock a fake API connection
         # PRE: None
@@ -95,7 +95,7 @@ module Opscode
         def _open_mock_api(api_key, username, auth_url)
           Chef::Log.debug("Opscode::Rackspace::Monitoring::CMApi._open_fog_api: creating new mocked connection for username #{username}")
           require_relative 'mock_data.rb'
-          
+
           @cm = Opscode::Rackspace::Monitoring::MockData::MockMonitoring.new(
                                                                              rackspace_api_key:  api_key,
                                                                              rackspace_username: username,
@@ -114,7 +114,7 @@ module Opscode
                              @credentials.get_attribute(:username),
                              @credentials.get_attribute(:auth_url))
           end
-          
+
           return @cm
         end
 
@@ -123,17 +123,16 @@ module Opscode
         # POST: None
         # RETURN VALUE: Boolean
         def mock?
-          @mocking
+          return @mocking
         end
 
         # mock!: Enable mocking
         # PRE: None
         # POST: None
         # RETURN VALUE: None
-        def mock?
+        def mock!
           @mocking = true
         end
-
       end # END CMApi class
     end # END MODULE
   end

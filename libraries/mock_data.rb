@@ -37,9 +37,9 @@ module Opscode
             @entities = MockMonitoringParent.new(MockMonitoringEntity)
             @agent_tokens = MockMonitoringParent.new(MockMonitoringAgentToken)
           end
-
         end
-        
+
+        # MockMonitoringParent: Emulate the parent Fog object, inhereiting Array
         class MockMonitoringParent < Array
           def initialize(my_child_obj_class)
             @child_obj_class = my_child_obj_class
@@ -51,6 +51,8 @@ module Opscode
           end
         end
 
+        # MockMonitoringParent: Emulate the parent of the Fog entity child objects, inhereiting Array
+        # This is the same as MockMonitoringParent, except it passes the entity object to the child constructor
         class MockMonitoringEntityParent < Array
           def initialize(my_child_obj_class, my_entity)
             @child_obj_class = my_child_obj_class
@@ -63,12 +65,12 @@ module Opscode
           end
         end
 
-        # MockMonitoringBase: Class mimicing the save, destroy, and compare Fog object methods
+        # MockMonitoringBase: Class mimicing the save and destroy, Fog object methods, and providing common helpers
         class MockMonitoringBase
           def initialize(my_parent)
             @parent = my_parent
           end
-          
+
           def save
             @parent.push(self)
           end
@@ -79,19 +81,20 @@ module Opscode
 
           def _compare_helper(other_obj, attributes)
             attributes.each do |attr|
-              if self.send(attr) != other_obj.send(attr)
+              if send(attr) != other_obj.send(attr)
                 return false
               end
             end
             return true
           end
-          
+
           def random_id
             src = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
             return (0...10).map { src[rand(src.length)] }.join
           end
         end
 
+        # MockMonitoringEntity: Mimic a Fog entity object
         class MockMonitoringEntity < MockMonitoringBase
           attr_accessor :id, :label, :metadata, :ip_addresses, :agent_id, :managed, :uri, :alarms, :checks
           attr_writer   :id, :label, :metadata, :ip_addresses, :agent_id, :managed, :uri
@@ -100,11 +103,11 @@ module Opscode
             super(parent)
 
             @id = random_id
-            options.each do |k,v|
+            options.each do |k, v|
               unless %w(label metadata ip_addresses agent_id managed uri).include? k
                 fail "Unknown option #{k}"
               end
-              self.instance_variable_set("@#{k}", v)
+              instance_variable_set("@#{k}", v)
             end
 
             @alarms = MockMonitoringEntityParent.new(MockMonitoringAlarm, self)
@@ -116,6 +119,7 @@ module Opscode
           end
         end
 
+        # MockMonitoringAlarm: Mimic a Fog alarm object
         class MockMonitoringAlarm < MockMonitoringBase
           attr_accessor :id, :entity, :check, :label, :criteria, :check_type, :notification_plan_id
           attr_writer   :id, :entity, :check, :label, :criteria, :check_type, :notification_plan_id
@@ -125,18 +129,18 @@ module Opscode
 
             @entity = my_entity
             @id = random_id
-            options.each do |k,v|
+            options.each do |k, v|
               unless %w(check label criteria check_type notification_plan_id).include? k
                 fail "Unknown option #{k}"
               end
-              self.instance_variable_set("@#{k}", v)
+              instance_variable_set("@#{k}", v)
             end
 
             if @check.nil?
-              fail "check is required"
+              fail 'check is required'
             end
             if @notification_plan_id.nil?
-              fail "notification_plan_id is required"
+              fail 'notification_plan_id is required'
             end
           end
 
@@ -145,6 +149,7 @@ module Opscode
           end
         end
 
+        # MockMonitoringCheck: Mimic a Fog check object
         class MockMonitoringCheck < MockMonitoringBase
           attr_accessor :id, :entity, :label, :metadata, :target_alias, :target_resolver, :target_hostname, :period, :timeout, :type, :details, :disabled, :monitoring_zones_poll
           attr_writer   :id, :entity, :label, :metadata, :target_alias, :target_resolver, :target_hostname, :period, :timeout, :details, :disabled, :monitoring_zones_poll
@@ -154,23 +159,25 @@ module Opscode
 
             @entity = my_entity
             @id = random_id
-            options.each do |k,v|
+            options.each do |k, v|
               unless %w(label metadata target_alias target_resolver target_hostname period timeout type details disabled monitoring_zones_poll).include? k
                 fail "Unknown option #{k}"
               end
-              self.instance_variable_set("@#{k}", v)
+              instance_variable_set("@#{k}", v)
             end
 
             if @type.nil?
-              fail "Type is required"
+              fail 'Type is required'
             end
           end
-          
+
           def compare?(other_obj)
-            _compare_helper(other_obj, [:id, :entity, :label, :metadata, :target_alias, :target_resolver, :target_hostname, :period, :timeout, :type, :details, :disabled, :monitoring_zones_poll])
+            _compare_helper(other_obj, [:id, :entity, :label, :metadata, :target_alias, :target_resolver, :target_hostname,
+                                        :period, :timeout, :type, :details, :disabled, :monitoring_zones_poll])
           end
         end
 
+        # MockMonitoringAgentToken: Mimic a Fog agent_token object
         class MockMonitoringAgentToken < MockMonitoringBase
           attr_accessor :label, :id
           attr_writer   :label
@@ -179,14 +186,14 @@ module Opscode
             super(parent)
 
             @id = random_id
-            options.each do |k,v|
+            options.each do |k, v|
               unless %w(label).include? k
                 fail "Unknown option #{k}"
               end
-              self.instance_variable_set("@#{k}", v)
+              instance_variable_set("@#{k}", v)
             end
           end
-          
+
           def token
             return @id
           end
@@ -195,7 +202,6 @@ module Opscode
             _compare_helper(other_obj, [:id, :label])
           end
         end
-
       end
     end
   end
