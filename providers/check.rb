@@ -20,7 +20,7 @@
 
 include Opscode::Rackspace::Monitoring
 
-action :create do
+action :create_if_missing do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   if @current_check.obj.nil?
     new_resource.updated_by_last_action(@current_check.update(
@@ -41,7 +41,7 @@ action :create do
   end
 end
 
-action :update do
+action :create do
   Chef::Log.debug("Beginning action[:update] for #{new_resource}")
   new_resource.updated_by_last_action(@current_check.update(
     label:                 new_resource.label,

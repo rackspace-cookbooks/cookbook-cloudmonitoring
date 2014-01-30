@@ -229,8 +229,8 @@ All LWRPs support the following actions:
 
 | Action | Description | Default |
 | ------ | ----------- | ------- |
-| update | Will create an object if it doesn't exist, and will converge existing objects if they do not match the current object | Yes |
-| create | Will create an object if it doesn't exist, but WILL NOT modify existing objects |  |
+| create | Will create an object if it doesn't exist, but WILL NOT modify existing objects | Yes |
+| update_if_missing | Will create an object if it doesn't exist, and will converge existing objects if they do not match the current object |  |
 | delete | Will remove an object if it exists |  |
 
 ### Agent Token

@@ -22,7 +22,7 @@ include Opscode::Rackspace::Monitoring
 
 require 'ipaddr'
 
-action :create do
+action :create_if_missing do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   if @current_entity.entity_obj.nil?
     new_resource.updated_by_last_action(create_entity)
@@ -31,7 +31,7 @@ action :create do
   end
 end
 
-action :update do
+action :create do
   Chef::Log.debug("Beginning action[:update] for #{new_resource}")
   if @current_entity.entity_obj.nil?
     new_resource.updated_by_last_action(create_entity)
