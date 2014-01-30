@@ -1,6 +1,6 @@
 # encoding: UTF-8
 actions :create, :update, :delete
-default_action :create
+default_action :update
 
 attribute :label, kind_of: String, name_attribute: true
 attribute :api_label, kind_of: String

@@ -22,6 +22,15 @@ include Opscode::Rackspace::Monitoring
 
 action :create do
   Chef::Log.debug("Beginning action[:create] for #{new_resource}")
+  if @current_agent_token.nil?
+    new_resource.updated_by_last_action(@current_agent_token.update(label: new_resource.label))
+  else
+    new_resource.updated_by_last_action(false)
+  end
+end
+
+action :update do
+  Chef::Log.debug("Beginning action[:create] for #{new_resource}")
   new_resource.updated_by_last_action(@current_agent_token.update(label: new_resource.label))
 end
 

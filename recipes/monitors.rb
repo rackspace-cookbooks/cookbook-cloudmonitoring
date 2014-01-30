@@ -43,7 +43,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
     target_alias      check_value.key?('target_alias') ? check_value['target_alias'] : nil
     target_hostname   check_value.key?('target_hostname') ? check_value['target_hostname'] : nil
     monitoring_zones_poll check_value.key?('monitoring_zones_poll') ? check_value['monitoring_zones_poll'] : nil
-    action            :create
+    action            :update
   end
 
   if check_value.key?('alarm')
@@ -58,7 +58,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
         disabled             alarm_value.key?('disabled') ? alarm_value['details'] : false
         # Line length disabled on the next line as it is long due to long variable names, not complexity.
         notification_plan_id check_value.key?('notification_plan_id') ? check_value['notification_plan_id'] : node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] # rubocop:disable LineLength
-        action               :create
+        action               :update
       end
 
     end # alarm loop
