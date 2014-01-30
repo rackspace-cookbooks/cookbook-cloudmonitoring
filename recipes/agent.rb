@@ -85,6 +85,7 @@ if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['r
   e.run_action(:create)
 
   my_token_obj = CMAgentToken.new(credentials, node['rackspace_cloudmonitoring']['config']['agent']['token'], node['hostname'])
+  my_token_obj.update('label' => node['hostname']) # Create/update the token if it doesn't exist
   my_token = my_token_obj.obj
 
   node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = my_token.token

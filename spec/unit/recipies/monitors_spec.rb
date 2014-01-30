@@ -27,10 +27,6 @@ describe 'rackspace_cloudmonitoring::monitors' do
               node.set['rackspace_cloudmonitoring']['mock'] = true
               node.set['rackspace']['cloud_credentials']['username'] = 'IfThisHitsTheApiSomethingIsBusted'
               node.set['rackspace']['cloud_credentials']['api_key']  = 'SuchFakePassword.VeryMock.Wow.'
-
-              # Mocked fog currently returns a nil token, causing the agent recipe to fail
-              node.set['rackspace_cloudmonitoring']['config']['agent']['id']    = 'rackspacerules'
-              node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = 'kittenmittens'
             end.converge('rackspace_cloudmonitoring::monitors')
           end
 
