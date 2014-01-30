@@ -51,7 +51,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
       # TODO: Add customizable messages, abstract the conditional more, etcetera...
       criteria = "if (#{alarm_value["conditional"]}) { return #{alarm}, '#{check} is past #{alarm} threshold' }"
 
-      rackspace_cloudmonitoring_alarm  "#{check_value['type']} #{alarm} alarm" do
+      rackspace_cloudmonitoring_alarm  "#{check} #{alarm} alarm" do
         entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
         check_label          check
         criteria             criteria
