@@ -23,25 +23,48 @@ describe 'rackspace_cloudmonitoring::monitors' do
       versions.each do |version|
         describe version do
           let(:chef_run) do
-            ChefSpec::Runner.new(platform: platform.to_s, version: version.to_s) do |node|
+            ChefSpec::Runner.new(platform: platform.to_s, 
+                                 version: version.to_s,
+                                 step_into: ['rackspace_cloudmonitoring_agent_token',
+                                             'rackspace_cloudmonitoring_alarm',
+                                             'rackspace_cloudmonitoring_check',
+                                             'rackspace_cloudmonitoring_entity']) do |node|
               node.set['rackspace_cloudmonitoring']['mock'] = true
               node.set['rackspace']['cloud_credentials']['username'] = 'IfThisHitsTheApiSomethingIsBusted'
               node.set['rackspace']['cloud_credentials']['api_key']  = 'SuchFakePassword.VeryMock.Wow.'
+              node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] = "Test Entity Label"
+              node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = "Test Plan"
+
+              node.set['rackspace_cloudmonitoring']['monitors'] = {
+                'load' => { 'type'  => 'agent.load_average',
+                  'alarm' => {
+                    'CRITICAL' => { 'conditional' => "metric['5m'] > 16", },
+                  },
+                }
+              }
+              
             end.converge('rackspace_cloudmonitoring::monitors')
           end
-
+          
           it 'include the default recipe' do
             expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::default'
           end
-
+          
           it 'include the agent recipe' do
             expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::agent'
           end
 
-          #
-          # TODO: Uhhh, write the rest of the tests?
-          #
+          it 'should create the entity' do
+            expect(chef_run).to create_monitoring_entity "Test Entity Label"
+          end
 
+          it 'should create the load check' do
+            expect(chef_run).to create_monitoring_check 'load'
+          end
+
+          it 'should create the load critical alarm' do
+            expect(chef_run).to create_monitoring_alarm 'load CRITICAL alarm'
+          end
         end
       end
     end
