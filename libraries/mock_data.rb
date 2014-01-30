@@ -122,8 +122,8 @@ module Opscode
 
         # MockMonitoringAlarm: Mimic a Fog alarm object
         class MockMonitoringAlarm < MockMonitoringBase
-          attr_accessor :id, :entity, :check, :label, :criteria, :check_type, :notification_plan_id
-          attr_writer   :id, :entity, :check, :label, :criteria, :check_type, :notification_plan_id
+          attr_accessor :id, :entity, :label, :check, :criteria, :notification_plan_id, :disabled, :metadata
+          attr_writer   :id, :entity, :label, :check, :criteria, :notification_plan_id, :disabled, :metadata
 
           def initialize(parent, my_entity, options = {})
             super(parent)
@@ -131,7 +131,7 @@ module Opscode
             @entity = my_entity
             @id = random_id
             options.each do |k, v|
-              unless %w(check label criteria check_type notification_plan_id).include? k.to_s
+              unless %w(check label criteria notification_plan_id disabled metadata).include? k.to_s
                 fail "Unknown option #{k}"
               end
               instance_variable_set("@#{k}", v)
@@ -146,7 +146,7 @@ module Opscode
           end
 
           def compare?(other_obj)
-            _compare_helper(other_obj, [:id, :entity, :check, :label, :criteria, :check_type, :notification_plan_id])
+            _compare_helper(other_obj, [:id, :entity, :label, :check, :criteria, :notification_plan_id, :disabled, :metadata])
           end
         end
 
