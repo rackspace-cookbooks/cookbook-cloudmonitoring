@@ -322,8 +322,8 @@ describe 'mock_data' do
           it 'should return a Opscode::Rackspace::Monitoring::MockData::MockMonitoringAlarm object' do
             @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ').should be_an_instance_of Opscode::Rackspace::Monitoring::MockData::MockMonitoringAlarm
           end
-
-          [:check, :label, :criteria, :check_type, :notification_plan_id].each do |arg|
+          
+          [:check, :label, :criteria, :notification_plan_id, :disabled, :metadata].each do |arg|
             it "should accept #{arg} as an option" do
               test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven', arg.to_s => 'foobar')
               test_check.send(arg).should_not eql nil
@@ -339,7 +339,7 @@ describe 'mock_data' do
           end
         end
 
-        [:label, :criteria, :check_type].each do |arg|
+        [:label, :criteria, :disabled, :metadata].each do |arg|
           describe "##{arg}" do
             it 'should be a getter and a setter' do
               test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
