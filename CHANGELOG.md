@@ -1,3 +1,7 @@
+v2.1.0
+------
+* Alter naming of alarms that could result in duplicates
+
 v2.0.0
 ------
 * Refactor cloud_monitoring library to use classes and object-oriented methodology
