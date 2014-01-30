@@ -71,7 +71,7 @@ class Chef::Recipe
   include Opscode::Rackspace::Monitoring
 end
 
-# Pull the token using the CMCredentials class, which handles node and databag varialbles
+# Pull the token using the CMCredentials class, which handles node and databag variables
 credentials = CMCredentials.new(node, nil)
 node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = credentials.get_attribute(:token)
 
@@ -85,68 +85,75 @@ if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['r
   e.run_action(:create)
 
   my_token_obj = CMAgentToken.new(credentials, node['rackspace_cloudmonitoring']['config']['agent']['token'], node['hostname'])
-  my_token_obj.update('label' => node['hostname']) # Create/update the token if it doesn't exist
   my_token = my_token_obj.obj
 
-  node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = my_token.token
-  # So the API calls it label, and the config calls it ID
-  # Clear as mud.
-  node.set['rackspace_cloudmonitoring']['config']['agent']['id'] = my_token.label
-end
-
-# Generate the config template
-template '/etc/rackspace-monitoring-agent.cfg' do
-  source 'rackspace-monitoring-agent.erb'
-  cookbook node['rackspace_cloudmonitoring']['templates_cookbook']['rackspace-monitoring-agent']
-  owner 'root'
-  group 'root'
-  mode 0600
-  variables(
-            monitoring_id:    node['rackspace_cloudmonitoring']['config']['agent']['id'],
-            monitoring_token: node['rackspace_cloudmonitoring']['config']['agent']['token']
-            )
-  action :create
-end
-
-package 'rackspace-monitoring-agent' do
-  if node['rackspace_cloudmonitoring']['agent']['version'] == 'latest'
-    action :upgrade
-  else
-    version node['rackspace_cloudmonitoring']['agent']['version']
-    action :install
+  unless my_token.nil?
+    node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = my_token.token
+    # So the API calls it label, and the config calls it ID
+    # Clear as mud.
+    node.set['rackspace_cloudmonitoring']['config']['agent']['id'] = my_token.label
   end
-
-  notifies :restart, 'service[rackspace-monitoring-agent]'
 end
 
-node['rackspace_cloudmonitoring']['agent']['plugins'].each_pair do |source_cookbook, path|
-  remote_directory "rackspace_cloudmonitoring_plugins_#{source_cookbook}" do
-    path node['rackspace_cloudmonitoring']['agent']['plugin_path']
-    cookbook source_cookbook
-    source path
-    files_mode 0755
+if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['rackspace_cloudmonitoring']['config']['agent']['id'].nil?
+  Chef::Log.warn("Unable to determine agent token and id: Not configuring agent")
+else
+  # Generate the config template
+  template '/etc/rackspace-monitoring-agent.cfg' do
+    source 'rackspace-monitoring-agent.erb'
+    cookbook node['rackspace_cloudmonitoring']['templates_cookbook']['rackspace-monitoring-agent']
     owner 'root'
     group 'root'
-    mode 0755
-    recursive true
-    purge false
+    mode 0600
+    variables(
+              monitoring_id:    node['rackspace_cloudmonitoring']['config']['agent']['id'],
+              monitoring_token: node['rackspace_cloudmonitoring']['config']['agent']['token']
+              )
+    action :create
   end
-end
-
-service 'rackspace-monitoring-agent' do
-  # TODO: RHEL, CentOS, ... support
-  supports value_for_platform(
-    ubuntu:  { default: [:start, :stop, :restart, :status] },
-    default: { default: [:start, :stop] }
-  )
-
-  case node['platform']
-  when 'ubuntu'
-    if node['platform_version'].to_f >= 9.10
-      provider Chef::Provider::Service::Upstart
+  
+  package 'rackspace-monitoring-agent' do
+    if node['rackspace_cloudmonitoring']['agent']['version'] == 'latest'
+      Chef::Log.info("Installing latest agent")
+      action :upgrade
+    else
+      Chef::Log.info("Installing agent version #{node['rackspace_cloudmonitoring']['agent']['version']}")
+      version node['rackspace_cloudmonitoring']['agent']['version']
+      action :install
+    end
+    
+    notifies :restart, 'service[rackspace-monitoring-agent]'
+  end
+  
+  node['rackspace_cloudmonitoring']['agent']['plugins'].each_pair do |source_cookbook, path|
+    remote_directory "rackspace_cloudmonitoring_plugins_#{source_cookbook}" do
+      path node['rackspace_cloudmonitoring']['agent']['plugin_path']
+      cookbook source_cookbook
+      source path
+      files_mode 0755
+      owner 'root'
+      group 'root'
+      mode 0755
+      recursive true
+      purge false
     end
   end
-
-  action [:enable, :start]
-  subscribes :restart, "template['/etc/rackspace-monitoring-agent.cfg']", :delayed
+  
+  service 'rackspace-monitoring-agent' do
+    # TODO: RHEL, CentOS, ... support
+    supports value_for_platform(
+                                ubuntu:  { default: [:start, :stop, :restart, :status] },
+                                default: { default: [:start, :stop] }
+                                )
+    
+    case node['platform']
+    when 'ubuntu'
+      if node['platform_version'].to_f >= 9.10
+        provider Chef::Provider::Service::Upstart
+      end
+  end
+    
+    action [:enable, :start]
+    subscribes :restart, "template['/etc/rackspace-monitoring-agent.cfg']", :delayed
+  end
 end

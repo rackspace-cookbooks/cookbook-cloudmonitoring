@@ -105,7 +105,7 @@ module Opscode
 
             @id = random_id
             options.each do |k, v|
-              unless %w(label metadata ip_addresses agent_id managed uri).include? k
+              unless %w(label metadata ip_addresses agent_id managed uri).include? k.to_s
                 fail "Unknown option #{k}"
               end
               instance_variable_set("@#{k}", v)
@@ -131,7 +131,7 @@ module Opscode
             @entity = my_entity
             @id = random_id
             options.each do |k, v|
-              unless %w(check label criteria check_type notification_plan_id).include? k
+              unless %w(check label criteria check_type notification_plan_id).include? k.to_s
                 fail "Unknown option #{k}"
               end
               instance_variable_set("@#{k}", v)
@@ -161,7 +161,7 @@ module Opscode
             @entity = my_entity
             @id = random_id
             options.each do |k, v|
-              unless %w(label metadata target_alias target_resolver target_hostname period timeout type details disabled monitoring_zones_poll).include? k
+              unless %w(label metadata target_alias target_resolver target_hostname period timeout type details disabled monitoring_zones_poll).include? k.to_s
                 fail "Unknown option #{k}"
               end
               instance_variable_set("@#{k}", v)
@@ -188,7 +188,7 @@ module Opscode
 
             @id = random_id
             options.each do |k, v|
-              unless %w(label).include? k
+              unless %w(label).include? k.to_s
                 fail "Unknown option #{k}"
               end
               instance_variable_set("@#{k}", v)

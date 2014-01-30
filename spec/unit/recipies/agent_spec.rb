@@ -23,43 +23,98 @@ describe 'rackspace_cloudmonitoring::agent' do
       versions.each do |version|
         describe version do
           let(:chef_run) do
-            ChefSpec::Runner.new(platform: platform.to_s, version: version.to_s) do |node|
-              node.set['rackspace_cloudmonitoring']['config']['agent']['id']    = 'rackspacerules'
-              node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = 'kittenmittens'
-            end.converge('rackspace_cloudmonitoring::agent')
+            ChefSpec::Runner.new(platform: platform.to_s,
+                                 version: version.to_s,
+                                 step_into: ['rackspace_cloudmonitoring_agent_token']
+                                 ) do |node|
+              node.set['rackspace_cloudmonitoring']['mock'] = true
+            end
           end
-
-          it 'include the default recipe' do
-            expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::default'
+          
+          describe 'with explicit token and ID' do
+            before :each do
+              chef_run.node.set['rackspace_cloudmonitoring']['config']['agent']['id']    = 'rackspacerules'
+              chef_run.node.set['rackspace_cloudmonitoring']['config']['agent']['token'] = 'kittenmittens'
+              chef_run.converge('rackspace_cloudmonitoring::agent')
+            end
+            
+            it 'include the default recipe' do
+              expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::default'
+            end
+            
+            it 'create the config tile' do
+              expect(chef_run).to create_template '/etc/rackspace-monitoring-agent.cfg'
+            end
+            
+            #
+            # Current no check for the repo, I don't see any repostitory machers in https://github.com/sethvargo/chefspec/tree/master/lib/chefspec/api
+            # Test kitchen will catch that, though.
+            #
+            
+            it 'install the monitoring agent pinned to a version' do
+              chef_run.node.set['rackspace_cloudmonitoring']['agent']['version'] = '1.2.3'
+              chef_run.converge('rackspace_cloudmonitoring::agent')
+              expect(chef_run).to install_package 'rackspace-monitoring-agent'
+            end
+            
+            it 'update the latest monitoring agent' do
+              chef_run.node.set['rackspace_cloudmonitoring']['agent']['version'] = 'latest'
+              chef_run.converge('rackspace_cloudmonitoring::agent')
+              expect(chef_run).to upgrade_package 'rackspace-monitoring-agent'
+            end
+            
+            it 'enable the monitoring agent' do
+              expect(chef_run).to enable_service 'rackspace-monitoring-agent'
+            end
+            
+            it 'populate the plugin directory' do
+              expect(chef_run).to create_remote_directory('rackspace_cloudmonitoring_plugins_rackspace_cloudmonitoring')
+            end
           end
+          
+          describe 'without explicit token and ID' do
+            before :each do
+              chef_run.node.set['rackspace']['cloud_credentials']['username'] = 'IfThisHitsTheApiSomethingIsBusted'
+              chef_run.node.set['rackspace']['cloud_credentials']['api_key']  = 'SuchFakePassword.VeryMock.Wow.'
+              chef_run.converge('rackspace_cloudmonitoring::agent')
+            end
+            
+            it 'include the default recipe' do
+              expect(chef_run).to include_recipe 'rackspace_cloudmonitoring::default'
+            end
+            
+            it 'create the config tile' do
+              expect(chef_run).to create_template '/etc/rackspace-monitoring-agent.cfg'
+            end
 
-          it 'create the config tile' do
-            expect(chef_run).to create_template '/etc/rackspace-monitoring-agent.cfg'
-          end
+            #
+            # Current no check for the repo, I don't see any repostitory machers in https://github.com/sethvargo/chefspec/tree/master/lib/chefspec/api
+            # Test kitchen will catch that, though.
+            #
+            
+            it 'install the monitoring agent pinned to a version' do
+              chef_run.node.set['rackspace_cloudmonitoring']['agent']['version'] = '1.2.3'
+              chef_run.converge('rackspace_cloudmonitoring::agent')
+              expect(chef_run).to install_package 'rackspace-monitoring-agent'
+            end
+            
+            it 'update the latest monitoring agent' do
+              chef_run.node.set['rackspace_cloudmonitoring']['agent']['version'] = 'latest'
+              chef_run.converge('rackspace_cloudmonitoring::agent')
+              expect(chef_run).to upgrade_package 'rackspace-monitoring-agent'
+            end
 
-          #
-          # Current no check for the repo, I don't see any repostitory machers in https://github.com/sethvargo/chefspec/tree/master/lib/chefspec/api
-          # Test kitchen will catch that, though.
-          #
+            it 'should update the agent_token' do
+              expect(chef_run).to create_monitoring_agent_token "Fauxhai"
+            end
 
-          it 'install the monitoring agent' do
-            chef_run.node.set['rackspace_cloudmonitoring']['agent']['version'] = '1.2.3'
-            chef_run.converge('rackspace_cloudmonitoring::agent')
-            expect(chef_run).to install_package 'rackspace-monitoring-agent'
-          end
+            it 'enable the monitoring agent' do
+              expect(chef_run).to enable_service 'rackspace-monitoring-agent'
+            end
 
-          it 'update the monitoring agent' do
-            chef_run.node.set['rackspace_cloudmonitoring']['agent']['version'] = 'latest'
-            chef_run.converge('rackspace_cloudmonitoring::agent')
-            expect(chef_run).to upgrade_package 'rackspace-monitoring-agent'
-          end
-
-          it 'enable the monitoring agent' do
-            expect(chef_run).to enable_service 'rackspace-monitoring-agent'
-          end
-
-          it 'populate the plugin directory' do
-            expect(chef_run).to create_remote_directory('rackspace_cloudmonitoring_plugins_rackspace_cloudmonitoring')
+            it 'populate the plugin directory' do
+              expect(chef_run).to create_remote_directory('rackspace_cloudmonitoring_plugins_rackspace_cloudmonitoring')
+            end
           end
         end
       end
