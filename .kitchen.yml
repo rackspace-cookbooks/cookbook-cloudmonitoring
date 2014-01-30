@@ -2,6 +2,8 @@
 driver_plugin: vagrant
 driver_config:
   require_chef_omnibus: latest
+  customize:
+    memory: 512
 
 platforms:
 - name: ubuntu-12.04
@@ -22,12 +24,23 @@ platforms:
   - recipe[rackspace_apt]
 
 suites:
-  - name: agent
+  - name: agent_explicit_args
     run_list:
       - recipe[rackspace_cloudmonitoring::agent]
     attributes:
       rackspace_cloudmonitoring:
+        mock: true
         config:
           agent:
             id:    "rackspacerules"
             token: "kittenmittens"
+  - name: agent_API
+    run_list:
+      - recipe[rackspace_cloudmonitoring::agent]
+    attributes:
+      rackspace_cloudmonitoring:
+        mock: true
+      rackspace:
+        cloud_credentials:
+           username: nobody
+           api_key:  secret
