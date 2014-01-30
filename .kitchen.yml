@@ -44,3 +44,44 @@ suites:
         cloud_credentials:
            username: nobody
            api_key:  secret
+  - name: monitors
+    run_list:
+      - recipe[rackspace_cloudmonitoring::monitors]
+    attributes:
+      rackspace:
+        cloud_credentials:
+           username: nobody
+           api_key:  secret
+      rackspace_cloudmonitoring:
+        mock: true
+        monitors_defaults:
+          alarm:
+            notification_plan_id: 'Test Plan'
+        monitors:
+          cpu:
+            type: 'agent.cpu'
+          load:
+            type: 'agent.load_average'
+            alarm:
+              CRITICAL:
+                conditional: "metric['5m'] > 32"
+              WARNING:
+                conditional: "metric['5m'] > 16"
+          disk:
+            type: 'agent.disk'
+            details:
+              target: '/dev/xvda1'
+          root_filesystem:
+            type: 'agent.filesystem'
+            details:
+              target: '/'
+          web_check:
+            type: 'remote.http'
+            target_alias: 'default'
+            monitoring_zones_poll:
+              - mzdfw
+              - mziad
+              - mzord
+            details:
+              url: 'http://127.0.0.1/'
+              method: get
