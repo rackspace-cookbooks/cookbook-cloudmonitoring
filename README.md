@@ -225,6 +225,14 @@ The underlying library works to abstract this as much as possible, but it is ben
 LWRP examples are not provided as LWRPs are considered advanced usage and use of the monitors.rb recipe cookbook is preferred.
 However, examples for all LWRPs can be found in this cookbook's recipes.
 
+All LWRPs support the following actions:
+
+| Action | Description | Default |
+| ------ | ----------- | ------- |
+| update | Will create an object if it doesn't exist, and will converge existing objects if they do not match the current object | Yes |
+| create | Will create an object if it doesn't exist, but WILL NOT modify existing objects |  |
+| delete | Will remove an object if it exists |  |
+
 ### Agent Token
 
 This LWRP interacts with the API to create Agent tokens.
