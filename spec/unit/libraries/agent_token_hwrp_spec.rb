@@ -20,28 +20,52 @@ require 'spec_helper'
 require_relative '../../../libraries/agent_token_hwrp.rb'
 require_relative 'hwrp_helpers.rb'
 
-# Dog simple mock class to ensure we're calling the underlying class with the right arguments
-# Actual behavior of the underlying classes is tested by their respective tests
-class CMAgentTokenHWRPMock
-  attr_accessor :label, :token, :credentials, :obj, :update_args, :delete_called
-  attr_writer   :obj
+module AgentTokenHWRPTestMocks
+  # Dog simple mock class to ensure we're calling the underlying class with the right arguments
+  # Actual behavior of the underlying classes is tested by their respective tests
+  class CMAgentTokenHWRPMock
+    attr_accessor :label, :token, :credentials, :obj, :update_args, :delete_called
+    attr_writer   :obj
 
-  def initialize(my_credentials, my_token, my_label)
-    @credentials = my_credentials
-    @token = my_token
-    @label = my_label
-    @delete_called = false
+    def initialize(my_credentials, my_token, my_label)
+      @credentials = my_credentials
+      @token = my_token
+      @label = my_label
+      @delete_called = false
+    end
+
+    def update(args = {})
+      @update_args = args
+      return true
+    end
+
+    def delete
+      @delete_called = true
+      return true
+    end
+  end
+end
+
+#
+# WARNING: This namespace is SHARED WITH OTHER TESTS so names MUST BE UNIQUE
+#
+def initialize_agent_token_provider_test
+  # Mock CMAgentToken with CMAgentTokenHWRPMock
+  stub_const('Opscode::Rackspace::Monitoring::CMAgentToken', AgentTokenHWRPTestMocks::CMAgentTokenHWRPMock)
+
+  unless Opscode::Rackspace::Monitoring::CMAgentToken.new(nil, nil, nil).is_a? AgentTokenHWRPTestMocks::CMAgentTokenHWRPMock
+    fail 'Failed to stub Opscode::Rackspace::Monitoring::CMAgentToken'
   end
 
-  def update(args = {})
-    @update_args = args
-    return true
-  end
-
-  def delete
-    @delete_called = true
-    return true
-  end
+  @node_data = nil
+  @new_resource = TestResourceData.new(
+                                       name:  'Test name',
+                                       label: nil,
+                                       token: 'Test token',
+                                       rackspace_api_key:  'Test rackspace_api_key',
+                                       rackspace_username: 'Test rackspace_username',
+                                       rackspace_auth_url: 'Test rackspace_auth_url'
+                                       )
 end
 
 describe 'rackspace_cloudmonitoring_agent_token' do
@@ -96,23 +120,7 @@ describe 'rackspace_cloudmonitoring_agent_token' do
   describe 'provider' do
     describe 'load_current_resource' do
       before :each do
-        # Mock CMAgentToken with CMAgentTokenHWRPMock
-        stub_const('Opscode::Rackspace::Monitoring::CMAgentToken', CMAgentTokenHWRPMock)
-
-        unless Opscode::Rackspace::Monitoring::CMAgentToken.new(nil, nil, nil).is_a? CMAgentTokenHWRPMock
-          fail 'Failed to stub Opscode::Rackspace::Monitoring::CMAgentToken'
-        end
-
-        @node_data = nil
-        @new_resource = TestResourceData.new(
-                                             name:  'Test name',
-                                             label: nil,
-                                             token: 'Test token',
-                                             rackspace_api_key:  'Test rackspace_api_key',
-                                             rackspace_username: 'Test rackspace_username',
-                                             rackspace_auth_url: 'Test rackspace_auth_url'
-                                             )
-
+        initialize_agent_token_provider_test
         @test_obj = Chef::Provider::RackspaceCloudmonitoringAgentToken.new(@new_resource, nil)
         @test_obj.load_current_resource
       end
@@ -139,7 +147,7 @@ describe 'rackspace_cloudmonitoring_agent_token' do
       end
 
       it 'initializes current_resource.token_obj to be a Opscode::Rackspace::Monitoring::CMAgentToken (Stubbed)' do
-        @test_obj.current_resource.token_obj.should be_an_instance_of CMAgentTokenHWRPMock
+        @test_obj.current_resource.token_obj.should be_an_instance_of AgentTokenHWRPTestMocks::CMAgentTokenHWRPMock
       end
 
       it 'passes Opscode::Rackspace::Monitoring::CMAgentToken a CMCredentials class, the token, and the label' do
@@ -151,22 +159,7 @@ describe 'rackspace_cloudmonitoring_agent_token' do
 
     describe 'action_create' do
       before :each do
-        # Mock CMAgentToken with CMAgentTokenHWRPMock
-        stub_const('Opscode::Rackspace::Monitoring::CMAgentToken', CMAgentTokenHWRPMock)
-
-        unless Opscode::Rackspace::Monitoring::CMAgentToken.new(nil, nil, nil).is_a? CMAgentTokenHWRPMock
-          fail 'Failed to stub Opscode::Rackspace::Monitoring::CMAgentToken'
-        end
-
-        @node_data = nil
-        @new_resource = TestResourceData.new(
-                                            name:  'Test name',
-                                            label: nil,
-                                            token: 'Test token',
-                                            rackspace_api_key:  'Test rackspace_api_key',
-                                            rackspace_username: 'Test rackspace_username',
-                                            rackspace_auth_url: 'Test rackspace_auth_url'
-                                            )
+        initialize_agent_token_provider_test
       end
 
       it 'calls update(label) when the current object is nil' do
@@ -198,22 +191,7 @@ describe 'rackspace_cloudmonitoring_agent_token' do
 
     describe 'action_create_if_missing' do
       before :each do
-        # Mock CMAgentToken with CMAgentTokenHWRPMock
-        stub_const('Opscode::Rackspace::Monitoring::CMAgentToken', CMAgentTokenHWRPMock)
-
-        unless Opscode::Rackspace::Monitoring::CMAgentToken.new(nil, nil, nil).is_a? CMAgentTokenHWRPMock
-          fail 'Failed to stub Opscode::Rackspace::Monitoring::CMAgentToken'
-        end
-
-        @node_data = nil
-        @new_resource = TestResourceData.new(
-                                            name:  'Test name',
-                                            label: nil,
-                                            token: 'Test token',
-                                            rackspace_api_key:  'Test rackspace_api_key',
-                                            rackspace_username: 'Test rackspace_username',
-                                            rackspace_auth_url: 'Test rackspace_auth_url'
-                                            )
+        initialize_agent_token_provider_test
       end
 
       it 'calls update(label) when the current object is nil' do
@@ -244,22 +222,7 @@ describe 'rackspace_cloudmonitoring_agent_token' do
 
     describe 'action_delete' do
       before :each do
-        # Mock CMAgentToken with CMAgentTokenHWRPMock
-        stub_const('Opscode::Rackspace::Monitoring::CMAgentToken', CMAgentTokenHWRPMock)
-
-        unless Opscode::Rackspace::Monitoring::CMAgentToken.new(nil, nil, nil).is_a? CMAgentTokenHWRPMock
-          fail 'Failed to stub Opscode::Rackspace::Monitoring::CMAgentToken'
-        end
-
-        @node_data = nil
-        @new_resource = TestResourceData.new(
-                                            name:  'Test name',
-                                            label: nil,
-                                            token: 'Test token',
-                                            rackspace_api_key:  'Test rackspace_api_key',
-                                            rackspace_username: 'Test rackspace_username',
-                                            rackspace_auth_url: 'Test rackspace_auth_url'
-                                            )
+        initialize_agent_token_provider_test
       end
 
       it 'calls delete()' do

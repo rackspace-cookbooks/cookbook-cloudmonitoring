@@ -26,19 +26,19 @@ module CheckHWRPTestMocks
   class CMCheckHWRPMock
     attr_accessor :credentials, :obj, :update_args, :delete_called, :entity_label, :label, :lookup_label
     attr_writer   :obj
-    
+
     def initialize(my_credentials, my_entity_label, my_label)
       @credentials = my_credentials
       @entity_label = my_entity_label
       @label = my_label
       @delete_called = false
     end
-    
+
     def update(args = {})
       @update_args = args
       return true
     end
-    
+
     def delete
       @delete_called = true
       return true

@@ -20,16 +20,94 @@ require 'spec_helper'
 require_relative '../../../libraries/alarm_hwrp.rb'
 require_relative 'hwrp_helpers.rb'
 
-def initialize_provider_test
+module AlarmHWRPTestMocks
+  # Dog simple mock class to ensure we're calling the underlying class with the right arguments
+  # Actual behavior of the underlying classes is tested by their respective tests
+  class CMAlarmHWRPMock
+    attr_accessor :credentials, :obj, :update_args, :delete_called, :entity_label, :label, :lookup_label, :example_alarm_id, :example_alarm_values
+    attr_writer   :obj
+
+    def initialize(my_credentials, my_entity_label, my_label)
+      @credentials = my_credentials
+      @entity_label = my_entity_label
+      @label = my_label
+      @delete_called = false
+    end
+
+    def update(args = {})
+      @update_args = args
+      return true
+    end
+
+    def delete
+      @delete_called = true
+      return true
+    end
+                               # We're mocking here, and attr_writer doesn't behave the same
+    def lookup_by_label(label) # rubocop:disable TrivialAccessors
+      @lookup_label = label
+    end
+
+    def example_alarm(id, values)
+      @example_alarm_id = id
+      @example_alarm_values = values
+      return CMAlarmHWRPMockDummyExampleAlarm.new
+    end
+  end
+
+  # Stupid simple class to mock the Example Alarm response
+  class CMAlarmHWRPMockDummyExampleAlarm
+    def bound_criteria
+      return 'Test Example Alarm Criteria'
+    end
+  end
+
+  # This is a simple mock of Opscode::Rackspace::Monitoring::CMCheck
+  # Testing the behavior, not the implementation, it allows us to return nil or an object
+  #  depending on the label passed.
+  class CMCheckHWRPMock
+    attr_accessor :obj
+    attr_writer   :obj
+
+    def initialize(my_credentials, my_entity_label, my_label)
+      @init_label = my_label
+      @obj = CMCheckHWRPMockCheckObj.new
+    end
+
+    def lookup_by_label(label)
+      if label != 'Bogus Test Label'
+        @obj = CMCheckHWRPMockCheckObj.new
+      else
+        if label != @init_label
+          fail 'CMCheckHWRPMock passed mismatched label: Caller not behaving as expected'
+        end
+
+        @obj = nil
+      end
+    end
+  end
+
+  # Stupid simple class to mock the CMCheck Object
+  class CMCheckHWRPMockCheckObj
+    def id
+      return 'Test CMCheck Object ID'
+    end
+  end
+end
+
+#
+# WARNING: This namespace is SHARED WITH OTHER TESTS so names MUST BE UNIQUE
+#
+def initialize_alarm_provider_test
   # Mock CMAlarm with CMAlarmHWRPMock
-  stub_const('Opscode::Rackspace::Monitoring::CMAlarm', CMAlarmHWRPMock)
-  unless Opscode::Rackspace::Monitoring::CMAlarm.new(nil, nil, nil).is_a? CMAlarmHWRPMock
+  stub_const('Opscode::Rackspace::Monitoring::CMAlarm', AlarmHWRPTestMocks::CMAlarmHWRPMock)
+  unless Opscode::Rackspace::Monitoring::CMAlarm.new(nil, nil, nil).is_a? AlarmHWRPTestMocks::CMAlarmHWRPMock
     fail 'Failed to stub Opscode::Rackspace::Monitoring::CMAlarm'
   end
 
   # Mock CMAlarm with CMCheckHWRPMock
-  stub_const('Opscode::Rackspace::Monitoring::CMCheck', CMCheckHWRPMock)
-  unless Opscode::Rackspace::Monitoring::CMCheck.new(nil, nil, nil).is_a? CMCheckHWRPMock
+  stub_const('Opscode::Rackspace::Monitoring::CMCheck', AlarmHWRPTestMocks::CMCheckHWRPMock)
+  unless Opscode::Rackspace::Monitoring::CMCheck.new(nil, nil, nil).is_a? AlarmHWRPTestMocks::CMCheckHWRPMock
     fail 'Failed to stub Opscode::Rackspace::Monitoring::CMCheck'
   end
 
@@ -52,18 +130,18 @@ def initialize_provider_test
                                        )
 end
 
-def common_update_tests_core(target_action, alarm_obj_state)
-  test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
-  test_obj.load_current_resource
-  test_obj.current_resource.alarm_obj.obj = alarm_obj_state
-  test_obj.send(target_action)
-  return test_obj
-end
-
 # This method tests the behavior expected by both :create and :create_if_missing when modifying the resource
-def common_update_tests(target_action, alarm_obj_state = nil) # rubocop:disable MethodLength
+def common_alarm_update_tests(target_action, alarm_obj_state = nil) # rubocop:disable MethodLength
                                                               # Yea, I know it's long, not really much to be done about it...
                                                               # rspec code is hard to code DRY due to scoping and slight but critical differences...
+  def common_update_tests_core(target_action, alarm_obj_state)
+    test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
+    test_obj.load_current_resource
+    test_obj.current_resource.alarm_obj.obj = alarm_obj_state
+    test_obj.send(target_action)
+    return test_obj
+  end
+
   fail 'ARGUMENT ERROR' if target_action.nil?
   let(:target_action) { target_action }
   let(:alarm_obj_state) { alarm_obj_state }
@@ -130,7 +208,7 @@ def common_update_tests(target_action, alarm_obj_state = nil) # rubocop:disable 
     test_obj = common_update_tests_core(target_action, alarm_obj_state)
 
     test_obj.current_resource.alarm_obj.update_args.key?(:check).should eql true
-    test_obj.current_resource.alarm_obj.update_args[:check].should eql CMCheckHWRPMockCheckObj.new.id
+    test_obj.current_resource.alarm_obj.update_args[:check].should eql AlarmHWRPTestMocks::CMCheckHWRPMockCheckObj.new.id
   end
 
   it 'fails when check_label is set but cannot be looked up' do
@@ -163,79 +241,6 @@ def common_update_tests(target_action, alarm_obj_state = nil) # rubocop:disable 
 
     test_obj.send(target_action)
     test_obj.new_resource.updated.should eql true
-  end
-end
-
-# Dog simple mock class to ensure we're calling the underlying class with the right arguments
-# Actual behavior of the underlying classes is tested by their respective tests
-class CMAlarmHWRPMock
-  attr_accessor :credentials, :obj, :update_args, :delete_called, :entity_label, :label, :lookup_label, :example_alarm_id, :example_alarm_values
-  attr_writer   :obj
-
-  def initialize(my_credentials, my_entity_label, my_label)
-    @credentials = my_credentials
-    @entity_label = my_entity_label
-    @label = my_label
-    @delete_called = false
-  end
-
-  def update(args = {})
-    @update_args = args
-    return true
-  end
-
-  def delete
-    @delete_called = true
-    return true
-  end
-                             # We're mocking here, and attr_writer doesn't behave the same
-  def lookup_by_label(label) # rubocop:disable TrivialAccessors
-    @lookup_label = label
-  end
-
-  def example_alarm(id, values)
-    @example_alarm_id = id
-    @example_alarm_values = values
-    return CMAlarmHWRPMockDummyExampleAlarm.new
-  end
-end
-
-# Stupid simple class to mock the Example Alarm response
-class CMAlarmHWRPMockDummyExampleAlarm
-  def bound_criteria
-    return 'Test Example Alarm Criteria'
-  end
-end
-
-# This is a simple mock of Opscode::Rackspace::Monitoring::CMCheck
-# Testing the behavior, not the implementation, it allows us to return nil or an object
-#  depending on the label passed.
-class CMCheckHWRPMock
-  attr_accessor :obj
-  attr_writer   :obj
-
-  def initialize(my_credentials, my_entity_label, my_label)
-    @init_label = my_label
-    @obj = CMCheckHWRPMockCheckObj.new
-  end
-
-  def lookup_by_label(label)
-    if label != 'Bogus Test Label'
-      @obj = CMCheckHWRPMockCheckObj.new
-    else
-      if label != @init_label
-        fail 'CMCheckHWRPMock passed mismatched label: Caller not behaving as expected'
-      end
-
-      @obj = nil
-    end
-  end
-end
-
-# Stupid simple class to mock the CMCheck Object
-class CMCheckHWRPMockCheckObj
-  def id
-    return 'Test CMCheck Object ID'
   end
 end
 
@@ -304,7 +309,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
   describe 'provider' do
     describe 'load_current_resource' do
       before :each do
-        initialize_provider_test
+        initialize_alarm_provider_test
         # We need all values set for the constructor test
         @new_resource = TestResourceData.new(
                                              name:                 'Test Name',
@@ -362,33 +367,33 @@ describe 'rackspace_cloudmonitoring_alarm' do
     describe 'action_create' do
       describe 'with a nil current object' do
         before :each do
-          initialize_provider_test
+          initialize_alarm_provider_test
         end
 
-        common_update_tests(:action_create, nil)
+        common_alarm_update_tests(:action_create, nil)
       end
 
       describe 'with a non-nil current object' do
         before :each do
-          initialize_provider_test
+          initialize_alarm_provider_test
         end
 
-        common_update_tests(:action_create, 'not nil')
+        common_alarm_update_tests(:action_create, 'not nil')
       end
     end
 
     describe 'action_create_if_missing' do
       describe 'with a nil current object' do
         before :each do
-          initialize_provider_test
+          initialize_alarm_provider_test
         end
 
-        common_update_tests(:action_create_if_missing, nil)
+        common_alarm_update_tests(:action_create_if_missing, nil)
       end
 
       describe 'with a non-nil current object' do
         before :each do
-          initialize_provider_test
+          initialize_alarm_provider_test
         end
 
         it 'does not call update' do
@@ -414,7 +419,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
 
     describe 'action_delete' do
       before :each do
-        initialize_provider_test
+        initialize_alarm_provider_test
       end
 
       it 'calls delete()' do
