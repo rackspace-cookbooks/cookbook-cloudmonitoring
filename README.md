@@ -284,7 +284,7 @@ This LWRP interacts with the API to create, and delete check API objects.
 | Option | Description | Required | Note |
 | ------ | ----------- | -------- | ---- |
 | entity_chef_label       | The Chef label of the entity to associate to | Yes |  |
-| type                    | The type of check | No |See API docs |
+| type                    | The type of check | Yes |See API docs |
 | details                 | Details of the check | No |See API docs |
 | metadata                | Metadata to associate with the check  | No | See API docs |
 | period                  | The period in seconds for a check.  | No | Has restrictions, See API docs |
