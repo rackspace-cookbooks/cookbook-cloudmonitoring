@@ -41,28 +41,37 @@ def initialize_provider_test
                                        notification_plan_id: 'Test notification_plan_id',
                                        check_id:    'Test check_id',
                                        check_label: nil,
-                                       metadata:    {test: 'Test metadata'},
+                                       metadata:    { test: 'Test metadata' },
                                        criteria:    'Test criteria',
                                        disabled:    false,
                                        example_id:  nil,
-                                       example_values:     {test: 'Test example_values'},
+                                       example_values:     { test: 'Test example_values' },
                                        rackspace_api_key:  'Test rackspace_api_key',
                                        rackspace_username: 'Test rackspace_username',
                                        rackspace_auth_url: 'Test rackspace_auth_url'
                                        )
-  
+end
+
+def common_update_tests_core(target_action, alarm_obj_state)
+  test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
+  test_obj.load_current_resource
+  test_obj.current_resource.alarm_obj.obj = alarm_obj_state
+  test_obj.send(target_action)
+  return test_obj
 end
 
 # This method tests the behavior expected by both :create and :create_if_missing when modifying the resource
-def common_update_tests(target_action, alarm_obj_state = nil)
-  fail "ARGUMENT ERROR" if target_action.nil?
+def common_update_tests(target_action, alarm_obj_state = nil) # rubocop:disable MethodLength
+                                                              # Yea, I know it's long, not really much to be done about it...
+                                                              # rspec code is hard to code DRY due to scoping and slight but critical differences...
+  fail 'ARGUMENT ERROR' if target_action.nil?
   let(:target_action) { target_action }
   let(:alarm_obj_state) { alarm_obj_state }
-  
+
   it 'fails when both example_id and criteria are set' do
-    fail "SCOPE ERROR" if target_action.nil?
+    fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.criteria.should_not eql nil
-    @new_resource.example_id = "Test Example ID"
+    @new_resource.example_id = 'Test Example ID'
     test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
     test_obj.load_current_resource
     test_obj.current_resource.alarm_obj.obj = alarm_obj_state
@@ -70,9 +79,9 @@ def common_update_tests(target_action, alarm_obj_state = nil)
   end
 
   it 'fails when both check_label and check_id are set' do
-    fail "SCOPE ERROR" if target_action.nil?
+    fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.check_id.should_not eql nil
-    @new_resource.check_label = "Test Check Label"
+    @new_resource.check_label = 'Test Check Label'
     test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
     test_obj.load_current_resource
     test_obj.current_resource.alarm_obj.obj = alarm_obj_state
@@ -80,87 +89,67 @@ def common_update_tests(target_action, alarm_obj_state = nil)
   end
 
   it 'Uses criteria when example_id is unspecified' do
-    fail "SCOPE ERROR" if target_action.nil?
+    fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.criteria.should_not eql nil
     @new_resource.example_id.should eql nil
-    
-    test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
-    test_obj.load_current_resource
-    test_obj.current_resource.alarm_obj.obj = alarm_obj_state
-    test_obj.send(target_action)
+    test_obj = common_update_tests_core(target_action, alarm_obj_state)
 
     test_obj.current_resource.alarm_obj.example_alarm_id.should eql nil
     test_obj.current_resource.alarm_obj.example_alarm_values.should eql nil
     test_obj.current_resource.alarm_obj.update_args.key?(:criteria).should eql true
     test_obj.current_resource.alarm_obj.update_args[:criteria].should eql @new_resource.criteria
   end
-  
+
   it 'Uses the example API when example_id is specified' do
-    fail "SCOPE ERROR" if target_action.nil?
+    fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.criteria = nil
-    @new_resource.example_id = "Test Example ID"
+    @new_resource.example_id = 'Test Example ID'
     @new_resource.example_values.should_not eql nil
-    
-    test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
-    test_obj.load_current_resource
-    test_obj.current_resource.alarm_obj.obj = alarm_obj_state
-    test_obj.send(target_action)
-    
+    test_obj = common_update_tests_core(target_action, alarm_obj_state)
+
     test_obj.current_resource.alarm_obj.example_alarm_id.should eql @new_resource.example_id
     test_obj.current_resource.alarm_obj.example_alarm_values.should eql @new_resource.example_values
     test_obj.current_resource.alarm_obj.update_args.key?(:criteria).should eql true
-    test_obj.current_resource.alarm_obj.update_args[:criteria].should eql "Test Example Alarm Criteria"
+    test_obj.current_resource.alarm_obj.update_args[:criteria].should eql 'Test Example Alarm Criteria'
   end
 
   it 'Uses check_id when check_label is unset' do
-    fail "SCOPE ERROR" if target_action.nil?
+    fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.check_id.should_not eql nil
     @new_resource.check_label.should eql nil
-    
-    test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
-    test_obj.load_current_resource
-    test_obj.current_resource.alarm_obj.obj = alarm_obj_state
-    test_obj.send(target_action)
+    test_obj = common_update_tests_core(target_action, alarm_obj_state)
 
     test_obj.current_resource.alarm_obj.update_args.key?(:check).should eql true
     test_obj.current_resource.alarm_obj.update_args[:check].should eql @new_resource.check_id
   end
 
   it 'Looks up a check when check_label is set' do
-    fail "SCOPE ERROR" if target_action.nil?
+    fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.check_id = nil
-    @new_resource.check_label = "Test Check Label"
-    
-    test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
-    test_obj.load_current_resource
-    test_obj.current_resource.alarm_obj.obj = alarm_obj_state
-    test_obj.send(target_action)
-    
+    @new_resource.check_label = 'Test Check Label'
+    test_obj = common_update_tests_core(target_action, alarm_obj_state)
+
     test_obj.current_resource.alarm_obj.update_args.key?(:check).should eql true
     test_obj.current_resource.alarm_obj.update_args[:check].should eql CMCheckHWRPMockCheckObj.new.id
   end
 
   it 'fails when check_label is set but cannot be looked up' do
-    fail "SCOPE ERROR" if target_action.nil?
+    fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.check_id = nil
-    @new_resource.check_label = "Bogus Test Label" # This label is coded into the CMCheckHWRPMock mock class below.
-    
+    @new_resource.check_label = 'Bogus Test Label' # This label is coded into the CMCheckHWRPMock mock class below.
+
     test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
     test_obj.load_current_resource
     test_obj.current_resource.alarm_obj.obj = alarm_obj_state
     expect { test_obj.send(target_action) }.to raise_exception
-    
+
   end
 
-  [ :label, :metadata, :notification_plan_id, :disabled ].each do |option|
+  [:label, :metadata, :notification_plan_id, :disabled].each do |option|
     it "passes #{option} to update" do
       @new_resource.send(option).should_not eql nil
+      test_obj = common_update_tests_core(target_action, alarm_obj_state)
 
-      test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
-      test_obj.load_current_resource
-      test_obj.current_resource.alarm_obj.obj = alarm_obj_state
-      test_obj.send(target_action)
-      
       test_obj.current_resource.alarm_obj.update_args.key?(option).should eql true
       test_obj.current_resource.alarm_obj.update_args[option].should eql @new_resource.send(option)
     end
@@ -182,7 +171,7 @@ end
 class CMAlarmHWRPMock
   attr_accessor :credentials, :obj, :update_args, :delete_called, :entity_label, :label, :lookup_label, :example_alarm_id, :example_alarm_values
   attr_writer   :obj
-  
+
   def initialize(my_credentials, my_entity_label, my_label)
     @credentials = my_credentials
     @entity_label = my_entity_label
@@ -194,13 +183,13 @@ class CMAlarmHWRPMock
     @update_args = args
     return true
   end
-  
+
   def delete
     @delete_called = true
     return true
   end
-
-  def lookup_by_label(label)
+                             # We're mocking here, and attr_writer doesn't behave the same
+  def lookup_by_label(label) # rubocop:disable TrivialAccessors
     @lookup_label = label
   end
 
@@ -211,9 +200,10 @@ class CMAlarmHWRPMock
   end
 end
 
+# Stupid simple class to mock the Example Alarm response
 class CMAlarmHWRPMockDummyExampleAlarm
   def bound_criteria
-    return "Test Example Alarm Criteria"
+    return 'Test Example Alarm Criteria'
   end
 end
 
@@ -223,31 +213,32 @@ end
 class CMCheckHWRPMock
   attr_accessor :obj
   attr_writer   :obj
-  
+
   def initialize(my_credentials, my_entity_label, my_label)
     @init_label = my_label
     @obj = CMCheckHWRPMockCheckObj.new
   end
 
   def lookup_by_label(label)
-    if label != "Bogus Test Label"
+    if label != 'Bogus Test Label'
       @obj = CMCheckHWRPMockCheckObj.new
     else
       if label != @init_label
-        fail "CMCheckHWRPMock passed mismatched label: Caller not behaving as expected"
+        fail 'CMCheckHWRPMock passed mismatched label: Caller not behaving as expected'
       end
-      
+
       @obj = nil
     end
   end
 end
 
+# Stupid simple class to mock the CMCheck Object
 class CMCheckHWRPMockCheckObj
   def id
-    return "Test CMCheck Object ID"
+    return 'Test CMCheck Object ID'
   end
 end
-  
+
 describe 'rackspace_cloudmonitoring_alarm' do
   describe 'resource' do
     describe '#initialize' do
@@ -264,7 +255,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
           @test_resource.allowed_actions.should include action
         end
       end
-      
+
       it 'should should have a default :create action' do
         @test_resource.action.should eql :create
       end
@@ -274,35 +265,35 @@ describe 'rackspace_cloudmonitoring_alarm' do
       end
     end
 
-    { label:                "Test Label",
-      entity_chef_label:    "Test Entity",
-      notification_plan_id: "Test ID",
-      check_id:             "Test Check",
-      check_label:          "Test Check Label",
-      metadata:             {test: "metadata"},
-      criteria:             "Test Criteria",
+    { label:                'Test Label',
+      entity_chef_label:    'Test Entity',
+      notification_plan_id: 'Test ID',
+      check_id:             'Test Check',
+      check_label:          'Test Check Label',
+      metadata:             { test: 'metadata' },
+      criteria:             'Test Criteria',
       disabled:             true,
-      example_id:           "Test Example",
-      example_values:       {test: "example data"},
-      rackspace_api_key:    "Test Key",
-      rackspace_username:   "Test Username",
-      rackspace_auth_url:   "Test Auth URL"
+      example_id:           'Test Example',
+      example_values:       { test: 'example data' },
+      rackspace_api_key:    'Test Key',
+      rackspace_username:   'Test Username',
+      rackspace_auth_url:   'Test Auth URL'
     }.each do |attr, value|
       describe "##{attr}" do
         before :all do
           @test_resource = Chef::Resource::RackspaceCloudmonitoringAlarm.new('Test Label')
         end
-        
+
         unless [:label, :entity_chef_label, :notification_plan_id].include? attr
           it 'should be nil initially' do
             @test_resource.send(attr).should eql nil
           end
         end
-        
+
         it 'should set values' do
           @test_resource.send(attr, value).should eql value
         end
-        
+
         it 'should get values' do
           @test_resource.send(attr).should eql value
         end
@@ -316,20 +307,20 @@ describe 'rackspace_cloudmonitoring_alarm' do
         initialize_provider_test
         # We need all values set for the constructor test
         @new_resource = TestResourceData.new(
-                                             name:                 "Test Name",
-                                             label:                "Test Label",
-                                             entity_chef_label:    "Test Entity",
-                                             notification_plan_id: "Test ID",
-                                             check_id:             "Test Check",
-                                             check_label:          "Test Check Label",
-                                             metadata:             {test: "metadata"},
-                                             criteria:             "Test Criteria",
+                                             name:                 'Test Name',
+                                             label:                'Test Label',
+                                             entity_chef_label:    'Test Entity',
+                                             notification_plan_id: 'Test ID',
+                                             check_id:             'Test Check',
+                                             check_label:          'Test Check Label',
+                                             metadata:             { test: 'metadata' },
+                                             criteria:             'Test Criteria',
                                              disabled:             true,
-                                             example_id:           "Test Example",
-                                             example_values:       {test: "example data"},
-                                             rackspace_api_key:    "Test Key",
-                                             rackspace_username:   "Test Username",
-                                             rackspace_auth_url:   "Test Auth URL"
+                                             example_id:           'Test Example',
+                                             example_values:       { test: 'example data' },
+                                             rackspace_api_key:    'Test Key',
+                                             rackspace_username:   'Test Username',
+                                             rackspace_auth_url:   'Test Auth URL'
                                              )
         @test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
         @test_obj.load_current_resource
@@ -338,7 +329,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
       it 'initializes current_resource to be a Chef::Resource::RackspaceCloudmonitoringAlarm' do
         @test_obj.current_resource.should be_an_instance_of Chef::Resource::RackspaceCloudmonitoringAlarm
       end
-      
+
       it 'Sets label to new_resource.name when new_resource.label is nil' do
         @new_resource.label = nil
         @test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
@@ -365,7 +356,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
 
       it 'Looks up existing alarms by label' do
         @test_obj.current_resource.alarm_obj.lookup_label.should eql 'Test Label'
-      end      
+      end
     end
 
     describe 'action_create' do
@@ -373,7 +364,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
         before :each do
           initialize_provider_test
         end
-      
+
         common_update_tests(:action_create, nil)
       end
 
@@ -381,8 +372,8 @@ describe 'rackspace_cloudmonitoring_alarm' do
         before :each do
           initialize_provider_test
         end
-      
-        common_update_tests(:action_create, "not nil")
+
+        common_update_tests(:action_create, 'not nil')
       end
     end
 
@@ -391,7 +382,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
         before :each do
           initialize_provider_test
         end
-      
+
         common_update_tests(:action_create_if_missing, nil)
       end
 
@@ -399,22 +390,22 @@ describe 'rackspace_cloudmonitoring_alarm' do
         before :each do
           initialize_provider_test
         end
-      
+
         it 'does not call update' do
           test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
           test_obj.load_current_resource
-          test_obj.current_resource.alarm_obj.obj = "not nil"
+          test_obj.current_resource.alarm_obj.obj = 'not nil'
           test_obj.new_resource.updated.should eql nil
-          
+
           test_obj.current_resource.alarm_obj.update_args.should eql nil
         end
 
         it 'notifies Chef that the resource was not updated' do
           test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
           test_obj.load_current_resource
-          test_obj.current_resource.alarm_obj.obj = "not nil"
+          test_obj.current_resource.alarm_obj.obj = 'not nil'
           test_obj.new_resource.updated.should eql nil
-          
+
           test_obj.action_create_if_missing
           test_obj.new_resource.updated.should eql false
         end
@@ -422,17 +413,17 @@ describe 'rackspace_cloudmonitoring_alarm' do
     end
 
     describe 'action_delete' do
-      before :each do 
+      before :each do
         initialize_provider_test
       end
-      
+
       it 'calls delete()' do
         @test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
         @test_obj.load_current_resource
         @test_obj.current_resource.alarm_obj.delete_called.should eql false
         @test_obj.new_resource.updated.should eql nil
         @test_obj.action_delete
-        
+
         @test_obj.current_resource.alarm_obj.delete_called.should eql true
         @test_obj.new_resource.updated.should eql true
       end
@@ -458,11 +449,11 @@ describe 'rackspace_cloudmonitoring_alarm' do
                                              notification_plan_id: 'Test notification_plan_id',
                                              check_id:    'Test check_id',
                                              check_label: 'Test check_label',
-                                             metadata:    {test: 'Test metadata'},
+                                             metadata:    { test: 'Test metadata' },
                                              criteria:    'Test criteria',
                                              disabled:    false,
                                              example_id:  'Test example_id',
-                                             example_values:     {test: 'Test example_values'},
+                                             example_values:     { test: 'Test example_values' },
                                              rackspace_api_key:  'Test rackspace_api_key',
                                              rackspace_username: 'Test rackspace_username',
                                              rackspace_auth_url: 'Test rackspace_auth_url'

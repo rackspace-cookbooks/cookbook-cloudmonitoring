@@ -40,18 +40,18 @@ class Chef
 
         @label = name
       end
-      
+
       def label(arg = nil)
         # set_or_return is a magic function from Chef that does most of the heavy lifting for attribute access.
         set_or_return(:label, arg, kind_of: String)
       end
 
       def entity_chef_label(arg = nil)
-        set_or_return(:entity_chef_label, arg, kind_of: String, :required => true)
+        set_or_return(:entity_chef_label, arg, kind_of: String, required: true)
       end
 
       def notification_plan_id(arg = nil)
-        set_or_return(:notification_plan_id, arg, kind_of: String, :required => true)
+        set_or_return(:notification_plan_id, arg, kind_of: String, required: true)
       end
 
       def check_id(arg = nil)
@@ -93,7 +93,6 @@ class Chef
       def rackspace_auth_url(arg = nil)
         set_or_return(:rackspace_auth_url, arg, kind_of: String)
       end
-
     end
   end
 end
@@ -102,7 +101,6 @@ class Chef
   class Provider
     # Implement the rackspace_cloudmonitoring_alarm provider
     class RackspaceCloudmonitoringAlarm < Chef::Provider
-      # Used for testing
       def load_current_resource
         # Here we keep the existing version of the resource
         # if none exists we create a new one from the resource we defined earlier
@@ -111,7 +109,7 @@ class Chef
          :example_values, :rackspace_api_key, :rackspace_username, :rackspace_auth_url].each do |arg|
           @current_resource.send(arg, new_resource.send(arg))
         end
-        
+
         @current_resource.alarm_obj = Opscode::Rackspace::Monitoring::CMAlarm.new(
               Opscode::Rackspace::Monitoring::CMCredentials.new(node, @current_resource),
               @current_resource.entity_chef_label, @current_resource.label)
@@ -151,26 +149,26 @@ class Chef
         else
           criteria = resource.criteria
         end
-  
+
         if resource.check_label
           fail 'Cannot specify check_label and check_id' unless resource.check_id.nil?
-          
+
           check_obj = Opscode::Rackspace::Monitoring::CMCheck.new(resource.alarm_obj.credentials, resource.entity_chef_label, resource.check_label)
           check_obj.lookup_by_label(resource.check_label)
-          
+
           if check_obj.obj.nil?
             fail "Unable to lookup check #{resource.check_label} on for alarm #{resource.label} on entity #{resource.entity_chef_label}"
           end
-          
+
           check_id = check_obj.obj.id
         else
           check_id = resource.check_id
         end
-        
+
         if resource.notification_plan_id.nil?
           fail ValueError, 'Must specify notification_plan_id in alarm resource'
         end
-        
+
         return resource.alarm_obj.update(
                                          label:                resource.label,
                                          metadata:             resource.metadata,
