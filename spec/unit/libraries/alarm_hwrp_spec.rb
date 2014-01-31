@@ -265,19 +265,19 @@ describe 'rackspace_cloudmonitoring_alarm' do
       end
     end
 
-    { label:                'Test Label',
-      entity_chef_label:    'Test Entity',
-      notification_plan_id: 'Test ID',
-      check_id:             'Test Check',
-      check_label:          'Test Check Label',
-      metadata:             { test: 'metadata' },
-      criteria:             'Test Criteria',
+    { label:                'Attr Test Label',
+      entity_chef_label:    'Attr Test Entity',
+      notification_plan_id: 'Attr Test ID',
+      check_id:             'Attr Test Check',
+      check_label:          'Attr Test Check Label',
+      metadata:             { test: 'Attr metadata' },
+      criteria:             'Attr Test Criteria',
       disabled:             true,
-      example_id:           'Test Example',
-      example_values:       { test: 'example data' },
-      rackspace_api_key:    'Test Key',
-      rackspace_username:   'Test Username',
-      rackspace_auth_url:   'Test Auth URL'
+      example_id:           'Attr Test Example',
+      example_values:       { test: 'Attr example data' },
+      rackspace_api_key:    'Attr Test Key',
+      rackspace_username:   'Attr Test Username',
+      rackspace_auth_url:   'Attr Test Auth URL'
     }.each do |attr, value|
       describe "##{attr}" do
         before :all do
