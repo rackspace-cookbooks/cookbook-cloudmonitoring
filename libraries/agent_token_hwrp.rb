@@ -72,7 +72,6 @@ class Chef
   class Provider
     # Implement the rackspace_cloudmonitoring_agent_token provider
     class RackspaceCloudmonitoringAgentToken < Chef::Provider
-      # Used for testing
       def load_current_resource
         # Here we keep the existing version of the resource
         # if none exists we create a new one from the resource we defined earlier
