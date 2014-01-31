@@ -96,7 +96,7 @@ if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['r
 end
 
 if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['rackspace_cloudmonitoring']['config']['agent']['id'].nil?
-  Chef::Log.warn("Unable to determine agent token and id: Not configuring agent")
+  Chef::Log.warn('Unable to determine agent token and id: Not configuring agent')
 else
   # Generate the config template
   template '/etc/rackspace-monitoring-agent.cfg' do
@@ -111,20 +111,20 @@ else
               )
     action :create
   end
-  
+
   package 'rackspace-monitoring-agent' do
     if node['rackspace_cloudmonitoring']['agent']['version'] == 'latest'
-      Chef::Log.info("Installing latest agent")
+      Chef::Log.info('Installing latest agent')
       action :upgrade
     else
       Chef::Log.info("Installing agent version #{node['rackspace_cloudmonitoring']['agent']['version']}")
       version node['rackspace_cloudmonitoring']['agent']['version']
       action :install
     end
-    
+
     notifies :restart, 'service[rackspace-monitoring-agent]'
   end
-  
+
   node['rackspace_cloudmonitoring']['agent']['plugins'].each_pair do |source_cookbook, path|
     remote_directory "rackspace_cloudmonitoring_plugins_#{source_cookbook}" do
       path node['rackspace_cloudmonitoring']['agent']['plugin_path']
@@ -138,21 +138,21 @@ else
       purge false
     end
   end
-  
+
   service 'rackspace-monitoring-agent' do
     # TODO: RHEL, CentOS, ... support
     supports value_for_platform(
                                 ubuntu:  { default: [:start, :stop, :restart, :status] },
                                 default: { default: [:start, :stop] }
                                 )
-    
+
     case node['platform']
     when 'ubuntu'
       if node['platform_version'].to_f >= 9.10
         provider Chef::Provider::Service::Upstart
       end
   end
-    
+
     action [:enable, :start]
     subscribes :restart, "template['/etc/rackspace-monitoring-agent.cfg']", :delayed
   end
