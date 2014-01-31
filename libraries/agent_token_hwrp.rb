@@ -98,7 +98,7 @@ class Chef
       end
 
       def action_create_if_missing
-        Chef::Log.debug("Beginning action[:create] for #{@current_resource}")
+        Chef::Log.debug("Beginning action[:create_if_missing] for #{@current_resource}")
         if @current_resource.token_obj.obj.nil?
           new_resource.updated_by_last_action(@current_resource.token_obj.update(label: @current_resource.label))
         else
