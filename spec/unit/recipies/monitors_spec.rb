@@ -418,8 +418,8 @@ describe 'rackspace_cloudmonitoring::monitors' do
                 chef_run.converge('rackspace_cloudmonitoring::monitors')
               end
 
-              4.times do |x|
-                4.times do |y|
+              3.times do |x|
+                3.times do |y|
                   it "create alarm #{y} under check #{x}" do
                     expect(chef_run).to create_monitoring_alarm("Test Check #{x} Test Alarm #{y} alarm")
                   end
