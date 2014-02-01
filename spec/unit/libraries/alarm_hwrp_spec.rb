@@ -349,6 +349,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
       [:entity_chef_label, :notification_plan_id, :check_id, :check_label, :metadata, :criteria, :disabled,
        :example_id, :example_values, :rackspace_api_key, :rackspace_username, :rackspace_auth_url].each do |arg|
         it "Sets #{arg} to new_resource.#{arg}" do
+          @new_resource.send(arg).should_not eql nil
           @test_obj.current_resource.send(arg).should eql @new_resource.send(arg)
         end
       end

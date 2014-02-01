@@ -202,6 +202,7 @@ describe 'rackspace_cloudmonitoring_check' do
       [:entity_chef_label, :type, :details, :metadata, :period, :timeout, :disabled, :target_alias, :target_resolver,
        :target_hostname, :monitoring_zones_poll, :rackspace_api_key, :rackspace_username, :rackspace_auth_url].each do |arg|
         it "Sets #{arg} to new_resource.#{arg}" do
+          @new_resource.send(arg).should_not eql nil
           @test_obj.current_resource.send(arg).should eql @new_resource.send(arg)
         end
       end

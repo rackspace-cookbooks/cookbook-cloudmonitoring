@@ -142,6 +142,7 @@ describe 'rackspace_cloudmonitoring_agent_token' do
 
       [:token, :rackspace_api_key, :rackspace_username, :rackspace_auth_url].each do |arg|
         it "Sets #{arg} to new_resource.#{arg}" do
+          @new_resource.send(arg).should_not eql nil
           @test_obj.current_resource.send(arg).should eql "Test #{arg}"
         end
       end
