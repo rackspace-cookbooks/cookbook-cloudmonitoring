@@ -71,13 +71,21 @@ The value is a second hash where the keys are the following attributes:
 
 | Key    | Value Data type | Description | Required | API Documentation Attribute Name | Default Value | Note |
 | ------ | --------------- | ----------- | -------- | -------------------------------- | ------------- | ---- |
-| type   | String | Check type  | Yes      | type                             | None          | -- |
-| period | Integer | The period in seconds for a check | No | period           | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period'] | The value must be greater than the minimum period set on your account. |
-| timeout | Integer | The timeout in seconds for a check | No | timeout | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] | This has to be less than the period. |
+| type   | String | Check type  | Yes      | type                             | None          |  |
+| alarm | Hash | Hash of alarms for this check.  See below. | No | N/A | None | This value is not a API value, it is specific to this cookbook. |
 | details | Hash | Detail data needed by the check | No | details | None | See API documentation for details on details. |
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
-| alarm | Hash | Hash of alarms for this check.  See below. | No | N/A | None | This value is not a API value, it is specific to this cookbook. |
-| entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this |
+| entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this | 
+| metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
+| monitoring_zones_poll | Array | Array of zones to poll remote checks from | No | monitoring_zones_poll | None | Only used with remote checks, See API docs for valid zones |
+| notification_plan_id | String | Notification plan to use for associated alarms | No | (Alarms) notification_plan_id | See precidence table below | This value is used with associated Alarms, not the check itself |
+| period | Integer | The period in seconds for a check | No | period           | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period'] | The value must be greater than the minimum period set on your account. |
+| target_alias    | string | Key in the entity's 'ip_addresses' hash used to resolve check to an IP address for remote checks | No | target_alias | None | Only used with remote checks, See API documentation |
+| target_hostname | string | Hostname a remote check should target | No | target_hostname | None | Only used with remote checks, See API documentation |
+| target_resolver | string | Method to resolve remote checks | No | target_resolver | None | Only used with remote checks, See API documentation |
+| timeout | Integer | The timeout in seconds for a check | No | timeout | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] | This has to be less than the period. |
+
+
 
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Checks](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-checks.html)
 As you can see the node['rackspace_cloudmonitoring']['monitors_defaults'] node hash is used to define defaults so that common options don't need to be defined for every check.
@@ -91,8 +99,11 @@ The value is a fourth hash ([yo-dawg](http://i.imgur.com/b18qXaT.jpg)) where the
 | ------ | --------------- | ----------- | -------- | -------------------------------- | ------------- | ---- |
 | conditional | string | Conditional logic to place in the alarm if() block | Yes | criteria | None | This implementation abstracts part of the criteria DSL, see below |
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
-| notification_plan_idea | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
 | entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this |
+| metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
+| notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | See precidence table below | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
+| state | String | State value to use when building the criteria DSL value | No | criteria | Alarm hash key | See the criteria DSL section of the API docs for details.  This should be CRITICAL, WARNING, or OK |
+
 
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Alarms](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-alarms.html)
 The values for each check is passed to the rackspace_cloudmonitoring_alarm LWRP to create the check in the API.
@@ -101,7 +112,18 @@ Also note that node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['
 The Monitoring alarm criteria is abstracted from the API somewhat.
 The alarm threshold conditional need only be specified and will be used directly in the if() block.
 The body of the criteria conditional is handled by the cookbook.
+The state value defaults to the key of the alarm hash, but can be overridden if needed to duplicate alarms.
 See recipes/monitors.rb for the exact abstraction and body used.
+
+The notification_plan_id precidence is as follows, where the lowest precidence is the default:
+
+| Location | Precidence |
+| --- | --- |
+| Alarm notification_plan_id | 3 |
+| Check notification_plan_id | 2 |
+| node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] | 1 |
+
+So plan IDs specified with the Alarm are used first, followed by plans specified with the check, and finally default plans in the default hash.
 
 As mentioned above the monitoring entity will automatically be created or updated.
 The entity behavior is configured by the following node variables:
@@ -114,7 +136,7 @@ The entity behavior is configured by the following node variables:
 | default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']     | IP to use when searching by IP |
 
 Defaults for all are in attributes/default.rb.
-See the entity LWRP description below for details about the search method.
+See the entity Resource Provider description below for details about the search method.
 For Rackspace Cloud Servers the defaults will result in the existing, automatically generated entity being reused.
 Checks and Alarms need to reference the entity and will use the Chef label to do so.
 
@@ -150,7 +172,7 @@ node.default['rackspace_cloudmonitoring']['monitors'] = {
 
   'web_check' => {
     'type' => 'remote.http',
-    'target_alias' => 'default',
+    'target_hostname' => node['hostname'],
     'monitoring_zones_poll' => [
       'mzdfw',
       'mziad',
