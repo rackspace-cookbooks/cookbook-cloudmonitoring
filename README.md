@@ -198,11 +198,11 @@ So to install a plugin at directory foo_dir in cookbook bar_book use:
 
     node.default['rackspace_cloudmonitoring']['agent']['plugins']['bar_book'] = 'foo_dir'
 
-## LWRP Usage
+## Resource Provider Usage
 
-This cookbook exposes LWRPs to operate on Monitoring API objects at a lower level.
-Direct interaction with LWRPs is not required when using the monitors.rb argument hash method.
-General precedence for the LWRPs are:
+This cookbook exposes Resource Providers (RPs) to operate on Monitoring API objects at a lower level.
+Direct interaction with RPs is not required when using the monitors.rb argument hash method.
+General precedence for the RPs are:
 
 ```
 Alarm
@@ -222,10 +222,10 @@ So the API create action returns the unique identifier which must then be used f
 This flows counter to Chef where you assign a unique label at creation, and use that label from then on.
 The underlying library works to abstract this as much as possible, but it is beneficial to keep in mind, especially with entity objects.
 
-LWRP examples are not provided as LWRPs are considered advanced usage and use of the monitors.rb recipe cookbook is preferred.
-However, examples for all LWRPs can be found in this cookbook's recipes.
+RP examples are not provided as RPs are considered advanced usage and use of the monitors.rb recipe cookbook is preferred.
+However, examples for all RPs can be found in this cookbook's recipes.
 
-All LWRPs support the following actions:
+All RPs support the following actions:
 
 | Action | Description | Default |
 | ------ | ----------- | ------- |
@@ -233,26 +233,29 @@ All LWRPs support the following actions:
 | update_if_missing | Will create an object if it doesn't exist, and will converge existing objects if they do not match the current object |  |
 | delete | Will remove an object if it exists |  |
 
+Also, note that you must include the default recipe before utilizing the RPs.
+The default recipe handles mandatory library dependencies and the RPs will fail with Fog errors.
+
 ### Agent Token
 
-This LWRP interacts with the API to create Agent tokens.
+This RP interacts with the API to create Agent tokens.
 
-The LWRP itself is quite simple, it only takes one argument in addition to the label:
+The RP itself is quite simple, it only takes one argument in addition to the label:
 
 | Option | Description                  | Required | Note |
 | ------ | -----------                  | -------- | ---- |
 | token  | Monitoring agent token value | No       |      |
 
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Agent Tokens](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-agent-tokens.html)
-The label is the only updatable attribute, and the chef LWRP label is used for the API label.
+The label is the only updatable attribute, and the chef RP label is used for the API label.
 
 ### Entity
 
-This LWRP interacts with the API to create, and delete entity API objects.
+This RP interacts with the API to create, and delete entity API objects.
 
 | Option | Description | Required | Note |
 | ------ | ----------- | -------- | ---- |
-| api_label     | Label to use for the label in the API | No | Defaults to the Chef LWRP label |
+| api_label     | Label to use for the label in the API | No | Defaults to the Chef RP label |
 | metadata      | Metadata for the entity | No |  |
 | ip_addresses  | IP addresses that can be referenced by checks on this entity. | No | See API docs |
 | agent_id      | ID of the agent associated with his server | No |  |
@@ -270,7 +273,7 @@ For this, a number of search methods are provided to locate existing entities vi
 
 | Method | Key used | Matched to |
 | ------ | -------- | ---------- |
-| [default] | Chef LWRP label | API Label |
+| [default] | Chef RP label | API Label |
 | ip      | search_ip argument | Any IP associated with the entity |
 | id      | search_id argument | API ID |
 | api_label | api_label argument | API Label |
@@ -280,7 +283,7 @@ id is the most reliable, but the id is not exposed outside of the underlying lib
 
 ### Check
 
-This LWRP interacts with the API to create, and delete check API objects.
+This RP interacts with the API to create, and delete check API objects.
 
 | Option | Description | Required | Note |
 | ------ | ----------- | -------- | ---- |
@@ -301,12 +304,12 @@ This LWRP interacts with the API to create, and delete check API objects.
 
 The Chef label is used for the API label, which is used for searching.  Multiple checks on one entity with the same label in the API are NOT supported.
 The vast majority of objects are passed through to the API.
-The Entity LWRP for the associated entity object must have already been called.
+The Entity RP for the associated entity object must have already been called.
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Checks](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-checks.html)
 
 ### Alarms
 
-This LWRP interacts with the API to create, and delete alarm API objects.
+This RP interacts with the API to create, and delete alarm API objects.
 
 | Option | Description | Required | Note |
 | ------ | ----------- | -------- | ---- |
@@ -325,8 +328,12 @@ This LWRP interacts with the API to create, and delete alarm API objects.
 
 The Chef label is used for the API label, which is used for searching.  Multiple alarms on one ENTITY (not check) with the same label in the API are NOT supported.
 The vast majority of objects are passed through to the API.
-The Check and Entity LWRPs for the associated check and entity object must Hanover already been called.
+The Check and Entity RPs for the associated check and entity object must Hanover already been called.
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Alarms](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-alarms.html)
+
+### RP Tests
+
+ChefSpec matchers are provided and defined in libraries/matchers.rb
 
 License & Authors
 -----------------
