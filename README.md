@@ -258,6 +258,7 @@ This LWRP interacts with the API to create, and delete entity API objects.
 | agent_id      | ID of the agent associated with his server | No |  |
 | search_method | Method to use for locating existing entities | No | See below for details |
 | search_ip     | IP to use for IP search | No | See below for details |
+| search_id     | Entity ID to use for ID search | No | See below for details |
 | rackspace_api_key | API key to use | No | See Credential Handling for further details |
 | rackspace_username| API username to use | No | See Credential Handling for further details |
 | rackspace_auth_url| API auth URL to use | No | See Credential Handling for further details |
