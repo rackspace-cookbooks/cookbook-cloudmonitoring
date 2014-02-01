@@ -10,7 +10,7 @@ describe 'Server With CloudMonitoring Agent' do
   describe file('/etc/rackspace-monitoring-agent.cfg') do
     it { should contain 'rackspacerules' } # test ID
     it { should contain 'kittenmittens' }  # test token
-  end  
+  end
 
   it 'should have the agent running' do
     expect(service 'rackspace-monitoring-agent').to be_running
