@@ -140,7 +140,6 @@ else
   end
 
   service 'rackspace-monitoring-agent' do
-    # TODO: RHEL, CentOS, ... support
     supports value_for_platform(
                                 ubuntu:  { default: [:start, :stop, :restart, :status] },
                                 default: { default: [:start, :stop] }
