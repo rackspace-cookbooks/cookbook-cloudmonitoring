@@ -192,6 +192,7 @@ include_recipe "rackspace_cloudmonitoring::monitors"
 ```
 
 The previous example assumes that the API key and API username are set via the node attributes or a databag, and that node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] is set.
+It also assumes your system has a valid, fully qualified domain name.
 
 NOTE: Earlier revisions assumed the check was of the "agent." type and automatically prepended "agent.".
 This behavior has been removed to allow remote checks, the full name of the check must now be passed!
