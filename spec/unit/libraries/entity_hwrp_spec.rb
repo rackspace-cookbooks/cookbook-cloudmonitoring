@@ -111,26 +111,6 @@ def common_entity_create_tests(target_action, entity_obj_state = nil) # rubocop:
     expect { test_obj.send(target_action) }.to raise_exception
   end
 
-  it 'normalizes IPs' do
-    fail 'SCOPE ERROR' if target_action.nil?
-    @new_resource.ip_addresses = {
-      correct_v4: '1.2.3.4',
-      correct_v6: '0123:4567:89ab:cdef:dead:beef:dead:beef',
-      zeropad_v4: '001.002.003.004',
-      zerogroup_v6: '0123:4567:89ab:cdef::dead:beef'
-    }
-
-    test_obj = common_entity_update_tests_core(target_action, entity_obj_state)
-    test_obj.current_resource.entity_obj.update_args.key?(:ip_addresses).should eql true
-    v = {
-      correct_v4: '1.2.3.4',
-      correct_v6: '0123:4567:89ab:cdef:dead:beef:dead:beef',
-      zeropad_v4: '1.2.3.4',
-      zerogroup_v6: '0123:4567:89ab:cdef:0000:0000:dead:beef'
-    }
-    test_obj.current_resource.entity_obj.update_args[:ip_addresses].should eql v
-  end
-
   [:ip_addresses, :metadata, :agent_id].each do |option|
     it "passes #{option} to update" do
       @new_resource.send(option).should_not eql nil
