@@ -22,7 +22,7 @@ Specifically this recipe will focus on main atom's in the system.
 # Credential Handling
 
 As this Cookbook is API focused, credentials for the API are required.
-These credentials can be passed to the LWRPs, loaded from an encrypted databag, or pulled from Node attributes.
+These credentials can be passed to the resource providers, loaded from an encrypted databag, or pulled from Node attributes.
 
 | Credential | Required | Default | Node Attribute | Databag Attribute |
 | ---------- | -------- | ------- | -------------- | ----------------- |
@@ -32,7 +32,7 @@ These credentials can be passed to the LWRPs, loaded from an encrypted databag, 
 | Agent Token | No      | Generated via API | node['rackspace_cloudmonitoring']['config']['agent']['token'] | agent_token |
 
 Note that the API Key and API Username use the shared node['rackspace"]['cloud_credentials'] namespace, not the node['rackspace_cloudmonitoring'] namespace.
-Passing values in via LWRPs will be covered in the LWRP section.
+Passing values in via Resource providers will be covered in the LWRP section.
 
 Precedence is as follows:
 
@@ -55,7 +55,7 @@ This cookbook is broken up into 3 recipes:
 
 | Recipe  | Purpose |
 | ------  | ------- |
-| default | Installs dependencies needed by the other recipes and LWRPs. |
+| default | Installs dependencies needed by the other recipes and Resource providers. |
 | agent   | Installs and configures the Cloud Monitoring server agent daemon. |
 | monitors | Parses the monitors configuration hash to configure the entity, checks, and alarms |
 
@@ -78,7 +78,7 @@ The value is a second hash where the keys are the following attributes:
 | entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this | 
 | metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
 | monitoring_zones_poll | Array | Array of zones to poll remote checks from | No | monitoring_zones_poll | None | Only used with remote checks, See API docs for valid zones |
-| notification_plan_id | String | Notification plan to use for associated alarms | No | (Alarms) notification_plan_id | See precidence table below | This value is used with associated Alarms, not the check itself |
+| notification_plan_id | String | Notification plan to use for associated alarms | No | (Alarms) notification_plan_id | See precedence table below | This value is used with associated Alarms, not the check itself |
 | period | Integer | The period in seconds for a check | No | period           | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period'] | The value must be greater than the minimum period set on your account. |
 | target_alias    | string | Key in the entity's 'ip_addresses' hash used to resolve check to an IP address for remote checks | No | target_alias | None | Only used with remote checks, See API documentation |
 | target_hostname | string | Hostname a remote check should target | No | target_hostname | None | Only used with remote checks, See API documentation |
@@ -101,7 +101,7 @@ The value is a fourth hash ([yo-dawg](http://i.imgur.com/b18qXaT.jpg)) where the
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
 | entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this |
 | metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
-| notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | See precidence table below | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
+| notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | See precedence table below | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
 | state | String | State value to use when building the criteria DSL value | No | criteria | Alarm hash key | See the criteria DSL section of the API docs for details.  This should be CRITICAL, WARNING, or OK |
 
 
@@ -115,9 +115,9 @@ The body of the criteria conditional is handled by the cookbook.
 The state value defaults to the key of the alarm hash, but can be overridden if needed to duplicate alarms.
 See recipes/monitors.rb for the exact abstraction and body used.
 
-The notification_plan_id precidence is as follows, where the lowest precidence is the default:
+The notification_plan_id precedence is as follows, where the lowest precedence is the default:
 
-| Location | Precidence |
+| Location | Precedence |
 | --- | --- |
 | Alarm notification_plan_id | 3 |
 | Check notification_plan_id | 2 |
