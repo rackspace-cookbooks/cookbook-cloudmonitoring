@@ -172,7 +172,7 @@ node.default['rackspace_cloudmonitoring']['monitors'] = {
 
   'web_check' => {
     'type' => 'remote.http',
-    'target_hostname' => node['hostname'],
+    'target_hostname' => node['fqdn'],
     'monitoring_zones_poll' => [
       'mzdfw',
       'mziad',
