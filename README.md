@@ -244,19 +244,19 @@ So the API create action returns the unique identifier which must then be used f
 This flows counter to Chef where you assign a unique label at creation, and use that label from then on.
 The underlying library works to abstract this as much as possible, but it is beneficial to keep in mind, especially with entity objects.
 
-RP examples are not provided as RPs are considered advanced usage and use of the monitors.rb recipe cookbook is preferred.
-However, examples for all RPs can be found in this cookbook's recipes.
-
-All RPs support the following actions:
+All Resource Providers support the following actions:
 
 | Action | Description | Default |
 | ------ | ----------- | ------- |
 | create | Will create an object if it doesn't exist, but WILL NOT modify existing objects | Yes |
 | update_if_missing | Will create an object if it doesn't exist, and will converge existing objects if they do not match the current object |  |
 | delete | Will remove an object if it exists |  |
+| nothing | Does nothing (noop) | |
 
 Also, note that you must include the default recipe before utilizing the RPs.
 The default recipe handles mandatory library dependencies and the RPs will fail with Fog errors.
+
+Minimal examples are provided, please note all assume the API credentials are set in the node attributes or a databag.
 
 ### Agent Token
 
@@ -270,6 +270,15 @@ The RP itself is quite simple, it only takes one argument in addition to the lab
 
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Agent Tokens](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-agent-tokens.html)
 The label is the only updatable attribute, and the chef RP label is used for the API label.
+Use of this provider is discouraged, utilize the agent recipe.
+
+Example:
+
+```
+rackspace_cloudmonitoring_agent_token node['hostname'] do
+   token               node['rackspace_cloudmonitoring']['config']['agent']['token']
+end
+```
 
 ### Entity
 
@@ -303,6 +312,17 @@ For this, a number of search methods are provided to locate existing entities vi
 ip is recommend as the easiest method.
 id is the most reliable, but the id is not exposed outside of the underlying library.
 
+Example:
+
+```
+rackspace_cloudmonitoring_entity node['hostname'] do
+  agent_id      node['rackspace_cloudmonitoring']['config']['agent']['id']
+  search_method 'ip'
+  search_ip     node['ipaddress']
+  ip_addresses  { default: node['ipaddress'] }
+end
+```
+
 ### Check
 
 This RP interacts with the API to create, and delete check API objects.
@@ -329,6 +349,15 @@ The vast majority of objects are passed through to the API.
 The Entity RP for the associated entity object must have already been called.
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Checks](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-checks.html)
 
+Example:
+
+```
+rackspace_cloudmonitoring_check 'Load' do
+  entity_chef_label node['hostname']
+  type              'agent.load'
+end
+```
+
 ### Alarms
 
 This RP interacts with the API to create, and delete alarm API objects.
@@ -339,8 +368,8 @@ This RP interacts with the API to create, and delete alarm API objects.
 | notification_plan_id | The Notification plan to use for this alarm | Yes | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
 | check_id             | API ID of the underlying check | No | check_id or check_label is required |
 | check_label          | Label of the underlying check  | No | check_id or check_label is required |
-| metadata             | Metadata to associate with the check  | No | See API docs |
 | criteria             | Alarm Criteria | No | See API docs, cannot be used with example criteria |
+| metadata             | Metadata to associate with the check  | No | See API docs |
 | disabled                | Disables the check when true        | No | |
 | example_id           | Example criteria ID | No | See API docs, cannot be used with criteria
 | example_values       | Example criteria values | When using example_id | See API docs |
@@ -353,7 +382,18 @@ The vast majority of objects are passed through to the API.
 The Check and Entity RPs for the associated check and entity object must Hanover already been called.
 The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Alarms](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-alarms.html)
 
-### RP Tests
+Example, note that the Notification Plan ID must be set to a valid value:
+
+```
+rackspace_cloudmonitoring_alarm  "Load Critical Alarm" do
+  entity_chef_label    node['hostname']
+  check_label          'Load'
+  criteria             'if (metric['5m'] > 8) { return CRITIAL, 'Load is past Critical threshold' }"
+  notification_plan_id 'Put Plan ID Here'
+end
+```
+
+### Resource Provider Tests
 
 ChefSpec matchers are provided and defined in libraries/matchers.rb
 
