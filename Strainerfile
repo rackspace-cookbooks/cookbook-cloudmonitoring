@@ -1,5 +1,5 @@
 # Strainerfile
-knife_test: bundle exec knife cookbook test $COOKBOOK -o $SANDBOX -z
+knife_test: bundle exec knife cookbook test $COOKBOOK -o $SANDBOX
 
 # Rubocop needs to be passed $SANDBOX/$COOKBOOK or else it will check all the cookbook
 #   dependencies populated by Berkshelf as well.
