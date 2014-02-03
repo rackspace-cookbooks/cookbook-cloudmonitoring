@@ -1,7 +1,7 @@
 # encoding: UTF-8
 #
 # Cookbook Name:: rackspace_cloudmonitoring
-# Recipe:: default
+# Library:: cloud_monitoring
 #
 # Copyright 2014, Rackspace, US, Inc.
 #
@@ -18,19 +18,19 @@
 # limitations under the License.
 #
 
-# Required to install fog
-include_recipe 'xml::ruby'
+require_relative 'CMChild.rb'
 
-chef_gem 'fog' do
-  version ">= #{node['rackspace_cloudmonitoring']['dependency_versions']['fog_version']}"
-  action :install
-end
-
-# Load fog for the cloud_monitoring library
-# https://sethvargo.com/using-gems-with-chef/
-require 'fog'
-
-# Mock out fog: THis code path is for testing
-if node['rackspace_cloudmonitoring']['mock']
-  Fog.mock!
+module Opscode
+  module Rackspace
+    module Monitoring
+      # CMCheck: Class for handling Cloud Monitoring Check objects
+      class CMCheck < Opscode::Rackspace::Monitoring::CMChild
+        # Note that this initializer DOES NOT LOAD ANY CHECKS!
+        # User must call a lookup function before calling update
+        def initialize(credentials, entity_label, my_label)
+          super(credentials, entity_label, 'checks', 'Check', my_label)
+        end
+      end
+    end # END MODULE
+  end
 end

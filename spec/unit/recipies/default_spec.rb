@@ -1,7 +1,5 @@
-# encoding: UTF-8
 #
 # Cookbook Name:: rackspace_cloudmonitoring
-# Recipe:: default
 #
 # Copyright 2014, Rackspace, US, Inc.
 #
@@ -16,21 +14,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# Required to install fog
-include_recipe 'xml::ruby'
+require 'spec_helper'
 
-chef_gem 'fog' do
-  version ">= #{node['rackspace_cloudmonitoring']['dependency_versions']['fog_version']}"
-  action :install
-end
+describe 'rackspace_cloudmonitoring::default' do
+  rackspace_cloudmonitoring_test_platforms.each do |platform, versions|
+    describe "on #{platform}" do
+      versions.each do |version|
+        describe version do
+          let(:chef_run) do
+            runner = ChefSpec::Runner.new(platform: platform.to_s, version: version.to_s)
+            runner.converge('rackspace_cloudmonitoring::default')
+          end
 
-# Load fog for the cloud_monitoring library
-# https://sethvargo.com/using-gems-with-chef/
-require 'fog'
-
-# Mock out fog: THis code path is for testing
-if node['rackspace_cloudmonitoring']['mock']
-  Fog.mock!
+          it 'install the Fog chef_gem' do
+            expect(chef_run).to install_chef_gem 'fog'
+          end
+        end
+      end
+    end
+  end
 end

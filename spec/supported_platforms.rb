@@ -1,8 +1,7 @@
 #
-# Cookbook Name:: raxmon-cli
-# Recipe:: default
+# Cookbook Name:: rackspace_cloudmonitoring
 #
-# Copyright 2012, Rackspace Hosting
+# Copyright 2014, Rackspace, US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,23 +14,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-include_recipe "python"
 
-#Create the .raxrc with credentials in /root
-template "/root/.raxrc" do
-  source "raxrc.erb"
-  owner "root"
-  group "root"
-  mode 0600
-  variables(
-    :raxusername => node['cloud_monitoring']['rackspace_username'],
-    :raxapikey => node['cloud_monitoring']['rackspace_api_key'],
-    :raxauthurl => node['cloud_monitoring']['rackspace_auth_url'] 
-  )
-end
+# This helper file defines the platforms to test in ChefSpec
 
-#Install the raxmon-cli
-python_pip "rackspace-monitoring-cli" do
-  action :upgrade
+def rackspace_cloudmonitoring_test_platforms
+  return {
+    ubuntu: %w(12.04),
+    debian: %w(7.2), # Requires Fauxhai chicanery as https://github.com/customink/fauxhai/pull/60
+                     #   hasn't made its way to RubyGems yet.
+    centos: %w(6.4)
+  }
 end

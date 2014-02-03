@@ -1,0 +1,87 @@
+---
+driver_plugin: vagrant
+driver_config:
+  require_chef_omnibus: latest
+  customize:
+    memory: 512
+
+platforms:
+- name: ubuntu-12.04
+  driver_config:
+    box: opscode-ubuntu-12.04
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-12.04_chef-provisionerless.box
+  run_list:
+  - recipe[rackspace_apt]
+- name: centos-6.4
+  driver_config:
+    box: opscode-centos-6.4
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.4_chef-provisionerless.box
+- name: debian-7.2.0
+  driver_config:
+    box: opscode-debian-7.2.0
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-7.2.0_chef-provisionerless.box
+  run_list:
+  - recipe[rackspace_apt]
+
+suites:
+  - name: agent_explicit_args
+    run_list:
+      - recipe[rackspace_cloudmonitoring::agent]
+    attributes:
+      rackspace_cloudmonitoring:
+        mock: true
+        config:
+          agent:
+            id:    "rackspacerules"
+            token: "kittenmittens"
+  - name: agent_API
+    run_list:
+      - recipe[rackspace_cloudmonitoring::agent]
+    attributes:
+      rackspace_cloudmonitoring:
+        mock: true
+      rackspace:
+        cloud_credentials:
+           username: nobody
+           api_key:  secret
+  - name: monitors
+    run_list:
+      - recipe[rackspace_cloudmonitoring::monitors]
+    attributes:
+      rackspace:
+        cloud_credentials:
+           username: nobody
+           api_key:  secret
+      rackspace_cloudmonitoring:
+        mock: true
+        monitors_defaults:
+          alarm:
+            notification_plan_id: 'Test Plan'
+        monitors:
+          cpu:
+            type: 'agent.cpu'
+          load:
+            type: 'agent.load_average'
+            alarm:
+              CRITICAL:
+                conditional: "metric['5m'] > 32"
+              WARNING:
+                conditional: "metric['5m'] > 16"
+          disk:
+            type: 'agent.disk'
+            details:
+              target: '/dev/xvda1'
+          root_filesystem:
+            type: 'agent.filesystem'
+            details:
+              target: '/'
+          web_check:
+            type: 'remote.http'
+            target_alias: 'default'
+            monitoring_zones_poll:
+              - mzdfw
+              - mziad
+              - mzord
+            details:
+              url: 'http://127.0.0.1/'
+              method: get

@@ -1,9 +1,9 @@
-# encoding: UTF-8
 #
 # Cookbook Name:: rackspace_cloudmonitoring
-# Recipe:: default
 #
 # Copyright 2014, Rackspace, US, Inc.
+# Copyright 2012-2013, Seth Vargo
+# Copyright 2012, CustomInk, LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,20 +17,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# Originally from https://github.com/customink-webops/hostsfile/blob/master/spec/spec_helper.rb
 
-# Required to install fog
-include_recipe 'xml::ruby'
+require 'chefspec'
+require 'chefspec/berkshelf'
 
-chef_gem 'fog' do
-  version ">= #{node['rackspace_cloudmonitoring']['dependency_versions']['fog_version']}"
-  action :install
-end
+require_relative 'supported_platforms.rb'
 
-# Load fog for the cloud_monitoring library
-# https://sethvargo.com/using-gems-with-chef/
-require 'fog'
-
-# Mock out fog: THis code path is for testing
-if node['rackspace_cloudmonitoring']['mock']
-  Fog.mock!
+RSpec.configure do |c|
+  c.filter_run(focus: true)
+  c.run_all_when_everything_filtered = true
+  c.log_level = :warn
 end

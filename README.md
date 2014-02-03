@@ -1,5 +1,8 @@
-**NOTE, there have been many changes in v1.0.0 series of this cookbook. Some of which are possibly breaking for older installations. Please see the changelog.**
- Older versions can be found on the [release page](https://github.com/rackspace-cookbooks/cookbook-cloudmonitoring/releases)
+rackspace_cloudmonitoring Cookbook
+===================================
+
+NOTE: v2.0.0 is a major rewrite with breaking changes.  Please review this readme for new usage and check the changelog
+-----------------------------------------------------------------------------------------------------------------------
 
 # Description
 
@@ -9,363 +12,408 @@ Specifically this recipe will focus on main atom's in the system.
 * Entities
 * Checks
 * Alarms
-* Agents
+* Agent
 * Agent Tokens
 
-The cookbook also installs the python-pip package in Debian and RedHat based systems, and then uses pip to install the Rackspace Cloud Monitoring client, raxmon-cli, via pip
+# General Requirements
+* Chef 11
+* A Rackspace Cloud Hosting account is required to use this tool.  And a valid `username` and `api_key` are required to authenticate into your account.  [sign-up](https://cart.rackspace.com/cloud/?cp_id=cloud_monitoring).
 
-The raxmon-cli recipe in this cookbook is not automatically added by default.  To install raxmon-cli, add the cloud_monitoring::raxmon recipe to the run_list. 
+# Credential Handling
 
-# Requirements
-**New in version v1.0.1 and higher**
-Requires Chef `0.10.12` or higher for the chef_gem resource. Chef 11 is recommended.
+As this Cookbook is API focused, credentials for the API are required.
+These credentials can be passed to the resource providers, loaded from an encrypted databag, or pulled from Node attributes.
 
-For Chef versions less than `0.10.12`, include the [chef_gem](https://github.com/hw-cookbooks/chef_gem) cookbook which will provide the chef_gem resource without upgrading chef entirely.
+| Credential | Required | Default | Node Attribute | Databag Attribute |
+| ---------- | -------- | ------- | -------------- | ----------------- |
+| API Key    | Yes      | NONE    | node['rackspace"]['cloud_credentials']['api_key'] | apikey |
+| API Username | Yes    | NONE    | node['rackspace"]['cloud_credentials']['username'] | username |
+| API Auth URL | No     | Defined in attributes.rb | node['rackspace_cloudmonitoring']['auth']['url'] | auth_url |
+| Agent Token | No      | Generated via API | node['rackspace_cloudmonitoring']['config']['agent']['token'] | agent_token |
 
-While this cookbook can be used in chef-solo mode, to gain the most flexibility, we recommend using chef-client with a Chef Server.
+Note that the API Key and API Username use the shared node['rackspace"]['cloud_credentials'] namespace, not the node['rackspace_cloudmonitoring'] namespace.
+Passing values in via Resource providers will be covered in the LWRP section.
 
-## Library Requirements
+Precedence is as follows:
 
-The inner workings of the library depend on [fog](https://github.com/fog/fog) which is used by the Ruby command line
-client called [rackspace-monitoring-rb](https://github.com/racker/rackspace-monitoring-rb).  These are handled in the
-instantiation and use of the Cookbook.
+1. LWRP arguments
+2. Node attributes
+3. Databag
 
-A Rackspace Cloud Hosting account is required to use this tool.  And a valid `username` and `api_key` are required to
-authenticate into your account.
+The details of the databag are as follows:
 
-You can get one here [sign-up](https://cart.rackspace.com/cloud/?cp_id=cloud_monitoring).
-
-### Raxmon Requirements
-
-python and python-pip (installed by this cookbook) for the raxmon-cli install
-
-### General Requirements
-* You need to either set the attributes for your Rackspace username and api key in attributes/default.rb or create an encrypted data bag per the following setup steps:
-
-## Setup
-
-Take either step depending on your databag setup.
-
-### I already have an encrypted_data_bag_secret file created and pushed out to your chef nodes
-
-* Create the new encrypted data_bag
-knife data bag create --secret-file <LOCATION/NAME OF SECRET FILE>  rackspace cloud
-
-* Make the json file opened look like the following, then save and exit your editor:
-```
-{
-  "id": "cloud",
-  "username": "<YOUR CLOUD SERVER USERNAME>",
-  "apikey": "<YOUR CLOUD SERVER API KEY>",
-  "region": "<YOUR ACCOUNT REGION (us OR uk)>"
-}
-```
-
-### I don't use an encrypted_data_bag_secret file
-* Create a new secret file
-`$ openssl rand -base64 512 | tr -d '\r\n' > /tmp/my_data_bag_key`
-
-* The `/tmp/my_data_bag_key` (or whatever you called it in the above step) needs to be pushed out to your chef nodes to `/etc/chef/encrypted_data_bag_secret`
-
-* Create the new encrypted data_bag
-`$ knife data bag create --secret-file /tmp/my_data_bag_key rackspace cloud`
-
-* Make the json file opened look like the following, then save and exit your editor:
-```
-{
-  "id": "cloud",
-  "username": "<YOUR CLOUD SERVER USERNAME>",
-  "apikey": "<YOUR CLOUD SERVER API KEY>",
-  "region": "<YOUR ACCOUNT REGION (us OR uk)>"
-}
-```
-
-# Attributes
-
-All attributes are namespaced under the `node['cloud_monitoring']` namespace.  This keeps everything clean and organized.
-
-The following attributes are required, either in attributes/default.rb or an encrypted data bag called rackspace with an item of cloud:
-
-* `node['cloud_monitoring']['rackspace_username']`
-* `node['cloud_monitoring']['rackspace_api_key']`
-* `node['cloud_monitoring']['rackspace_auth_region']`
-  * This must be set to either 'us' or 'uk', depending on where your account was created
+| Credential | Default | Node Attribute |
+| ---------- | ------- | -------------- |
+| Name       | Defined in attributes.rb | node['rackspace_cloudmonitoring']['auth']['databag']['name'] |
+| Item	     | Defined in attributes.rb | node['rackspace_cloudmonitoring']['auth']['databag']['item'] |
 
 # Usage
 
-This cookbook exposes many different elements of the Cloud Monitoring product. We'll go over some examples and best
-practices for using this cookbook. The most widely used parts of the system are the three core Resources in the system `Entity`, `Check` and `Alarm`. So we'll cover those first and tackle The other primitives towards the end.
+## Recipes
 
-## Entity
+This cookbook is broken up into 3 recipes:
 
-The first element is the `Entity`.  The `Entity` maps to the target of what you're monitoring.  This in most cases
-represents a server, loadbalancer or website.  However, there is some advanced flexibility but that is only used in rare cases. The first use case we will show is populating your chef nodes in Cloud Monitoring...
+| Recipe  | Purpose |
+| ------  | ------- |
+| default | Installs dependencies needed by the other recipes and Resource providers. |
+| agent   | Installs and configures the Cloud Monitoring server agent daemon. |
+| monitors | Parses the monitors configuration hash to configure the entity, checks, and alarms |
 
-Learn more about all these concepts in the docs and specifically the
-[Concepts](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/Concepts.html#concepts-key-terms) section of the
-developer guide.
+## Configuration hash usage
 
-```ruby
-cloud_monitoring_entity "#{node.hostname}-manual" do
-  ip_addresses        'default' => node[:ipaddress]
-  metadata            'environment' => 'dev', :more => 'meta data'
-  rackspace_username  'joe'
-  rackspace_api_key   'XXX'
-  action :create
-end
-```
-Upon execution of this code, if you viewed the `/entities` API call you would see an `Entity` labeled whatever the hostname of the machine.
+The simplest and preferred way to utilize this cookbook is via a configuration hash.
+The configuration hash defines the desired monitors and alarms for the server.
+The monitors recipe handles all dependencies for configuring the defined checks and will install the agent on the server.
 
-Most of the fields are optional, you can even specify something as minimal as:
+The base namespace is node['rackspace_cloudmonitoring']['monitors'].
+node['rackspace_cloudmonitoring']['monitors'] is a hash where each key is the name of a check.
+The value is a second hash where the keys are the following attributes:
 
-```ruby
-cloud_monitoring_entity "#{node.hostname}" do
-  rackspace_username  'joe'
-  rackspace_api_key   'XXX'
-  action :create
-end
-```
-
-This operation is idempotent, and will select the node based on the name of the resource, which maps to the label of the
-entity.  This is ***important*** because this pattern is repeated through out this cookbook.  If an attribute of the
-resource changes the provider will issue a `PUT` instead of a `POST` to update the resource instead of creating another
-one.
-
-This will set an attribute on the node `node[:cloud_monitoring][:entity_id]`.  This attribute will be saved in the
-chef server.  It is bi-directional, it can re-attach your cloud monitoring entities to your chef node based on the
-label.  Keep in mind nothing is removed unless explicitly told so, like most chef resources.
+| Key    | Value Data type | Description | Required | API Documentation Attribute Name | Default Value | Note |
+| ------ | --------------- | ----------- | -------- | -------------------------------- | ------------- | ---- |
+| type   | String | Check type  | Yes      | type                             | None          |  |
+| alarm | Hash | Hash of alarms for this check.  See below. | No | N/A | None | This value is not a API value, it is specific to this cookbook. |
+| details | Hash | Detail data needed by the check | No | details | None | See API documentation for details on details. |
+| disabled | Boolean | Disables the check when true | No | disabled | false | -- |
+| entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this | 
+| metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
+| monitoring_zones_poll | Array | Array of zones to poll remote checks from | No | monitoring_zones_poll | None | Only used with remote checks, See API docs for valid zones |
+| notification_plan_id | String | Notification plan to use for associated alarms | No | (Alarms) notification_plan_id | See precedence table below | This value is used with associated Alarms, not the check itself |
+| period | Integer | The period in seconds for a check | No | period           | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period'] | The value must be greater than the minimum period set on your account. |
+| target_alias    | string | Key in the entity's 'ip_addresses' hash used to resolve check to an IP address for remote checks | No | target_alias | None | Only used with remote checks, See API documentation |
+| target_hostname | string | Hostname a remote check should target | No | target_hostname | None | Only used with remote checks, See API documentation |
+| target_resolver | string | Method to resolve remote checks | No | target_resolver | None | Only used with remote checks, See API documentation |
+| timeout | Integer | The timeout in seconds for a check | No | timeout | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] | This has to be less than the period. |
 
 
-## Check
 
-The check is the way to start collecting data.  The stanza looks very similar to the `Entity` stanza except the accepted
-parameters are different, it is seen more as the "what" of monitoring.
+The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Checks](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-checks.html)
+As you can see the node['rackspace_cloudmonitoring']['monitors_defaults'] node hash is used to define defaults so that common options don't need to be defined for every check.
+The values for each check is passed to the rackspace_cloudmonitoring_check LWRP to create the check in the API.
 
-***Note: you must either have the attribute assigned `node[:cloud_monitoring][:entity_id]` or pass in an entity_id
-explicitly so the Check knows which node to create it on.***
+The 'alarm' key for a check is very similar, and defines alarms tied to the given check.
+Like the check hash, the key of the alarm hash is the name of a alarm.
+The value is a fourth hash ([yo-dawg](http://i.imgur.com/b18qXaT.jpg)) where the keys are the following attributes:
 
-Here is an example of a ping check:
+| Key    | Value Data type | Description | Required | API Documentation Attribute Name | Default Value | Note |
+| ------ | --------------- | ----------- | -------- | -------------------------------- | ------------- | ---- |
+| conditional | string | Conditional logic to place in the alarm if() block | Yes | criteria | None | This implementation abstracts part of the criteria DSL, see below |
+| disabled | Boolean | Disables the check when true | No | disabled | false | -- |
+| entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this |
+| metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
+| notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | See precedence table below | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
+| state | String | State value to use when building the criteria DSL value | No | criteria | Alarm hash key | See the criteria DSL section of the API docs for details.  This should be CRITICAL, WARNING, or OK |
 
-```ruby
-cloud_monitoring_check  "ping" do
-  target_alias          'default'
-  type                  'remote.ping'
-  period                30
-  timeout               10
-  monitoring_zones_poll ['mzord']
-  rackspace_username    'joe'
-  rackspace_api_key     'XXX'
-  action :create
-end
-```
 
-This will create a ping check that is scoped on the `Entity` that was created above.  In this case, it makes sense,
-however sometimes you want to be specific about which node to create this check on.  If that's the case, then passing in
-an `entity_id` will allow you to do that.
+The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Alarms](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-alarms.html)
+The values for each check is passed to the rackspace_cloudmonitoring_alarm LWRP to create the check in the API.
+Also note that node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] does not have a default.
 
-This block will create a ping check named "ping" with 30 second interval from a single datacenter "mzord".  It will
-execute the check against the target_alias default, which is the chef flagged ipaddress above.
+The Monitoring alarm criteria is abstracted from the API somewhat.
+The alarm threshold conditional need only be specified and will be used directly in the if() block.
+The body of the criteria conditional is handled by the cookbook.
+The state value defaults to the key of the alarm hash, but can be overridden if needed to duplicate alarms.
+See recipes/monitors.rb for the exact abstraction and body used.
 
-Creating a more complex check is just as simple, take HTTP check as an example.  There are multiple options to pass in
-to run the check. This maps very closely to the API, so you have a details hash at your disposal to do that.
+The notification_plan_id precedence is as follows, where the lowest precedence is the default:
 
-```ruby
-cloud_monitoring_check  "http" do
-  target_alias          'default'
-  type                  'remote.http'
-  period                30
-  timeout               10
-  details               'url' => 'http://www.google.com', 'method' => 'GET'
-  monitoring_zones_poll ['mzord', 'mzdfw']
-  rackspace_username    'joe'
-  rackspace_api_key     'XXX'
-  action :create
-end
-```
+| Location | Precedence |
+| --- | --- |
+| Alarm notification_plan_id | 3 |
+| Check notification_plan_id | 2 |
+| node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] | 1 |
 
-## Alarm
+So plan IDs specified with the Alarm are used first, followed by plans specified with the check, and finally default plans in the default hash.
 
-The `Alarm` is the way to specify a threshold in Cloud Monitoring and connect that to sending an alert to a customer.
-Without an `Alarm` a user would never receive an alert based on a failure, warning or success.  An `Alarm` is scoped on
-an entity and points to a check id or a check type.
+As mentioned above the monitoring entity will automatically be created or updated.
+The entity behavior is configured by the following node variables:
 
-An Alarm state is the combination of a Check + Alarm + Dimension.  Dimensions are additional complexity which I won't go
-into here but they allow you arbitrarily nest information from the edge.
+| variable | Description |
+| -------- | ----------- |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']         | Label for the entity   |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['ip_addresses']  | IP addresses to set in the API |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_method'] | Method to use to search for existing entities |
+| default['rackspace_cloudmonitoring']['monitors_defaults']['entity']['search_ip']     | IP to use when searching by IP |
 
-Alarms in the public API take a couple critical fields.  A notification plan id and a "criteria".  The notification plan
-id points at a notification plan to execute upon a state transitioning.  The criteria describes the conditions to
-generate an alert.
+Defaults for all are in attributes/default.rb.
+See the entity Resource Provider description below for details about the search method.
+For Rackspace Cloud Servers the defaults will result in the existing, automatically generated entity being reused.
+Checks and Alarms need to reference the entity and will use the Chef label to do so.
 
-There are some guides describing how to best threshold for certain events, and there is also a built in alarm examples
-API that is very powerful.  This [Alarm Examples
-API](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-alarm-examples.html) is exposed in this
-recipe indirectly through the alarm `cloud_monitoring_alarm` stanza.  Look at an example below:
+### Configuration Hash Example
+
+The following example configures CPU, load, disk, and filesystem monitors, with alarms enabled on the 5 minute load average:
 
 ```ruby
-cloud_monitoring_alarm  "ping alarm" do
-  check_label           'ping'
-  example_id            'remote.ping_packet_loss'
-  notification_plan_id  'npBLAH'
-  action :create
-end
-```
+# Calculate default values
+# Critical at x4 CPU count
+cpu_critical_threshold = (node['cpu']['total'] * 4)
+# Warning at x2 CPU count
+cpu_warning_threshold = (node['cpu']['total'] * 2)
 
-This is a creating an alarm that checks for ping packet loss, if we look at a snippet from the JSON payload of the
-alarm_examples API it looks something like this...
-
-```javascript
-...
-    {
-        "id": "remote.ping_packet_loss",
-        "label": "Ping packet loss",
-        "description": "Alarm which returns WARNING if the packet loss is greater than 5% and CRITICAL if it's greater than 20%",
-        "check_type": "remote.ping",
-        "criteria": "if (metric['available'] < 80) {\n  return CRITICAL, \"Packet loss is greater than 20%\"\n}\n\nif (metric['available'] < 95) {\n  return WARNING, \"Packet loss is greater than 5%\"\n}\n\nreturn OK, \"Packet loss is normal\"\n",
-        "fields": []
-    }
-...
-```
-
-
-There is templating capability in the alarm_examples API call so if I were to use an example that would require this
-functionality, I could specify `example_values` which would template the call.
-
-Below is a new example of a templated alarm example as applied to an SSH check.
-
-```javascript
-...
-    {
-        "id": "remote.ssh_fingerprint_match",
-        "label": "SSH fingerprint match",
-        "description": "Alarm which returns CRITICAL if the SSH fingerprint doesn't match the provided one",
-        "check_type": "remote.ssh",
-        "criteria": "if (metric['fingerprint'] != \"${fingerprint}\") {\n  return OK, \"SSH fingerprint didn't match the expected one ${fingerprint}\"\n}\n\nreturn OK, \"Got expected SSH fingerprint (${fingerprint})\"\n",
-        "fields": [
-            {
-                "name": "fingerprint",
-                "description": "Expected SSH fingerprint",
-                "type": "string"
-            }
-        ]
+# Define our monitors
+node.default['rackspace_cloudmonitoring']['monitors'] = {
+  'cpu' =>  { 'type' => 'agent.cpu', },
+  'load' => { 'type'  => 'agent.load_average',
+    'alarm' => {
+      'CRITICAL' => { 'conditional' => "metric['5m'] > #{cpu_critical_threshold}", },
+      'WARNING'  => { 'conditional' => "metric['5m'] > #{cpu_warning_threshold}", },
     },
-...
-```
+  },
 
-Here is the corresponding check.
+  'disk' => {
+    'type' => 'agent.disk',
+    'details' => { 'target' => '/dev/xvda1'},
+  },
+  'root_filesystem' => {
+    'type' => 'agent.filesystem',
+    'details' => { 'target' => '/'},
+  },
 
-```ruby
-cloud_monitoring_check  "ssh check name" do
-  target_alias          'default'
-  type                  'remote.ssh'
-  period                30
-  timeout               10
-  monitoring_zones_poll ['mzord']
-  action :create
-end
-```
-
-And the alarm, notice the example_values hash.
-
-
-```ruby
-cloud_monitoring_alarm  "ssh alarm" do
-  check_label           'ssh check name'
-  example_id            'remote.ssh_fingerprint_match'
-  example_values        "fingerprint" => node[:ssh][:fingerprint]
-  notification_plan_id  'npBLAH'
-  action :create
-end
-```
-
-You'll also notice the check_label reference doesn't exist in the API, but the cookbook makes this much easier to
-connect to other related objects.
-
-
-If you wanted to use your own threshold then you could specify criteria in the alarm block.
-
-```ruby
-cloud_monitoring_alarm  "ping alarm" do
-  check_label           'ping'
-  criteria              "if (metric['available'] < 100) { return CRITICAL, 'Availability is at ${available}' }"
-  notification_plan_id  'npBLAH'
-  action                :create
-end
-```
-
-# Agent and Agent Tokens
-The Agent recipe will install the cloud monitoring agent on your node and either register it with a provided agent_token
-or if none is provided it will call the cloud_monitoring_agent_token provider to generate a new one for this node.
-
-The Agent token can either be provided through the following attribute.
-* `node['cloud_monitoring']['agent']['token']`  
-
-or through an entry in the rackspace cloud data bag like so.
-
-* `"token": "<Your Agent Token>"`
-
-
-Example Agent check
-
-```ruby
-cloud_monitoring_check  "cpu" do
-  type                  'agent.cpu'
-  period                30
-  timeout               10
-  rackspace_username  node['cloud_monitoring']['rackspace_username']
-  rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
-  action :create
-end
-```
-
-## Agent Plugins
-
-There are 2 ways to install plugins currently:
-
-1. Reference remote plugin files:
-By leveraging the built-in `remote_file` resource from chef, we can link to plugins that may be remote. This requires no changes to the cloud-monitoring cookbook assuming you are calling the LWRPs from another recipe. Here is an example from a longer recipe that sets up all of our checks for a given role:
-
-```ruby
-remote_file "/usr/lib/rackspace-monitoring-agent/plugins/plugin_name" do
-  owner "root"
-  group "root"
-  mode 00755
-  source "https://raw.github.com/racker/rackspace-monitoring-agent-plugins-contrib/master/plugin_name"
-```
-2. Add plugins as files in the cookbook:
-The [Cloud Monitoring agent][1] supports using custom plugins for checks not supported out of the box by the
-agent. The agent recipe will help you install the plugins in the correct directory so
-they can be used. It copies the style of Opscode's [ohai cookbook][2] which allows you to specify additional cookbooks
-containing plugins. This means you can keep the cloudmonitoring cookbook pristine but still have your own custom plugins.
-
-Create a role in the following style:
-
-```javascript
-{
-  "name": "plugins_role",
-  "default_attributes": {
-    "cloud_monitoring": {
-      "plugin_path": "/usr/lib/rackspace-monitoring-agent/plugins"
+  'web_check' => {
+    'type' => 'remote.http',
+    'target_hostname' => node['fqdn'],
+    'monitoring_zones_poll' => [
+      'mzdfw',
+      'mziad',
+      'mzord'
+    ],
+    'details' => {
+      "url" => "http://#{node['ipaddress']}/",
+      "method" => "GET"
     }
   }
 }
+
+#
+# Call the monitoring cookbook with our changes
+#
+include_recipe "rackspace_cloudmonitoring::monitors"
 ```
 
-This would mean you created a `my_plugin_cookbook` cookbook and placed all your plugins in `files/default/plugins`.
+The previous example assumes that the API key and API username are set via the node attributes or a databag, and that node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] is set.
+It also assumes your system has a valid, fully qualified domain name.
 
-[1]: http://docs.rackspace.com/cm/preview/api/v1.0/cm-devguide/content/appendix-check-types-agent.html
-[2]: https://github.com/opscode-cookbooks/ohai
+NOTE: Earlier revisions assumed the check was of the "agent." type and automatically prepended "agent.".
+This behavior has been removed to allow remote checks, the full name of the check must now be passed!
 
-### Agent Plugin Checks
- Once your plugins are in the correct directory, you'll need to enable checks and alarms. Here is sample syntax to create a basic check:
+## Agent Recipe
 
- ```ruby
-cloud_monitoring_check  "ubuntu_updates_check.sh" do
-    type                  'agent.plugin'
-    period                120
-    timeout               10
-    details               'file' => 'ubuntu_updates_check.sh'
-    rackspace_username    node['cloud_monitoring']['rackspace_username']
-    rackspace_api_key     node['cloud_monitoring']['rackspace_api_key']
-    action :create
+The agent recipe installs the monitoring agent on the node.
+It is called by the monitors recipe so the agent is installed automatically when using the method above.
+With the API key and username set it is essentially standalone, it will call the agent_token LWRP to generate a token.
+
+However, the following attributes can be set to bypass API calls and configure the agent completely from node attributes:
+
+| Attribute | Description |
+| --------- | ----------- |
+| node['rackspace_cloudmonitoring']['config']['agent']['token'] | Agent Token |
+| node['rackspace_cloudmonitoring']['config']['agent']['id']    | Agent ID    |
+
+Note that BOTH must be set to bypass API calls.
+The ID will be overwritten if only the token is passed.
+See the API docs for exact details of these values.
+
+The agent recipe also supports a configuration hash for pulling in plugins.
+Plugin directories can be added to the node['rackspace_cloudmonitoring']['agent']['plugins'] hash to install plugins for the agent.
+The syntax is node['rackspace_cloudmonitoring']['agent']['plugins'][cookbook] = directory and utilizes the remote_directory chef LWRP.
+So to install a plugin at directory foo_dir in cookbook bar_book use:
+
+    node.default['rackspace_cloudmonitoring']['agent']['plugins']['bar_book'] = 'foo_dir'
+
+## Resource Provider Usage
+
+This cookbook exposes Resource Providers (RPs) to operate on Monitoring API objects at a lower level.
+Direct interaction with RPs is not required when using the monitors.rb argument hash method.
+General precedence for the RPs are:
+
+```
+Alarm
+ | Requires Check Label, Entity Chef Label
+ |
+ +-> Check
+      | Requires Entity Chef Label
+	  | 
+	  +-> Entity
+	       | (Optional) Uses Agent ID
+		   |
+		   +-> Agent Token
+```
+
+A key note is that the UID for an object in the Monitoring API is generated when the object is created.
+So the API create action returns the unique identifier which must then be used from then on to reference the object.
+This flows counter to Chef where you assign a unique label at creation, and use that label from then on.
+The underlying library works to abstract this as much as possible, but it is beneficial to keep in mind, especially with entity objects.
+
+All Resource Providers support the following actions:
+
+| Action | Description | Default |
+| ------ | ----------- | ------- |
+| create | Will create an object if it doesn't exist, but WILL NOT modify existing objects | Yes |
+| update_if_missing | Will create an object if it doesn't exist, and will converge existing objects if they do not match the current object |  |
+| delete | Will remove an object if it exists |  |
+| nothing | Does nothing (noop) | |
+
+Also, note that you must include the default recipe before utilizing the RPs.
+The default recipe handles mandatory library dependencies and the RPs will fail with Fog errors.
+
+Minimal examples are provided, please note all assume the API credentials are set in the node attributes or a databag.
+
+### Agent Token
+
+This RP interacts with the API to create Agent tokens.
+
+The RP itself is quite simple, it only takes one argument in addition to the label:
+
+| Option | Description                  | Required | Note |
+| ------ | -----------                  | -------- | ---- |
+| token  | Monitoring agent token value | No       |      |
+
+The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Agent Tokens](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-agent-tokens.html)
+The label is the only updatable attribute, and the chef RP label is used for the API label.
+Use of this provider is discouraged, utilize the agent recipe.
+
+Example:
+
+```
+rackspace_cloudmonitoring_agent_token node['hostname'] do
+   token               node['rackspace_cloudmonitoring']['config']['agent']['token']
 end
- ```
+```
+
+### Entity
+
+This RP interacts with the API to create, and delete entity API objects.
+
+| Option | Description | Required | Note |
+| ------ | ----------- | -------- | ---- |
+| api_label     | Label to use for the label in the API | No | Defaults to the Chef RP label |
+| metadata      | Metadata for the entity | No |  |
+| ip_addresses  | IP addresses that can be referenced by checks on this entity. | No | See API docs |
+| agent_id      | ID of the agent associated with his server | No |  |
+| search_method | Method to use for locating existing entities | No | See below for details |
+| search_ip     | IP to use for IP search | No | See below for details |
+| search_id     | Entity ID to use for ID search | No | See below for details |
+| rackspace_api_key | API key to use | No | See Credential Handling for further details |
+| rackspace_username| API username to use | No | See Credential Handling for further details |
+| rackspace_auth_url| API auth URL to use | No | See Credential Handling for further details |
+
+The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Entities](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-entities.html)
+
+Unfortunately the label is often not sufficient to locate a proper existing entity due to various factors.
+For this, a number of search methods are provided to locate existing entities via the search_method attribute:
+
+| Method | Key used | Matched to |
+| ------ | -------- | ---------- |
+| [default] | Chef RP label | API Label |
+| ip      | search_ip argument | Any IP associated with the entity |
+| id      | search_id argument | API ID |
+| api_label | api_label argument | API Label |
+
+ip is recommend as the easiest method.
+id is the most reliable, but the id is not exposed outside of the underlying library.
+
+Example:
+
+```
+rackspace_cloudmonitoring_entity node['hostname'] do
+  agent_id      node['rackspace_cloudmonitoring']['config']['agent']['id']
+  search_method 'ip'
+  search_ip     node['ipaddress']
+  ip_addresses  { default: node['ipaddress'] }
+end
+```
+
+### Check
+
+This RP interacts with the API to create, and delete check API objects.
+
+| Option | Description | Required | Note |
+| ------ | ----------- | -------- | ---- |
+| entity_chef_label       | The Chef label of the entity to associate to | Yes |  |
+| type                    | The type of check | Yes |See API docs |
+| details                 | Details of the check | No |See API docs |
+| metadata                | Metadata to associate with the check  | No | See API docs |
+| period                  | The period in seconds for a check.  | No | Has restrictions, See API docs |
+| timeout                 | The timeout in seconds for a check. | No | Has restrictions, See API docs |
+| disabled                | Disables the check when true        | No | |
+| target_alias            | (Remote Checks) Key in the entity's 'ip_addresses' hash used to resolve remote check to an IP address. | No | Has restrictions, See API docs |
+| target_resolver         | (Remote Checks) Determines how to resolve the remote check target.  | No | See API docs |
+| target_hostname         | (Remote Checks) The hostname remote check should target. | No | Has restrictions, See API docs |
+| monitoring_zones_poll   | (Remote Checks) Monitoring zones to poll from for remote checks | No | See API Docs |
+| rackspace_api_key | API key to use | No | See Credential Handling for further details |
+| rackspace_username| API username to use | No | See Credential Handling for further details |
+| rackspace_auth_url| API auth URL to use | No | See Credential Handling for further details |
+
+The Chef label is used for the API label, which is used for searching.  Multiple checks on one entity with the same label in the API are NOT supported.
+The vast majority of objects are passed through to the API.
+The Entity RP for the associated entity object must have already been called.
+The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Checks](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-checks.html)
+
+Example:
+
+```
+rackspace_cloudmonitoring_check 'Load' do
+  entity_chef_label node['hostname']
+  type              'agent.load'
+end
+```
+
+### Alarms
+
+This RP interacts with the API to create, and delete alarm API objects.
+
+| Option | Description | Required | Note |
+| ------ | ----------- | -------- | ---- |
+| entity_chef_label    | The Chef label of the entity to associate to | Yes |  |
+| notification_plan_id | The Notification plan to use for this alarm | Yes | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
+| check_id             | API ID of the underlying check | No | check_id or check_label is required |
+| check_label          | Label of the underlying check  | No | check_id or check_label is required |
+| criteria             | Alarm Criteria | No | See API docs, cannot be used with example criteria |
+| metadata             | Metadata to associate with the check  | No | See API docs |
+| disabled                | Disables the check when true        | No | |
+| example_id           | Example criteria ID | No | See API docs, cannot be used with criteria
+| example_values       | Example criteria values | When using example_id | See API docs |
+| rackspace_api_key | API key to use | No | See Credential Handling for further details |
+| rackspace_username| API username to use | No | See Credential Handling for further details |
+| rackspace_auth_url| API auth URL to use | No | See Credential Handling for further details |
+
+The Chef label is used for the API label, which is used for searching.  Multiple alarms on one ENTITY (not check) with the same label in the API are NOT supported.
+The vast majority of objects are passed through to the API.
+The Check and Entity RPs for the associated check and entity object must Hanover already been called.
+The API documentation can be found here: [Rackspace Cloud Monitoring Developer Guide: Alarms](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-alarms.html)
+
+Example, note that the Notification Plan ID must be set to a valid value:
+
+```
+rackspace_cloudmonitoring_alarm  "Load Critical Alarm" do
+  entity_chef_label    node['hostname']
+  check_label          'Load'
+  criteria             'if (metric['5m'] > 8) { return CRITIAL, 'Load is past Critical threshold' }"
+  notification_plan_id 'Put Plan ID Here'
+end
+```
+
+### Resource Provider Tests
+
+ChefSpec matchers are provided and defined in libraries/matchers.rb
+
+License & Authors
+-----------------
+- v2.0.0 Author: Tom Noonan II (<thomas.noonan@rackspace.com>)
+
+```
+Copyright:: 2012 - 2014 Rackspace
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
