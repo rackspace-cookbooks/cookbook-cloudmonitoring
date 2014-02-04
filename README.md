@@ -389,7 +389,7 @@ Example, note that the Notification Plan ID must be set to a valid value:
 rackspace_cloudmonitoring_alarm  "Load Critical Alarm" do
   entity_chef_label    node['hostname']
   check_label          'Load'
-  criteria             'if (metric['5m'] > 8) { return CRITIAL, 'Load is past Critical threshold' }"
+  criteria             "if (metric['5m'] > 8) { return CRITIAL, 'Load is past Critical threshold' }"
   notification_plan_id 'Put Plan ID Here'
 end
 ```
