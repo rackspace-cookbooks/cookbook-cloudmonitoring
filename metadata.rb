@@ -13,8 +13,6 @@ depends 'rackspace_yum', '~> 4.0'
 # TODO: Update these to rackspace-* cookbooks
 # build essential is done, but XML is not.  XML flagged in rebuild tracker.
 depends 'xml', '~> 1.1'
-# Dep of xml
-depends 'build-essential', '~> 1.4'
 
 # Conflict with the earlier version we forked from as they won't play nice with each other
 conflicts 'cloud_monitoring'
