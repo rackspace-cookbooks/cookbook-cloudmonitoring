@@ -51,10 +51,21 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
 
   if check_value.key?('alarm')
     check_value['alarm'].each do |alarm, alarm_value|
-      # TODO: Add customizable messages, abstract the conditional more, etcetera...
-      state = alarm_value.key?('state') ?  alarm_value['state'] : alarm
-      fail 'Mandatory alarm argument conditional unset' if alarm_value['conditional'].nil?
-      criteria = "if (#{alarm_value["conditional"]}) { return #{state}, '#{check} is past #{state} threshold' }"
+      if alarm_value.key?('alarm_dsl')
+        criteria = alarm_value['alarm_dsl']
+      else
+        # TODO: Add customizable messages, abstract the conditional more, etcetera...
+        state = alarm_value.key?('state') ?  alarm_value['state'] : alarm
+        fail 'Mandatory alarm argument conditional unset' if alarm_value['conditional'].nil?
+
+        if alarm_value.key?('message')
+          message = alarm_value['message']
+        else
+          message = "#{check} is past #{state} threshold"
+        end
+
+        criteria = "if (#{alarm_value["conditional"]}) { return #{state}, '#{message}' }"
+      end
 
       if alarm_value.key?('notification_plan_id')
         notification_plan = alarm_value['notification_plan_id']
