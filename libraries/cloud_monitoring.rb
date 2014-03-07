@@ -24,7 +24,7 @@ module Opscode
         )
 
         Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: Loading views") if(!defined?(@@view) || @@view.nil?)
-        @@view ||= Hash[@@cm.entities.overview.map {|x| [x.identity, x]}]
+        @@view ||= Hash[@@cm.entities.overview({ 'limit' => 1000 }).map {|x| [x.identity, x]}]
         @@cm
       end
 
