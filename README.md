@@ -75,7 +75,6 @@ The value is a second hash where the keys are the following attributes:
 | alarm | Hash | Hash of alarms for this check.  See below. | No | N/A | None | This value is not a API value, it is specific to this cookbook. |
 | details | Hash | Detail data needed by the check | No | details | None | See API documentation for details on details. |
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
-| entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this | 
 | metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
 | monitoring_zones_poll | Array | Array of zones to poll remote checks from | No | monitoring_zones_poll | None | Only used with remote checks, See API docs for valid zones |
 | notification_plan_id | String | Notification plan to use for associated alarms | No | (Alarms) notification_plan_id | See precedence table below | This value is used with associated Alarms, not the check itself |
@@ -99,7 +98,6 @@ The value is a fourth hash ([yo-dawg](http://i.imgur.com/b18qXaT.jpg)) where the
 | ------ | --------------- | ----------- | -------- | -------------------------------- | ------------- | ---- |
 | conditional | string | Conditional logic to place in the alarm if() block | Yes | criteria | None | This implementation abstracts part of the criteria DSL, see below |
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
-| entity_chef_label | string | Chef label of the entity to associate with this check | No | N/A | node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label'] | See below for a description of this |
 | metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
 | notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | See precedence table below | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
 | state | String | State value to use when building the criteria DSL value | No | criteria | Alarm hash key | See the criteria DSL section of the API docs for details.  This should be CRITICAL, WARNING, or OK |
