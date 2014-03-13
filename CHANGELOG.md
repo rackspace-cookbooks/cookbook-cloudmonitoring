@@ -1,3 +1,7 @@
+v3.0.0
+------
+* Refactor monitors.rb alarm generation which is not completely backwards compatable.
+
 v2.1.0
 ------
 * Alter naming of alarms that could result in duplicates
