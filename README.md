@@ -103,6 +103,7 @@ The 'alarm' key is itself a hash supporting the following keys:
 | WARNING | Hash | WARNING state alarm data | No | -- | None | Takes a state data hash, see below |
 | states | Array | Array of state data hashes to be added | No | -- | None | See below for a description |
 | alarm_dsl | string | Explicit alarm DSL criteria for the alarm | No | criteria | None | Exclusive with CRITICAL, WARNING, and state |
+| remove_old_alarms | Boolean | Remove alarms created by v2 of the cookbook | No | -- | node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms'] | Only removes CRITICAL and WARNING alarms, any custom states will need to be removed by hand. |
 
 The states, CRITICAL, and WARNING are used to auto generate the alarm DSL criteria for the check.
 CRITICAL and WARNING are present for convience and reverse compatability, and are equivalent to an entry in the states array with the corresponding state.

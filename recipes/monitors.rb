@@ -118,6 +118,10 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
       action               :create
     end
 
+    unless check_value['alarm'].key?('remove_old_alarms')
+      check_value['alarm']['remove_old_alarms'] = node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms']
+    end
+
     # Clean up behind old versions
     if check_value['alarm']['remove_old_alarms']
       %w(CRITICAL WARNING).each do |alarm|
