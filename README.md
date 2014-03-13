@@ -112,8 +112,8 @@ The states take a 4th level hash ([yo-dawg](http://i.imgur.com/b18qXaT.jpg)) tha
 | Key    | Value Data type | Description | Required | API Documentation Attribute Name | Default Value | Note |
 | ------ | --------------- | ----------- | -------- | -------------------------------- | ------------- | ---- |
 | conditional | string | Conditional logic to place in the alarm if() block | Yes | criteria | None | This implementation abstracts part of the criteria DSL, see below |
-| disabled | Boolean | Disables the state when true | No | disabled | false | Provided for compatability with v2 and simply omits the state logic from the criteria. Use of this option is discouraged |
-| state | String | State value to use when building the criteria DSL value | Yes within the states array | criteria | Label for CRITICAL and WARNING helpers | Should be CRITICAL, WARNING, or OK |
+| disabled | Boolean | Disables the state when true | No | -- | false | Provided for compatability with v2 and simply omits the state logic from the criteria. Use of this option is discouraged |
+| state | String | State value to use when building the criteria DSL value | Yes within the states array | -- | Label for CRITICAL and WARNING helpers | Should be CRITICAL, WARNING, or OK |
 | message | String | Message to return when the conditional is met | No | -- | "#{check} is past #{state} threshold" | -- |
 
 Note that several keys (alarm_dsl, metadata, notification_plan_id) which were previously supported within the state hash are now deprecated.
@@ -125,6 +125,7 @@ If alarm_dsl is specified then that value is used verbatim, no abstraction is pe
 Otherwise, the Monitoring alarm criteria is abstracted from the API somewhat.
 The alarm threshold conditional will be used directly in the if() block.
 The body of the criteria conditional is handled by the cookbook unless overridden.
+A final OK state will automatically be added if alarm_dsl is not used.
 See recipes/monitors.rb and libraries/MonitorsRecipeHelpers.rb for the exact abstraction and body used.
 
 The values for each check is passed to the rackspace_cloudmonitoring_alarm LWRP to create the check in the API.
