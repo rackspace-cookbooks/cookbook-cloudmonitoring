@@ -140,10 +140,12 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
       end
     end
   else
-    # Alarms unset: As we know the name of any orphaned alarms go ahead and remove them
-    rackspace_cloudmonitoring_alarm "#{check} alarm" do
-      entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
-      action :delete
+    if node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_orphan_alarms']
+      # Alarms unset: As we know the name of any orphaned alarms go ahead and remove them
+      rackspace_cloudmonitoring_alarm "#{check} alarm" do
+        entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
+        action :delete
+      end
     end
   end # key?('alarm')
 end # monitors loop
