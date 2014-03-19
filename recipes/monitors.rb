@@ -118,14 +118,17 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
       action               :create
     end
 
-    unless check_value['alarm'].key?('remove_old_alarms')
-      check_value['alarm']['remove_old_alarms'] = node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms']
+    if check_value['alarm'].key?('remove_old_alarms')
+      remove_alarms = check_value['alarm']['remove_old_alarms']
+    else
+      remove_alarms = node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms']
     end
 
     # Clean up behind old versions
-    if check_value['alarm']['remove_old_alarms']
+    if remove_alarms
       %w(CRITICAL WARNING).each do |alarm|
         rackspace_cloudmonitoring_alarm  "#{check} #{alarm} alarm" do
+          entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
           action :delete
         end
       end
@@ -133,6 +136,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
   else
     # Alarms unset: As we know the name of any orphaned alarms go ahead and remove them
     rackspace_cloudmonitoring_alarm "#{check} alarm" do
+      entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
       action :delete
     end
   end # key?('alarm')
