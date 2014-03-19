@@ -58,7 +58,7 @@ module Opscode
             message = "#{check} is past #{state} threshold"
           end
 
-          return "if (#{alarm_data_hash["conditional"]}) { return new AlarmStatus(#{state}, '#{message}') };\n"
+          return "if (#{alarm_data_hash["conditional"]}) { return new AlarmStatus(#{state}, '#{message}'); }\n"
         end
         module_function :generate_alarm_dsl_block
       end

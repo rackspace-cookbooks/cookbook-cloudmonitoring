@@ -95,7 +95,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
         ok_message = "#{check} is clear"
       end
 
-      alarm_criteria << "return new AlarmStatus(OK, '#{ok_message}');\n"
+      alarm_criteria << "return new AlarmStatus(OK, '#{ok_message}');"
     end
 
     if check_value['alarm'].key?('notification_plan_id')
