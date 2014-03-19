@@ -55,7 +55,13 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
   end
 
   if check_value.key?('alarm')
-    alarm_criteria = ''
+    if check_value['alarm'].key?('consecutive_count')
+      consecutive_count = check_value['alarm']['consecutive_count']
+    else
+      consecutive_count = node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['consecutive_count']
+    end
+
+    alarm_criteria = ":set consecutiveCount=#{consecutive_count}\n"
     states_specified = false
 
     # CRITICAL and WARNING are helpers for the state array
