@@ -50,7 +50,7 @@ module Opscode
             end
           end
 
-          fail 'ERROR: #{check} #{state} state alarm: Mandatory alarm argument conditional unset' if alarm_data_hash['conditional'].nil?
+          fail "ERROR: #{check} #{state} state alarm: Mandatory alarm argument conditional unset" if alarm_data_hash['conditional'].nil?
 
           if alarm_data_hash.key?('message')
             message = alarm_data_hash['message']
