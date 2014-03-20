@@ -4,7 +4,7 @@ rackspace_cloudmonitoring libraries
 This cookbook has multiple tiers of libraries:
 
 * HWRPs
-* Classes supporting the HWRPs that interact with the API
+* Classes supporting recipes and the HWRPs that interact with the API
 * Test support libraries
 
 HWRPs
@@ -49,6 +49,14 @@ These classes support the CM Classes above
 | CMCredentials | CMCredentials.rb | This class handles API credential sourcing and precedence from the HWRP attributes, node attributes, and databag in a common and consistent manner |
 | CMObjBase | CMObjBase.rb | This is a common class implementing the basic actions required to interact with MaaS objects.  It is inherited by the higher level classes and serves to deduplicate code. |
 | CMChild | CMChild.rb | This is a common class for CMAlarm and CMCheck objects, which are incredibly similar.  It implements the shared behavior and entity loading for CMCheck and CMAlarm objects, and is inherited by both. |
+
+### Recipe support libraries
+
+The following libraries implement methods to support the specified recipes:
+
+| Module | File | Supported Recipe |
+| ------ | ---- | ---------------- |
+| MonitorsRecipeHelpers | MonitorsRecipeHelpers.rb | monitors |
 
 Testing Classes
 ---------------
