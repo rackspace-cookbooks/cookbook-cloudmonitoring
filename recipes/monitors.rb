@@ -79,55 +79,50 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
       end
     end
 
-    if check_value['alarm'].key?('alarm_dsl')
-      # We're testing for alarm_dsl here as it allows an easy check to see if we have exclusive options
-      # if states_specified == true then options have been set which will be overridden possibly resulting
-      #   in unexpected bahavior
-      fail "ERROR: Check #{check}: alarm_dsl was specified along with individual state declarations" unless states_specified == false
-
-      alarm_criteria = check_value['alarm']['alarm_dsl']
-    else
-      # In the else block: Don't tack OK onto the specified alarm_dsl
-
+    if check_value['alarm']['alarm_dsl'].nil?
       # Fail if no states were specified
       # Don't fail if alarm_criteria == "" as we may have disabled states and we want the alarm to go OK.
       # (Hence the boolean flag)
       fail "ERROR: Check #{check}: has no states!" if states_specified == false
 
       # Add OK block
-      if check_value['alarm'].key?('ok_message')
-        ok_message = check_value['alarm']['ok_message']
-      else
+      if check_value['alarm']['ok_message'].nil?
         ok_message = "#{check} is clear"
+      else
+        ok_message = check_value['alarm']['ok_message']
       end
 
       alarm_criteria << "return new AlarmStatus(OK, '#{ok_message}');"
+    else
+      # We're testing for alarm_dsl here as it allows an easy check to see if we have exclusive options
+      # if states_specified == true then options have been set which will be overridden possibly resulting
+      #   in unexpected bahavior
+      fail "ERROR: Check #{check}: alarm_dsl was specified along with individual state declarations" unless states_specified == false
+      fail 'ERROR: ok_message and alarm_dsl are exclusive.' unless check_value['alarm']['ok_message'].nil?
+
+      alarm_criteria = check_value['alarm']['alarm_dsl']
     end
 
-    if check_value['alarm'].key?('notification_plan_id')
-      notification_plan = check_value['alarm']['notification_plan_id']
+    if check_value['alarm']['notification_plan_id'].nil?
+      notification_plan = node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id']
     else
-      if check_value.key?('notification_plan_id')
-        notification_plan = check_value['notification_plan_id']
-      else
-        notification_plan = node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id']
-      end
+      notification_plan = check_value['alarm']['notification_plan_id']
     end
 
     rackspace_cloudmonitoring_alarm "#{check} alarm" do
       entity_chef_label    node['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']
       check_label          check
       criteria             alarm_criteria
-      disabled             check_value['alarm'].key?('disabled') ? check_value['alarm']['disabled'] : false
-      metadata             check_value['alarm'].key?('metadata') ? check_value['alarm']['metadata'] : nil
+      disabled             check_value['alarm']['disabled'].nil? ? false : check_value['alarm']['disabled']
+      metadata             check_value['alarm']['metadata'].nil? ? nil : check_value['alarm']['metadata']
       notification_plan_id notification_plan
       action               :create
     end
 
-    if check_value['alarm'].key?('remove_old_alarms')
-      remove_alarms = check_value['alarm']['remove_old_alarms']
-    else
+    if check_value['alarm']['remove_old_alarms'].nil?
       remove_alarms = node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms']
+    else
+      remove_alarms = check_value['alarm']['remove_old_alarms']
     end
 
     # Clean up behind old versions

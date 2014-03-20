@@ -77,7 +77,6 @@ The value is a second hash where the keys are the following attributes:
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
 | metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
 | monitoring_zones_poll | Array | Array of zones to poll remote checks from | No | monitoring_zones_poll | None | Only used with remote checks, See API docs for valid zones |
-| notification_plan_id | String | Notification plan to use for associated alarms | No | (Alarms) notification_plan_id | See precedence table below | This value is used with associated Alarms, not the check itself |
 | period | Integer | The period in seconds for a check | No | period           | node['rackspace_cloudmonitoring']['monitors_defaults']['check']['period'] | The value must be greater than the minimum period set on your account. |
 | target_alias    | string | Key in the entity's 'ip_addresses' hash used to resolve check to an IP address for remote checks | No | target_alias | None | Only used with remote checks, See API documentation |
 | target_hostname | string | Hostname a remote check should target | No | target_hostname | None | Only used with remote checks, See API documentation |
@@ -99,7 +98,7 @@ The 'alarm' key is itself a hash supporting the following keys:
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
 | metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
 | consecutive_count | Integer | Number of consecutive evaluations required to trigger a state change | No | consecutiveCount | node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['consecutive_count'] |  |
-| notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | See precedence table below | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
+| notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
 | CRITICAL | Hash | CRITICAL state alarm data | No | -- | None | Takes a state data hash, see below |
 | WARNING | Hash | WARNING state alarm data | No | -- | None | Takes a state data hash, see below |
 | states | Array | Array of state data hashes to be added | No | -- | None | See below for a description |
@@ -133,14 +132,6 @@ See recipes/monitors.rb and libraries/MonitorsRecipeHelpers.rb for the exact abs
 The values for each check is passed to the rackspace_cloudmonitoring_alarm LWRP to create the check in the API.
 Also note that node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] does not have a default.
 If 'alarm' is not defined any existing alarm will be removed.
-
-The notification_plan_id precedence is as follows, where the lowest precedence is the default:
-
-| Location | Precedence |
-| --- | --- |
-| Alarm notification_plan_id | 3 |
-| Check notification_plan_id | 2 |
-| node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] | 1 |
 
 So plan IDs specified with the Alarm are used first, followed by plans specified with the check, and finally default plans in the default hash.
 

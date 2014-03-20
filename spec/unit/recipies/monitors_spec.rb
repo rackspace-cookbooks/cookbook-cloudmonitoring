@@ -17,6 +17,21 @@
 
 require 'spec_helper'
 
+def init_common_monitors_spec_alarm_tests
+  chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = 'Test Default Plan'
+  chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']  = 'Test Entity Label'
+  chef_run.node.set['rackspace_cloudmonitoring']['monitors'] = {
+    'Test Check' => {
+      'type'  => 'Test Type',
+      'alarm' => {
+        'CRITICAL' => {
+          'conditional' => 'test conditional'
+        }
+      }
+    }
+  }
+end
+
 describe 'rackspace_cloudmonitoring::monitors' do
   rackspace_cloudmonitoring_test_platforms.each do |platform, versions|
     describe "on #{platform}" do
@@ -227,205 +242,221 @@ describe 'rackspace_cloudmonitoring::monitors' do
             end # Loop describe
           end # Check describe
 
-          describe 'configure alarms' do
-            describe 'without mandatory options:' do
-              before :each do
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']  = 'Test Entity Label'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']  = 1234
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] = 5678
-
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors'] = {
-                  'Test Check' => {
-                      'type'  => 'Test Type',
-                      'alarm' => {
-                      'Test Alarm' => {}
-                    }
-                  }
-                }
-              end
-
-              it 'fail without conditional' do
-                expect { chef_run.converge('rackspace_cloudmonitoring::monitors') }.to raise_exception
-              end
-            end
-
-            describe 'with default values:' do
-              before :each do
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = 'Test Default Plan'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']  = 'Test Entity Label'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']  = 1234
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] = 5678
-
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors'] = {
-                  'Test Check' => {
-                    'type'  => 'Test Type',
-                    'alarm' => {
-                      'Test Alarm' => {
-                        'conditional' => 'test conditional'
-                      }
-                    }
-                  }
-                }
-                chef_run.converge('rackspace_cloudmonitoring::monitors')
-              end
-
-              it 'monitors_defaults entity_chef_label' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(entity_chef_label: 'Test Entity Label')
-              end
-
-              it 'parent check label' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(check_label: 'Test Check')
-              end
-
-              it 'default generated criteria' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(
-                   criteria: "if (test conditional) { return Test Alarm, 'Test Check is past Test Alarm threshold' }"
-                                                                                                )
-              end
-
-              it 'monitors hash disabled' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(disabled: false)
-              end
-
-              it 'monitors hash metadata' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(metadata: nil)
-              end
-
-              it 'monitors_defaults notification_plan_id' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(notification_plan_id: 'Test Default Plan')
-              end
-            end
-
-            describe 'with values inherited from the check:' do
-              before :each do
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = 'Test Default Plan'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']  = 'Test Entity Label'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']  = 1234
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] = 5678
-
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors'] = {
-                  'Test Check' => {
-                    'notification_plan_id' => 'Test Check Notification Plan',
-                    'type'  => 'Test Type',
-                    'alarm' => {
-                      'Test Alarm' => {
-                        'conditional' => 'test conditional'
-                      }
-                    }
-                  }
-                }
-                chef_run.converge('rackspace_cloudmonitoring::monitors')
-              end
-
-              it 'monitors_defaults entity_chef_label' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(entity_chef_label: 'Test Entity Label')
-              end
-
-              it 'parent check label' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(check_label: 'Test Check')
-              end
-
-              it 'default generated criteria' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(
-                    criteria: "if (test conditional) { return Test Alarm, 'Test Check is past Test Alarm threshold' }"
-                                                                                                )
-              end
-
-              it 'monitors hash disabled' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(disabled: false)
-              end
-
-              it 'monitors hash metadata' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(metadata: nil)
-              end
-
-              it 'monitors_defaults notification_plan_id' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(notification_plan_id: 'Test Check Notification Plan')
-              end
-            end
-
-            describe 'with specified values:' do
-              before :each do
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = 'Test Default Plan'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']  = 'Test Entity Label'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']  = 1234
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] = 5678
-
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors'] = {
-                  'Test Check' => {
-                    'notification_plan_id' => 'Test Check Notification Plan',
-                    'type'  => 'Test Type',
-                    'alarm' => {
-                      'Test Alarm' => {
-                        'conditional' => 'test conditional',
-                        'notification_plan_id' => 'Test Alarm Notification Plan',
-                        'state'    => 'Test Alarm State',
-                        'disabled' => true,
-                        'metadata' => { test: 'Test Metadata' }
-                      }
-                    }
-                  }
-                }
-                chef_run.converge('rackspace_cloudmonitoring::monitors')
-              end
-
-              it 'monitors_defaults entity_chef_label' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(entity_chef_label: 'Test Entity Label')
-              end
-
-              it 'parent check label' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(check_label: 'Test Check')
-              end
-
-              it 'specific generated criteria' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(
-                    criteria: "if (test conditional) { return Test Alarm State, 'Test Check is past Test Alarm State threshold' }"
-                                                                                                )
-              end
-
-              it 'specified disabled' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(disabled: true)
-              end
-
-              it 'specified metadata' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(metadata: { 'test' => 'Test Metadata' })
-              end
-
-              it 'specified notification_plan_id' do
-                expect(chef_run).to create_monitoring_alarm('Test Check Test Alarm alarm').with(notification_plan_id: 'Test Alarm Notification Plan')
-              end
-            end
-
-            describe 'in a loop:' do
-              before :each do
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = 'Test Default Plan'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']  = 'Test Entity Label'
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']  = 1234
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout'] = 5678
-
-                chef_run.node.set['rackspace_cloudmonitoring']['monitors'] = {}
-                3.times do |x|
-                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']["Test Check #{x}"] = {
-                    'type'  => 'Test Type',
-                    'alarm' => {}
-                  }
-                  3.times do |y|
-                    chef_run.node.set['rackspace_cloudmonitoring']['monitors']["Test Check #{x}"]['alarm']["Test Alarm #{y}"] = {
-                      'conditional' => 'test conditional'
-                    }
-                  end
+          describe 'configure alarms: ' do
+            describe 'alarm creation: ' do
+              describe 'consecutive_count' do
+                before :each do
+                  init_common_monitors_spec_alarm_tests
                 end
-                chef_run.converge('rackspace_cloudmonitoring::monitors')
+
+                it 'uses values from node data' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['consecutive_count'] = 'Node Data Consecutive Count'
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(criteria: /^:set consecutiveCount=Node Data Consecutive Count$/)
+                end
+
+                it 'uses values from alarm data' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['consecutive_count'] = 'Node Data Consecutive Count'
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['consecutive_count'] = 'Alarm Data Consecutive Count'
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(criteria: /^:set consecutiveCount=Alarm Data Consecutive Count$/)
+                end
               end
 
-              3.times do |x|
-                3.times do |y|
-                  it "create alarm #{y} under check #{x}" do
-                    expect(chef_run).to create_monitoring_alarm("Test Check #{x} Test Alarm #{y} alarm")
+              describe 'state generation:' do
+                it 'fails with no states or alarm_dsl' do
+                  init_common_monitors_spec_alarm_tests
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm'] = {}
+                  expect { chef_run.converge('rackspace_cloudmonitoring::monitors') }.to raise_exception
+                end
+
+                describe 'states array and helpers:' do
+                  before :each do
+                    init_common_monitors_spec_alarm_tests
+                    chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm'].merge!(
+                          'CRITICAL' => { 'conditional' => 'test CRITICAL conditional' },
+                          'WARNING'  => { 'conditional' => 'test WARNING conditional' },
+                          'states'   => [
+                                         { 'state' => 'TestState1', 'conditional' => 'test TestState1 conditional' },
+                                         { 'state' => 'TestState2', 'conditional' => 'test TestState2 conditional' },
+                                         { 'state' => 'TestState3', 'conditional' => 'test TestState3 conditional' }
+                                        ]
+                                                                                                             )
+                    chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  end
+
+                  %w(CRITICAL WARNING TestState1 TestState2 TestState3).each do |state|
+                    it "configures the #{state} state criteria" do
+                      # Use a lazy regex, the tests for generate_alarm_dsl_block will check the exact DSL
+                      expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(criteria: /^if \(.*#{state}.*\).*#{state}.*/)
+                    end
                   end
                 end
               end
-            end # Loop describe
+
+              describe 'alarm_dsl usage:' do
+                before :each do
+                  init_common_monitors_spec_alarm_tests
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm'] = {}
+                end
+
+                [{ description: 'CRITICAL helper is specified', argument: { 'CRITICAL' => { 'conditional' => 'test CRITICAL conditional' } } },
+                 { description: 'WARNING helper is specified', argument: { 'WARNING' => { 'conditional' => 'test WARNING conditional' } } },
+                 { description: 'states array is populated', argument: { 'states' => [{ 'state' => 'TestState1', 'conditional' => 'test TestState1 conditional' }] } },
+                 { description: 'ok_message is specified', argument: { 'ok_message' => 'All is well' } }
+                ].each do |test_data|
+                  it "fails if alarm_dsl and #{test_data[:description]}" do
+                    chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm'].merge!(test_data[:argument])
+                    chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['alarm_dsl'] = 'Test Alarm DSL'
+                    expect { chef_run.converge('rackspace_cloudmonitoring::monitors') }.to raise_exception
+                  end
+                end
+
+                it 'uses alarm_dsl for criteria' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['alarm_dsl'] = 'Test Alarm DSL'
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(criteria: 'Test Alarm DSL')
+                end
+              end
+
+              describe 'ok_message usage:' do
+                before :each do
+                  init_common_monitors_spec_alarm_tests
+                end
+
+                it 'Appends the default OK message without ok_message' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['ok_message'] = nil
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(criteria: /^return new AlarmStatus\(OK, 'Test Check is clear'\);$/)
+                end
+
+                it 'Appends the specified ok_message' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['ok_message'] = 'Test OK Message'
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(criteria: /^return new AlarmStatus\(OK, 'Test OK Message'\);$/)
+                end
+              end
+
+              describe 'notification_plan_id' do
+                before :each do
+                  init_common_monitors_spec_alarm_tests
+                end
+
+                it 'uses values from node data' do
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(notification_plan_id: 'Test Default Plan')
+                end
+
+                it 'uses values from alarm data' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['notification_plan_id'] = 'Test Alarm Plan'
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(notification_plan_id: 'Test Alarm Plan')
+                end
+              end
+
+              describe 'disabled' do
+                before :each do
+                  init_common_monitors_spec_alarm_tests
+                end
+
+                it 'defaults to false' do
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(disabled: false)
+                end
+
+                it 'uses values from alarm data' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['disabled'] = true
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(disabled: true)
+                end
+              end
+
+              describe 'metadata' do
+                before :each do
+                  init_common_monitors_spec_alarm_tests
+                end
+
+                it 'defaults to nil' do
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(metadata: nil)
+                end
+
+                it 'uses values from alarm data' do
+                  chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['metadata'] = { 'foo' => 'bar' }
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(metadata: { 'foo' => 'bar' })
+                end
+              end
+
+              describe 'entity_chef_label and check_label' do
+                before :each do
+                  init_common_monitors_spec_alarm_tests
+                  chef_run.converge('rackspace_cloudmonitoring::monitors')
+                end
+
+                it 'uses the node entity label' do
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(entity_chef_label: 'Test Entity Label')
+                end
+
+                it 'uses the check name' do
+                  expect(chef_run).to create_monitoring_alarm('Test Check alarm').with(check_label: 'Test Check')
+                end
+              end
+            end
+
+            describe 'legacy alarm removal:' do
+              before :each do
+                init_common_monitors_spec_alarm_tests
+              end
+
+              # Explicitly test all logic states
+              [false, true].each do |node_setting|
+                [false, true, nil].each do |alarm_setting|
+                  expected_state = alarm_setting.nil? ? node_setting : alarm_setting
+                  if expected_state
+                    it "deletes legacy alarms when node remove_old_alarms is #{node_setting} and alarm remove_old_alarms is #{alarm_setting}" do
+                      chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms'] = node_setting
+                      chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['remove_old_alarms'] = alarm_setting
+                      chef_run.converge('rackspace_cloudmonitoring::monitors')
+                      expect(chef_run).to delete_monitoring_alarm('Test Check CRITICAL alarm')
+                      expect(chef_run).to delete_monitoring_alarm('Test Check WARNING alarm')
+                    end
+                  else
+                    it "does not delete legacy alarms when node remove_old_alarms is #{node_setting} and alarm remove_old_alarms is #{alarm_setting}" do
+                      chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms'] = node_setting
+                      chef_run.node.set['rackspace_cloudmonitoring']['monitors']['Test Check']['alarm']['remove_old_alarms'] = alarm_setting
+                      chef_run.converge('rackspace_cloudmonitoring::monitors')
+                      expect(chef_run).to_not delete_monitoring_alarm('Test Check CRITICAL alarm')
+                      expect(chef_run).to_not delete_monitoring_alarm('Test Check WARNING alarm')
+                    end
+                  end
+                end
+              end
+            end
+
+            describe 'orphan alarm removal:' do
+              before :each do
+                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = 'Test Default Plan'
+                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['entity']['label']  = 'Test Entity Label'
+                chef_run.node.set['rackspace_cloudmonitoring']['monitors'] = {
+                  'Test Check' => {
+                    'type'  => 'Test Type'
+                  }
+                }
+              end
+
+              it 'removes orphaned alarms when node remove_orphan_alarms is true' do
+                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_orphan_alarms'] = true
+                chef_run.converge('rackspace_cloudmonitoring::monitors')
+                expect(chef_run).to delete_monitoring_alarm('Test Check alarm')
+              end
+
+              it 'does not remove orphaned alarms when node remove_orphan_alarms is true' do
+                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_orphan_alarms'] = false
+                chef_run.converge('rackspace_cloudmonitoring::monitors')
+                expect(chef_run).to_not delete_monitoring_alarm('Test Check alarm')
+              end
+            end
 
           end # Alarm describe
         end # Version loop
