@@ -10,7 +10,7 @@ group :testing do
   gem 'chef',       '~> 11.0'
   gem 'rspec',      '~> 2.14'
   gem 'vagrant-wrapper', '~> 1.2'
-  gem 'rubocop',    '~> 0.17' 
+  gem 'rubocop',    '~> 0.18.0' 
 
   # Required for this cookbook's ChefSpec tests
   gem 'fog',        '~> 1.19'
