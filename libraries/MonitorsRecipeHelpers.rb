@@ -26,14 +26,14 @@ module Opscode
         # generate_alarm_dsl_block: Generate a if() return block of alarm DSL for a given check
         def generate_alarm_dsl_block(alarm_data_hash, check, default_state = nil)
           # Generate state
-          if alarm_data_hash.key?('state')
-            state = alarm_data_hash['state']
-          else
+          if alarm_data_hash['state'].nil?
             if default_state.nil?
               fail "ERROR: #{check}: Alarm with missing state detected"
             else
               state = default_state
             end
+          else
+            state = alarm_data_hash['state']
           end
 
           # Check for deprecated options
@@ -52,10 +52,10 @@ module Opscode
 
           fail "ERROR: #{check} #{state} state alarm: Mandatory alarm argument conditional unset" if alarm_data_hash['conditional'].nil?
 
-          if alarm_data_hash.key?('message')
-            message = alarm_data_hash['message']
-          else
+          if alarm_data_hash['message'].nil?
             message = "#{check} is past #{state} threshold"
+          else
+            message = alarm_data_hash['message']
           end
 
           return "if (#{alarm_data_hash["conditional"]}) { return new AlarmStatus(#{state}, '#{message}'); }\n"
