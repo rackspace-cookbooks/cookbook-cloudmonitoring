@@ -51,7 +51,7 @@ class Chef
       end
 
       def notification_plan_id(arg = nil)
-        set_or_return(:notification_plan_id, arg, kind_of: String, required: true)
+        set_or_return(:notification_plan_id, arg, kind_of: String)
       end
 
       def check_id(arg = nil)
@@ -143,6 +143,8 @@ class Chef
 
       # update_alarm: internal helper shared by the create* actions
       def update_alarm(resource)
+        fail 'notification_plan_id is required' if resource.notification_plan_id.nil?
+
         if resource.example_id
           fail 'Cannot specify example_id and criteria' unless resource.criteria.nil?
           criteria =  resource.alarm_obj.example_alarm(resource.example_id, resource.example_values).bound_criteria

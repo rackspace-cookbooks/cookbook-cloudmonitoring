@@ -68,6 +68,9 @@ default['rackspace_cloudmonitoring']['monitors_defaults']['check']['period']    
 default['rackspace_cloudmonitoring']['monitors_defaults']['check']['timeout']        = 10
 default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']                   = {} # Define an empty hash to avoid nilclass errors if the user omits this.
 # default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] = nil
+default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['consecutive_count']    = 2
+default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_old_alarms']    = true # Remove alarms left from v2
+default['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['remove_orphan_alarms'] = true # Remove alarms orphaned by alarm config hash block removal
 
 # Configuration template overrides
 default['rackspace_cloudmonitoring']['templates_cookbook']['rackspace-monitoring-agent'] = 'rackspace_cloudmonitoring'

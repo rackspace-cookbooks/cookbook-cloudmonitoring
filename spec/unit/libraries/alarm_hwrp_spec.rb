@@ -146,6 +146,15 @@ def common_alarm_update_tests(target_action, alarm_obj_state = nil) # rubocop:di
   let(:target_action) { target_action }
   let(:alarm_obj_state) { alarm_obj_state }
 
+  it 'fails when notification_plan_id is unset' do
+    fail 'SCOPE ERROR' if target_action.nil?
+    @new_resource.notification_plan_id = nil
+    test_obj = Chef::Provider::RackspaceCloudmonitoringAlarm.new(@new_resource, nil)
+    test_obj.load_current_resource
+    test_obj.current_resource.alarm_obj.obj = alarm_obj_state
+    expect { test_obj.send(target_action) }.to raise_exception
+  end
+
   it 'fails when both example_id and criteria are set' do
     fail 'SCOPE ERROR' if target_action.nil?
     @new_resource.criteria.should_not eql nil
@@ -289,7 +298,7 @@ describe 'rackspace_cloudmonitoring_alarm' do
           @test_resource = Chef::Resource::RackspaceCloudmonitoringAlarm.new('Test Label')
         end
 
-        unless [:label, :entity_chef_label, :notification_plan_id].include? attr
+        unless [:label, :entity_chef_label].include? attr
           it 'should be nil initially' do
             @test_resource.send(attr).should eql nil
           end
