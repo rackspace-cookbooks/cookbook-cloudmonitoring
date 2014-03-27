@@ -97,7 +97,7 @@ The 'alarm' key is itself a hash supporting the following keys:
 | ------ | --------------- | ----------- | -------- | -------------------------------- | ------------- | ---- |
 | disabled | Boolean | Disables the check when true | No | disabled | false | -- |
 | metadata | Hash | Metadata to associate with the check | No | metadata | None |  |
-| consecutive_count | Integer | Number of consecutive evaluations required to trigger a state change | No | consecutiveCount | node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['consecutive_count'] |  |
+| consecutive_count | Integer | Number of consecutive evaluations required to trigger a state change | No | consecutiveCount | node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['consecutive_count'] | Allowed values are 1 - 5 |
 | notification_plan_id | string | Notification Plan ID to trigger on alarm | No | notification_plan_id | node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] | See [the API guide here](http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/service-notification-plans.html) for details on notification plans |
 | CRITICAL | Hash | CRITICAL state alarm data | No | -- | None | Takes a state data hash, see below |
 | WARNING | Hash | WARNING state alarm data | No | -- | None | Takes a state data hash, see below |
