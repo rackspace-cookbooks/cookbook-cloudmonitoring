@@ -125,20 +125,6 @@ else
     notifies :restart, 'service[rackspace-monitoring-agent]'
   end
 
-  node['rackspace_cloudmonitoring']['agent']['plugins'].each_pair do |source_cookbook, path|
-    remote_directory "rackspace_cloudmonitoring_plugins_#{source_cookbook}" do
-      path node['rackspace_cloudmonitoring']['agent']['plugin_path']
-      cookbook source_cookbook
-      source path
-      files_mode 0755
-      owner 'root'
-      group 'root'
-      mode 0755
-      recursive true
-      purge false
-    end
-  end
-
   service 'rackspace-monitoring-agent' do
     supports value_for_platform(
                                 ubuntu:  { default: [:start, :stop, :restart, :status] },
@@ -154,5 +140,30 @@ else
 
     action [:enable, :start]
     subscribes :restart, "template['/etc/rackspace-monitoring-agent.cfg']", :delayed
+  end
+end
+
+# Handle plugins directory and plugins
+# Explicitly create the directory to avoid convergence failures, don't rely on the agent
+# (Note agent install is inside a conditional.)
+directory node['rackspace_cloudmonitoring']['agent']['plugin_path'] do
+  owner 'root'
+  group 'root'
+  mode 00755
+  action :create
+  recursive true
+end
+
+node['rackspace_cloudmonitoring']['agent']['plugins'].each_pair do |source_cookbook, path|
+  remote_directory "rackspace_cloudmonitoring_plugins_#{source_cookbook}" do
+    path node['rackspace_cloudmonitoring']['agent']['plugin_path']
+    cookbook source_cookbook
+    source path
+    files_mode 0755
+    owner 'root'
+    group 'root'
+    mode 0755
+    recursive true
+    purge false
   end
 end

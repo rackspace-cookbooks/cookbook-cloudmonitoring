@@ -112,6 +112,10 @@ describe 'rackspace_cloudmonitoring::agent' do
               expect(chef_run).to enable_service 'rackspace-monitoring-agent'
             end
 
+            it 'create the plugin directory' do
+              expect(chef_run).to create_directory('/usr/lib/rackspace-monitoring-agent/plugins')
+            end
+
             it 'populate the plugin directory' do
               expect(chef_run).to create_remote_directory('rackspace_cloudmonitoring_plugins_rackspace_cloudmonitoring')
             end
