@@ -133,7 +133,7 @@ The values for each check is passed to the rackspace_cloudmonitoring_alarm LWRP 
 Also note that node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['notification_plan_id'] does not have a default.
 If 'alarm' is not defined any existing alarm will be removed.
 
-So plan IDs specified with the Alarm are used first, followed by plans specified with the check, and finally default plans in the default hash.
+Alarms may also be blanket disabled for the node, see the bypass_alarms option in attributes/default.rb
 
 As mentioned above the monitoring entity will automatically be created or updated.
 The entity behavior is configured by the following node variables:
