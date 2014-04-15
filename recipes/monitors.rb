@@ -54,7 +54,7 @@ node['rackspace_cloudmonitoring']['monitors'].each do |check, check_value|
     action            :create
   end
 
-  if check_value.key?('alarm')
+  if check_value.key?('alarm') && node['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['bypass_alarms'] == false
     if check_value['alarm'].key?('consecutive_count')
       consecutive_count = check_value['alarm']['consecutive_count']
     else

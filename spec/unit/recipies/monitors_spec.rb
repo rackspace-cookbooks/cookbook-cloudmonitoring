@@ -243,6 +243,15 @@ describe 'rackspace_cloudmonitoring::monitors' do
           end # Check describe
 
           describe 'configure alarms: ' do
+            describe 'alarm bypass: 'do
+              it 'does not create an alarm' do
+                init_common_monitors_spec_alarm_tests
+                chef_run.node.set['rackspace_cloudmonitoring']['monitors_defaults']['alarm']['bypass_alarms'] = true
+                chef_run.converge('rackspace_cloudmonitoring::monitors')
+                expect(chef_run).to_not create_monitoring_alarm('Test Check alarm')
+              end
+            end
+
             describe 'alarm creation: ' do
               describe 'consecutive_count' do
                 before :each do
