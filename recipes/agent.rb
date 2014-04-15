@@ -151,6 +151,7 @@ directory node['rackspace_cloudmonitoring']['agent']['plugin_path'] do
   group 'root'
   mode 00755
   action :create
+  recursive true
 end
 
 node['rackspace_cloudmonitoring']['agent']['plugins'].each_pair do |source_cookbook, path|
