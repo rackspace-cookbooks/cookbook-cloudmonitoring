@@ -1,0 +1,10 @@
+# Strainerfile
+knife_test: bundle exec knife cookbook test $COOKBOOK -o $SANDBOX
+
+# Rubocop needs to be passed $SANDBOX/$COOKBOOK or else it will check all the cookbook
+#   dependencies populated by Berkshelf as well.
+rubocop:    bundle exec rubocop --no-color $SANDBOX/$COOKBOOK
+# Disable foodcritic style warnings.  Rubocop will handle that and FC023 introduces version bugs.
+foodcritic: bundle exec foodcritic --tags ~style -f ~style  $SANDBOX/$COOKBOOK
+chefspec:   bundle exec rspec
+kitchen:    bundle exec kitchen test --destroy always
