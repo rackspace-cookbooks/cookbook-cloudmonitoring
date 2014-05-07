@@ -99,9 +99,21 @@ describe 'mock_data' do
       end
 
       describe '#save' do
-        it 'should save the entity into the parent' do
+        it 'should save the token into the parent' do
           @mock_obj.agent_tokens.length.should eql 0
           test_obj = @mock_obj.agent_tokens.new
+          test_obj.save
+          @mock_obj.agent_tokens.length.should eql 1
+          @mock_obj.agent_tokens[0].should eql test_obj
+        end
+
+        it 'should overwrite tokens with duplicate IDs' do
+          @mock_obj.agent_tokens.length.should eql 1
+          test_obj = @mock_obj.agent_tokens[0]
+
+          test_obj.label.should_not eql 'Test label 2'
+          test_obj.label = 'Test label 2'
+
           test_obj.save
           @mock_obj.agent_tokens.length.should eql 1
           @mock_obj.agent_tokens[0].should eql test_obj
@@ -109,7 +121,7 @@ describe 'mock_data' do
       end
 
       describe '#destroy' do
-        it 'should remove the entity from the parent' do
+        it 'should remove the token from the parent' do
           @mock_obj.agent_tokens.length.should eql 1
           target = @mock_obj.agent_tokens[0]
           target.destroy
@@ -227,6 +239,18 @@ describe 'mock_data' do
           @mock_obj.entities.length.should eql 1
           @mock_obj.entities[0].should eql test_entity
         end
+
+        it 'should overwrite entities with duplicate IDs' do
+          @mock_obj.entities.length.should eql 1
+          test_obj = @mock_obj.entities[0]
+
+          test_obj.label.should_not eql 'Test label 2'
+          test_obj.label = 'Test label 2'
+
+          test_obj.save
+          @mock_obj.entities.length.should eql 1
+          @mock_obj.entities[0].should eql test_obj
+        end
       end
 
       describe '#destroy' do
@@ -338,17 +362,29 @@ describe 'mock_data' do
         end
 
         describe '#save' do
-          it 'should save the entity into the parent' do
+          it 'should save the check into the parent' do
             @test_entity.checks.length.should eql 0
             test_check = @test_entity.checks.new('type' => 'dummy ')
             test_check.save
             @test_entity.checks.length.should eql 1
             @test_entity.checks[0].should eql test_check
           end
+
+          it 'should overwrite checks with duplicate IDs' do
+            @test_entity.checks.length.should eql 1
+            test_obj = @test_entity.checks[0]
+            
+            test_obj.label.should_not eql 'Test label 2'
+            test_obj.label = 'Test label 2'
+            
+            test_obj.save
+            @test_entity.checks.length.should eql 1
+            @test_entity.checks[0].should eql test_obj
+          end
         end
 
         describe '#destroy' do
-          it 'should remove the entity from the parent' do
+          it 'should remove the check from the parent' do
             @test_entity.checks.length.should eql 1
             target = @test_entity.checks[0]
             target.destroy
@@ -461,17 +497,30 @@ describe 'mock_data' do
         end
 
         describe '#save' do
-          it 'should save the entity into the parent' do
+          it 'should save the alarm into the parent' do
             @test_entity.alarms.length.should eql 0
             test_check = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
             test_check.save
             @test_entity.alarms.length.should eql 1
             @test_entity.alarms[0].should eql test_check
           end
+
+          it 'should overwrite alarms with duplicate IDs' do
+            @test_entity.alarms.length.should eql 1
+            test_obj = @test_entity.alarms[0]
+            
+            test_obj.label.should_not eql 'Test label 2'
+            test_obj.label = 'Test label 2'
+            
+            test_obj.save
+            @test_entity.alarms.length.should eql 1
+            @test_entity.alarms[0].should eql test_obj
+          end
+
         end
 
         describe '#destroy' do
-          it 'should remove the entity from the parent' do
+          it 'should remove the alarm from the parent' do
             @test_entity.alarms.length.should eql 1
             target = @test_entity.alarms[0]
             target.destroy

@@ -108,7 +108,13 @@ module Opscode
           end
 
           def save
-            @parent.push(self)
+            # Overwrite objects with matching IDs
+            existing_obj = @parent.find { |o| o.id == self.id }
+            if existing_obj.nil?
+              @parent.push(self)
+            else
+              @parent[@parent.index(existing_obj)] = self
+            end
           end
 
           def destroy
