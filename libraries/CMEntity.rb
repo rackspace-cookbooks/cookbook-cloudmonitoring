@@ -162,7 +162,7 @@ module Opscode
             end
           end
 
-          return _update_entity_obj(@cm.entities.find { |entity| _lookup_entity_by_ip_checker(entity, ip) })
+          return _update_entity_obj(obj_paginated_find(@cm.entities, "entity") { |entity| _lookup_entity_by_ip_checker(entity, ip) })
         end
 
         # update_entity: Update or create a new monitoring entity
