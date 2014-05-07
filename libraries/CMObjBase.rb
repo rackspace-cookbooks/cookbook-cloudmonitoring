@@ -39,14 +39,14 @@ module Opscode
           marker = nil
           while true
             # Obtain a block of objects starting at marker
-            search_obj = parent_obj.all({marker: marker, limit: limit})
-            
+            search_obj = parent_obj.all(marker: marker, limit: limit)
+
             # Search using the provided block
             ret_val = search_obj.find &block
             unless ret_val == nil
               return ret_val
             end
-              
+
             begin
               # As of Fog 1.22.0 not all MaaS objects support the pagination marker
               # https://github.com/fog/fog/issues/2908
@@ -71,7 +71,7 @@ module Opscode
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Requesting additional page of results")
           end
         end
-            
+
 
         # lookup_by_id: Locate an entity by ID string
         # PRE:

@@ -42,7 +42,7 @@ describe 'CMObjBase' do
     it 'locates all objects in a paginated response' do
       # Seed the mock object with 50 objects
       50.times do |c|
-        @parent_obj.new({label: "Test Object #{c}"}).save
+        @parent_obj.new(label: "Test Object #{c}").save
       end
       @parent_obj.length.should eql 50
 
@@ -155,7 +155,7 @@ describe 'CMObjBase' do
 
     it 'does not modify if not required' do
       orig_target_obj = @parent_obj.new(label: 'label1')
-      @test_obj.obj_update(orig_target_obj, @parent_obj, 'obj modification test', label: 'label1').should eql orig_target_obj 
+      @test_obj.obj_update(orig_target_obj, @parent_obj, 'obj modification test', label: 'label1').should eql orig_target_obj
       @parent_obj.length.should eql 0
     end
   end

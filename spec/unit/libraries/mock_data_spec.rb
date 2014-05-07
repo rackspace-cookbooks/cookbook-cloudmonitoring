@@ -150,26 +150,26 @@ describe 'mock_data' do
           10.times do
             @mock_obj.agent_tokens.new.save
           end
-        end          
+        end
 
         it 'returns all objects when object count < limit' do
-          all_output = @mock_obj.agent_tokens.all({limit: 20, marker: nil})
+          all_output = @mock_obj.agent_tokens.all(limit: 20, marker: nil)
           all_output.should eql @mock_obj.agent_tokens
           all_output.marker.should eql nil
         end
 
         it 'returns all objects when object count == limit' do
-          all_output = @mock_obj.agent_tokens.all({limit: 10, marker: nil})
+          all_output = @mock_obj.agent_tokens.all(limit: 10, marker: nil)
           all_output.should eql @mock_obj.agent_tokens
           all_output.marker.should eql nil
         end
 
         it 'Paginates when when object count > limit' do
-          all_output = @mock_obj.agent_tokens.all({limit: 5, marker: nil})
+          all_output = @mock_obj.agent_tokens.all(limit: 5, marker: nil)
           all_output.should eql @mock_obj.agent_tokens[0..4]
           all_output.marker.should eql @mock_obj.agent_tokens[5].id
 
-          all_output = @mock_obj.agent_tokens.all({limit: 5, marker: all_output.marker})
+          all_output = @mock_obj.agent_tokens.all(limit: 5, marker: all_output.marker)
           all_output.should eql @mock_obj.agent_tokens[5..9]
           all_output.marker.should eql nil
         end
@@ -275,7 +275,7 @@ describe 'mock_data' do
           test_entity.compare?(test_entity2).should eql false
         end
       end
-      
+
       describe '#all' do
         before :each do
           @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
@@ -283,31 +283,31 @@ describe 'mock_data' do
           10.times do
             @mock_obj.entities.new.save
           end
-        end          
+        end
 
         it 'returns all objects when object count < limit' do
-          all_output = @mock_obj.entities.all({limit: 20, marker: nil})
+          all_output = @mock_obj.entities.all(limit: 20, marker: nil)
           all_output.should eql @mock_obj.entities
           all_output.marker.should eql nil
         end
 
         it 'returns all objects when object count == limit' do
-          all_output = @mock_obj.entities.all({limit: 10, marker: nil})
+          all_output = @mock_obj.entities.all(limit: 10, marker: nil)
           all_output.should eql @mock_obj.entities
           all_output.marker.should eql nil
         end
 
         it 'Paginates when when object count > limit' do
-          all_output = @mock_obj.entities.all({limit: 5, marker: nil})
+          all_output = @mock_obj.entities.all(limit: 5, marker: nil)
           all_output.should eql @mock_obj.entities[0..4]
           all_output.marker.should eql @mock_obj.entities[5].id
 
-          all_output = @mock_obj.entities.all({limit: 5, marker: all_output.marker})
+          all_output = @mock_obj.entities.all(limit: 5, marker: all_output.marker)
           all_output.should eql @mock_obj.entities[5..9]
           all_output.marker.should eql nil
         end
       end
-      
+
       describe '#checks' do
         before :all do
           @test_entity = @mock_obj.entities.new
@@ -373,10 +373,10 @@ describe 'mock_data' do
           it 'should overwrite checks with duplicate IDs' do
             @test_entity.checks.length.should eql 1
             test_obj = @test_entity.checks[0]
-            
+
             test_obj.label.should_not eql 'Test label 2'
             test_obj.label = 'Test label 2'
-            
+
             test_obj.save
             @test_entity.checks.length.should eql 1
             @test_entity.checks[0].should eql test_obj
@@ -412,26 +412,26 @@ describe 'mock_data' do
             10.times do
               @test_entity.checks.new('type' => 'dummy ').save
             end
-          end        
-          
+          end
+
           it 'returns all objects when object count < limit' do
-            all_output = @test_entity.checks.all({limit: 20, marker: nil})
+            all_output = @test_entity.checks.all(limit: 20, marker: nil)
             all_output.should eql @test_entity.checks
             all_output.marker.should eql nil
           end
-          
+
           it 'returns all objects when object count == limit' do
-            all_output = @test_entity.checks.all({limit: 10, marker: nil})
+            all_output = @test_entity.checks.all(limit: 10, marker: nil)
             all_output.should eql @test_entity.checks
             all_output.marker.should eql nil
           end
-          
+
           it 'Paginates when when object count > limit' do
-            all_output = @test_entity.checks.all({limit: 5, marker: nil})
+            all_output = @test_entity.checks.all(limit: 5, marker: nil)
             all_output.should eql @test_entity.checks[0..4]
             all_output.marker.should eql @test_entity.checks[5].id
-            
-            all_output = @test_entity.checks.all({limit: 5, marker: all_output.marker})
+
+            all_output = @test_entity.checks.all(limit: 5, marker: all_output.marker)
             all_output.should eql @test_entity.checks[5..9]
             all_output.marker.should eql nil
           end
@@ -508,10 +508,10 @@ describe 'mock_data' do
           it 'should overwrite alarms with duplicate IDs' do
             @test_entity.alarms.length.should eql 1
             test_obj = @test_entity.alarms[0]
-            
+
             test_obj.label.should_not eql 'Test label 2'
             test_obj.label = 'Test label 2'
-            
+
             test_obj.save
             @test_entity.alarms.length.should eql 1
             @test_entity.alarms[0].should eql test_obj
@@ -548,26 +548,26 @@ describe 'mock_data' do
             10.times do
               @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ').save
             end
-          end        
-          
+          end
+
           it 'returns all objects when object count < limit' do
-            all_output = @test_entity.alarms.all({limit: 20, marker: nil})
+            all_output = @test_entity.alarms.all(limit: 20, marker: nil)
             all_output.should eql @test_entity.alarms
             all_output.marker.should eql nil
           end
-          
+
           it 'returns all objects when object count == limit' do
-            all_output = @test_entity.alarms.all({limit: 10, marker: nil})
+            all_output = @test_entity.alarms.all(limit: 10, marker: nil)
             all_output.should eql @test_entity.alarms
             all_output.marker.should eql nil
           end
-          
+
           it 'Paginates when when object count > limit' do
-            all_output = @test_entity.alarms.all({limit: 5, marker: nil})
+            all_output = @test_entity.alarms.all(limit: 5, marker: nil)
             all_output.should eql @test_entity.alarms[0..4]
             all_output.marker.should eql @test_entity.alarms[5].id
-            
-            all_output = @test_entity.alarms.all({limit: 5, marker: all_output.marker})
+
+            all_output = @test_entity.alarms.all(limit: 5, marker: all_output.marker)
             all_output.should eql @test_entity.alarms[5..9]
             all_output.marker.should eql nil
           end
