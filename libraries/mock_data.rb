@@ -87,9 +87,9 @@ module Opscode
           end
         end
 
-        # MockMonitoringParent: Emulate the parent of the Fog entity child objects, inhereiting Array
+        # MockMonitoringChildObjParent: Emulate the parent of the Fog entity child objects, inhereiting Array
         # This is the same as MockMonitoringParent, except it passes the entity object to the child constructor
-        class MockMonitoringEntityParent < MockMonitoringParent
+        class MockMonitoringChildObjParent < MockMonitoringParent
           def initialize(my_child_obj_class, my_entity)
             @child_obj_class = my_child_obj_class
             @entity = my_entity
@@ -146,8 +146,8 @@ module Opscode
               instance_variable_set("@#{k}", v)
             end
 
-            @alarms = MockMonitoringEntityParent.new(MockMonitoringAlarm, self)
-            @checks = MockMonitoringEntityParent.new(MockMonitoringCheck, self)
+            @alarms = MockMonitoringChildObjParent.new(MockMonitoringAlarm, self)
+            @checks = MockMonitoringChildObjParent.new(MockMonitoringCheck, self)
           end
 
           def compare?(other_obj)
