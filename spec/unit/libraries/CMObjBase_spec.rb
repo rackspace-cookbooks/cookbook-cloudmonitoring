@@ -30,6 +30,31 @@ module CMObjBaseTestHelpers
 end
 
 describe 'CMObjBase' do
+  describe '#obj_paginated_find' do
+    before :each do
+      @test_obj = CMObjBase.new
+      @parent_obj = CMObjBaseTestHelpers.get_dummy_parent_object
+      if @parent_obj != []
+        fail '@parent_obj not empty after initialization'
+      end
+    end
+
+    it 'locates all objects in a paginated response' do
+      # Seed the mock object with 50 objects
+      50.times do |c|
+        @parent_obj.new({label: "Test Object #{c}"}).save
+      end
+      @parent_obj.length.should eql 50
+
+      # Find them!
+      50.times do |c|
+        # Limit to 10 for pagination testing (5 pages)
+        @test_obj.obj_paginated_find(@parent_obj, "paginated find test", 10) { |o| o.label == "Test Object #{c}" }.should eql @parent_obj[c]
+      end
+    end
+
+  end
+
   describe '#obj_lookup_by_id' do
     before :each do
       @test_obj = CMObjBase.new

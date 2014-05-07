@@ -31,13 +31,15 @@ module Opscode
         # paginated_find: Perform a .find call taking into account Fog pagination
         # https://github.com/fog/fog/issues/2469
         # PRE: parent_obj supports the all() method which accepts a marker option and returns an Enumerable class
+        # limit <= 1000 per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
         # POST: None
         # RETURN VALUE: Value of find method
-        def obj_paginated_find(parent_obj, debug_name, &block)
+        # Resolution for https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
+        def obj_paginated_find(parent_obj, debug_name, limit = 1000, &block)
           marker = nil
           while true
             # Obtain a block of objects starting at marker
-            search_obj = parent_obj.all({marker: marker})
+            search_obj = parent_obj.all({marker: marker, limit: limit})
             
             # Search using the provided block
             ret_val = search_obj.find &block
@@ -45,12 +47,27 @@ module Opscode
               return ret_val
             end
               
+            begin
+              # As of Fog 1.22.0 not all MaaS objects support the pagination marker
+              # https://github.com/fog/fog/issues/2908
+              marker = search_obj.marker
+            rescue NoMethodError
+              # This may not be a hard fail: See if we are at the pagination limit
+              if search_obj.length < limit
+                # Below the limit: No match, no pagination
+                return nil
+              end
+
+              # At the limit: Unknown if we need to paginate, assume failure to avoid nasty falure modes in subsequent code
+              # Check https://github.com/fog/fog/issues/2908 if you're getting this failure: it may be solved by a Fog update.
+              fail "ERROR: Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Current Fog version does not support pagination marker"
+            end
+
             # No match: Return nil if there is no marker (no further results / no pagination)
-            if search_obj.marker == nil
+            if marker == nil
               return nil
             end
 
-            marker = search_obj.marker
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Requesting additional page of results")
           end
         end
