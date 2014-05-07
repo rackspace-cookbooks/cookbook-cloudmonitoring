@@ -26,7 +26,8 @@ def test_credentials
                              'rackspace' => { 'cloud_credentials' => {
                                  'username' => 'Mr. Mockson',
                                  'api_key'  => 'Woodruff'
-                               } }
+                               }
+                             }
                            }, nil)
 end
 
