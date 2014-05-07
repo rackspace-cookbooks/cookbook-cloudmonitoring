@@ -42,6 +42,7 @@ describe 'mock_data' do
     end
 
     describe '#agent_tokens' do
+      # Using :all instead of :each to allow the destroy test to use the value added by the save test.
       before :all do
         @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
                                        rackspace_username: 'sandwitches')
@@ -129,9 +130,42 @@ describe 'mock_data' do
           test_obj.compare?(test_obj2).should eql false
         end
       end
+
+      describe '#all' do
+        before :each do
+          @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
+                                         rackspace_username: 'sandwitches')
+          10.times do
+            @mock_obj.agent_tokens.new.save
+          end
+        end          
+
+        it 'returns all objects when object count < limit' do
+          all_output = @mock_obj.agent_tokens.all({limit: 20, marker: nil})
+          all_output.should eql @mock_obj.agent_tokens
+          all_output.marker.should eql nil
+        end
+
+        it 'returns all objects when object count == limit' do
+          all_output = @mock_obj.agent_tokens.all({limit: 10, marker: nil})
+          all_output.should eql @mock_obj.agent_tokens
+          all_output.marker.should eql nil
+        end
+
+        it 'Paginates when when object count > limit' do
+          all_output = @mock_obj.agent_tokens.all({limit: 5, marker: nil})
+          all_output.should eql @mock_obj.agent_tokens[0..4]
+          all_output.marker.should eql @mock_obj.agent_tokens[5].id
+
+          all_output = @mock_obj.agent_tokens.all({limit: 5, marker: all_output.marker})
+          all_output.should eql @mock_obj.agent_tokens[5..9]
+          all_output.marker.should eql nil
+        end
+      end
     end
 
     describe '#entities' do
+      # Using :all instead of :each to allow the destroy test to use the value added by the save test.
       before :all do
         @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
                                        rackspace_username: 'sandwitches')
@@ -217,7 +251,39 @@ describe 'mock_data' do
           test_entity.compare?(test_entity2).should eql false
         end
       end
+      
+      describe '#all' do
+        before :each do
+          @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
+                                           rackspace_username: 'sandwitches')
+          10.times do
+            @mock_obj.entities.new.save
+          end
+        end          
 
+        it 'returns all objects when object count < limit' do
+          all_output = @mock_obj.entities.all({limit: 20, marker: nil})
+          all_output.should eql @mock_obj.entities
+          all_output.marker.should eql nil
+        end
+
+        it 'returns all objects when object count == limit' do
+          all_output = @mock_obj.entities.all({limit: 10, marker: nil})
+          all_output.should eql @mock_obj.entities
+          all_output.marker.should eql nil
+        end
+
+        it 'Paginates when when object count > limit' do
+          all_output = @mock_obj.entities.all({limit: 5, marker: nil})
+          all_output.should eql @mock_obj.entities[0..4]
+          all_output.marker.should eql @mock_obj.entities[5].id
+
+          all_output = @mock_obj.entities.all({limit: 5, marker: all_output.marker})
+          all_output.should eql @mock_obj.entities[5..9]
+          all_output.marker.should eql nil
+        end
+      end
+      
       describe '#checks' do
         before :all do
           @test_entity = @mock_obj.entities.new
@@ -303,9 +369,41 @@ describe 'mock_data' do
             test_check.compare?(test_check2).should eql false
           end
         end
+
+        describe '#all' do
+          before :each do
+            @test_entity = @mock_obj.entities.new
+            10.times do
+              @test_entity.checks.new('type' => 'dummy ').save
+            end
+          end        
+          
+          it 'returns all objects when object count < limit' do
+            all_output = @test_entity.checks.all({limit: 20, marker: nil})
+            all_output.should eql @test_entity.checks
+            all_output.marker.should eql nil
+          end
+          
+          it 'returns all objects when object count == limit' do
+            all_output = @test_entity.checks.all({limit: 10, marker: nil})
+            all_output.should eql @test_entity.checks
+            all_output.marker.should eql nil
+          end
+          
+          it 'Paginates when when object count > limit' do
+            all_output = @test_entity.checks.all({limit: 5, marker: nil})
+            all_output.should eql @test_entity.checks[0..4]
+            all_output.marker.should eql @test_entity.checks[5].id
+            
+            all_output = @test_entity.checks.all({limit: 5, marker: all_output.marker})
+            all_output.should eql @test_entity.checks[5..9]
+            all_output.marker.should eql nil
+          end
+        end
       end
 
       describe '#alarms' do
+      # Using :all instead of :each to allow the destroy test to use the value added by the save test.
         before :all do
           @test_entity = @mock_obj.entities.new
         end
@@ -392,6 +490,37 @@ describe 'mock_data' do
             test_check =  @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
             test_check2 = @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ')
             test_check.compare?(test_check2).should eql false
+          end
+        end
+
+        describe '#all' do
+          before :each do
+            @test_entity = @mock_obj.entities.new
+            10.times do
+              @test_entity.alarms.new('check' => 'three', 'notification_plan_id' => 'seven ').save
+            end
+          end        
+          
+          it 'returns all objects when object count < limit' do
+            all_output = @test_entity.alarms.all({limit: 20, marker: nil})
+            all_output.should eql @test_entity.alarms
+            all_output.marker.should eql nil
+          end
+          
+          it 'returns all objects when object count == limit' do
+            all_output = @test_entity.alarms.all({limit: 10, marker: nil})
+            all_output.should eql @test_entity.alarms
+            all_output.marker.should eql nil
+          end
+          
+          it 'Paginates when when object count > limit' do
+            all_output = @test_entity.alarms.all({limit: 5, marker: nil})
+            all_output.should eql @test_entity.alarms[0..4]
+            all_output.marker.should eql @test_entity.alarms[5].id
+            
+            all_output = @test_entity.alarms.all({limit: 5, marker: all_output.marker})
+            all_output.should eql @test_entity.alarms[5..9]
+            all_output.marker.should eql nil
           end
         end
       end

@@ -64,19 +64,21 @@ module Opscode
               if target == nil
                 start_index = 0
               else
-                start_index = array.index(target)
+                start_index = self.index(target)
               end
             end
 
+            # Emulate Fog pagination
+            ret_val = self.slice(start_index, my_options[:limit])
+
             # Set the marker for pagination
             if (start_index + my_options[:limit]) < self.length
-              self.marker = self[(start_index + my_options[:limit])].id
+              ret_val.marker = self[(start_index + my_options[:limit])].id
             else
-              self.marker = nil
+              ret_val.marker = nil
             end
 
-            # Emulate Fog pagination
-            return self.slice(start_index, my_options[:limit])
+            return ret_val
           end
 
           # Overload new
