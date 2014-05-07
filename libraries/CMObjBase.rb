@@ -37,13 +37,13 @@ module Opscode
         # Resolution for https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
         def obj_paginated_find(parent_obj, debug_name, limit = 1000, &block)
           marker = nil
-          while true
+          loop do
             # Obtain a block of objects starting at marker
             search_obj = parent_obj.all(marker: marker, limit: limit)
 
             # Search using the provided block
-            ret_val = search_obj.find &block
-            unless ret_val == nil
+            ret_val = search_obj.find(&block)
+            unless ret_val.nil?
               return ret_val
             end
 
@@ -60,18 +60,17 @@ module Opscode
 
               # At the limit: Unknown if we need to paginate, assume failure to avoid nasty falure modes in subsequent code
               # Check https://github.com/fog/fog/issues/2908 if you're getting this failure: it may be solved by a Fog update.
-              fail "ERROR: Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Current Fog version does not support pagination marker"
+              raise "ERROR: Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Current Fog version does not support pagination marker (Fog #2908)"
             end
 
             # No match: Return nil if there is no marker (no further results / no pagination)
-            if marker == nil
+            if marker.nil?
               return nil
             end
 
             Chef::Log.debug("Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Requesting additional page of results")
           end
         end
-
 
         # lookup_by_id: Locate an entity by ID string
         # PRE:

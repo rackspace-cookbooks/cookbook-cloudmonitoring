@@ -57,22 +57,22 @@ module Opscode
             }.merge(options)
 
             # Locate the index of the specified marker
-            if my_options[:marker] == nil
+            if my_options[:marker].nil?
               start_index = 0
             else
-              target = self.find { |t| t.id == my_options[:marker] }
-              if target == nil
+              target = find { |t| t.id == my_options[:marker] }
+              if target.nil?
                 start_index = 0
               else
-                start_index = self.index(target)
+                start_index = index(target)
               end
             end
 
             # Emulate Fog pagination
-            ret_val = self.slice(start_index, my_options[:limit])
+            ret_val = slice(start_index, my_options[:limit])
 
             # Set the marker for pagination
-            if (start_index + my_options[:limit]) < self.length
+            if (start_index + my_options[:limit]) < length
               ret_val.marker = self[(start_index + my_options[:limit])].id
             else
               ret_val.marker = nil
@@ -109,7 +109,7 @@ module Opscode
 
           def save
             # Overwrite objects with matching IDs
-            existing_obj = @parent.find { |o| o.id == self.id }
+            existing_obj = @parent.find { |o| o.id == id }
             if existing_obj.nil?
               @parent.push(self)
             else

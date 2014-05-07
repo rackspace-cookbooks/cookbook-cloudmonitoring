@@ -279,7 +279,7 @@ describe 'mock_data' do
       describe '#all' do
         before :each do
           @mock_obj = MockMonitoring.new(rackspace_api_key:  'porkchop',
-                                           rackspace_username: 'sandwitches')
+                                         rackspace_username: 'sandwitches')
           10.times do
             @mock_obj.entities.new.save
           end

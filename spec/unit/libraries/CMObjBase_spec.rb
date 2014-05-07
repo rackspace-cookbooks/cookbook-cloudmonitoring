@@ -20,20 +20,21 @@ require_relative '../../../libraries/CMObjBase.rb'
 require_relative '../../../libraries/mock_data.rb'
 include Opscode::Rackspace::Monitoring
 
+# CMObjBaseTestHelpers: Helper methods/classes for the tests
 module CMObjBaseTestHelpers
-  # get_dummy_parent_object: Return a dummy patent object for testing
+  # dummy_parent_object: Return a dummy patent object for testing
   # Code deduplication method: Provides a single definition for what is mocking the object.
-  def get_dummy_parent_object
+  def dummy_parent_object
     return MockData::MockMonitoringParent.new(MockData::MockMonitoringEntity)
   end
-  module_function :get_dummy_parent_object
+  module_function :dummy_parent_object
 end
 
 describe 'CMObjBase' do
   describe '#obj_paginated_find' do
     before :each do
       @test_obj = CMObjBase.new
-      @parent_obj = CMObjBaseTestHelpers.get_dummy_parent_object
+      @parent_obj = CMObjBaseTestHelpers.dummy_parent_object
       if @parent_obj != []
         fail '@parent_obj not empty after initialization'
       end
@@ -49,7 +50,7 @@ describe 'CMObjBase' do
       # Find them!
       50.times do |c|
         # Limit to 10 for pagination testing (5 pages)
-        @test_obj.obj_paginated_find(@parent_obj, "paginated find test", 10) { |o| o.label == "Test Object #{c}" }.should eql @parent_obj[c]
+        @test_obj.obj_paginated_find(@parent_obj, 'paginated find test', 10) { |o| o.label == "Test Object #{c}" }.should eql @parent_obj[c]
       end
     end
 
@@ -58,7 +59,7 @@ describe 'CMObjBase' do
   describe '#obj_lookup_by_id' do
     before :each do
       @test_obj = CMObjBase.new
-      @parent_obj = CMObjBaseTestHelpers.get_dummy_parent_object
+      @parent_obj = CMObjBaseTestHelpers.dummy_parent_object
       if @parent_obj != []
         fail '@parent_obj not empty after initialization'
       end
@@ -93,7 +94,7 @@ describe 'CMObjBase' do
   describe '#obj_lookup_by_label' do
     before :each do
       @test_obj = CMObjBase.new
-      @parent_obj = CMObjBaseTestHelpers.get_dummy_parent_object
+      @parent_obj = CMObjBaseTestHelpers.dummy_parent_object
       if @parent_obj != []
         fail '@parent_obj not empty after initialization'
       end
@@ -128,7 +129,7 @@ describe 'CMObjBase' do
   describe '#obj_update' do
     before :each do
       @test_obj = CMObjBase.new
-      @parent_obj = CMObjBaseTestHelpers.get_dummy_parent_object
+      @parent_obj = CMObjBaseTestHelpers.dummy_parent_object
     end
 
     it 'creates a new object when obj is nil' do
@@ -163,7 +164,7 @@ describe 'CMObjBase' do
   describe '#obj_delete' do
     before :each do
       @test_obj = CMObjBase.new
-      @parent_obj = CMObjBaseTestHelpers.get_dummy_parent_object
+      @parent_obj = CMObjBaseTestHelpers.dummy_parent_object
       @target_obj = @parent_obj.new(label: 'label1')
       @target_obj.save
       fail 'Failed to save target' if @parent_obj.length != 1
