@@ -173,6 +173,13 @@ describe 'mock_data' do
           all_output.should eql @mock_obj.agent_tokens[5..9]
           all_output.marker.should eql nil
         end
+
+        it 'Fails when limit < 1' do
+          expect { @mock_obj.agent_tokens.all(limit: 0, marker: nil) }.to raise_exception
+        end
+        it 'Fails when limit > 1000' do
+          expect { @mock_obj.agent_tokens.all(limit: 1001, marker: nil) }.to raise_exception
+        end
       end
     end
 
@@ -306,6 +313,13 @@ describe 'mock_data' do
           all_output.should eql @mock_obj.entities[5..9]
           all_output.marker.should eql nil
         end
+
+        it 'Fails when limit < 1' do
+          expect { @mock_obj.entities.all(limit: 0, marker: nil) }.to raise_exception
+        end
+        it 'Fails when limit > 1000' do
+          expect { @mock_obj.entities.all(limit: 1001, marker: nil) }.to raise_exception
+        end
       end
 
       describe '#checks' do
@@ -434,6 +448,13 @@ describe 'mock_data' do
             all_output = @test_entity.checks.all(limit: 5, marker: all_output.marker)
             all_output.should eql @test_entity.checks[5..9]
             all_output.marker.should eql nil
+          end
+
+          it 'Fails when limit < 1' do
+            expect { @test_entity.checks.all(limit: 0, marker: nil) }.to raise_exception
+          end
+          it 'Fails when limit > 1000' do
+            expect { @test_entity.checks.all(limit: 1001, marker: nil) }.to raise_exception
           end
         end
       end
@@ -570,6 +591,13 @@ describe 'mock_data' do
             all_output = @test_entity.alarms.all(limit: 5, marker: all_output.marker)
             all_output.should eql @test_entity.alarms[5..9]
             all_output.marker.should eql nil
+          end
+ 
+          it 'Fails when limit < 1' do
+            expect { @test_entity.alarms.all(limit: 0, marker: nil) }.to raise_exception
+          end
+          it 'Fails when limit > 1000' do
+            expect { @test_entity.alarms.all(limit: 1001, marker: nil) }.to raise_exception
           end
         end
       end

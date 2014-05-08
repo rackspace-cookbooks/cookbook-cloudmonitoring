@@ -56,6 +56,11 @@ module Opscode
               marker: nil
             }.merge(options)
 
+            # Limits per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
+            if my_options[:limit] < 1 || my_options[:limit] > 1000
+              fail "ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringParent.all: Illegal limit #{my_options[:limit]}"
+            end
+
             # Locate the index of the specified marker
             if my_options[:marker].nil?
               start_index = 0
