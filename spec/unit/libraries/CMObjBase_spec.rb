@@ -58,8 +58,8 @@ describe 'CMObjBase' do
     it 'Passes find_pagination_limit through to the API' do
       # Test via illegal value
       @test_obj = CMObjBase.new(find_pagination_limit: 0)
-      expect { @test_obj.obj_paginated_find(@parent_obj, 'find_pagination_limit test') { |o| o.label == "Test Object 0" } }.to raise_exception
-    end    
+      expect { @test_obj.obj_paginated_find(@parent_obj, 'find_pagination_limit test') { |o| o.label == 'Test Object 0' } }.to raise_exception
+    end
   end
 
   describe '#obj_lookup_by_id' do

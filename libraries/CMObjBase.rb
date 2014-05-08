@@ -31,7 +31,7 @@ module Opscode
         # Initialize: Initialize the class
         # PRE: find_pagination_limit <= 1000 per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
         # POST: None
-        def initialize(options = {find_pagination_limit: 100})
+        def initialize(options = { find_pagination_limit: 100 })
           @find_page_limit = options[:find_pagination_limit]
         end
 

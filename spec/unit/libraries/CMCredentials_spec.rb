@@ -89,42 +89,42 @@ class TestData
   # iteration_data: A hash to be looped over to test the various attributes handled
   def self.iteration_data
     return {
-      api_key: { 
+      api_key: {
         name: 'apikey',
         resource_supported: true,
         node_supported: true,
-        databag_supported: true,
+        databag_supported: true
       },
       username: {
         name: 'username',
         resource_supported: true,
         node_supported: true,
-        databag_supported: true,
+        databag_supported: true
       },
       auth_url: {
         name: 'authurl',
         resource_supported: true,
         node_supported: true,
-        databag_supported: true,
+        databag_supported: true
       },
       token: {
         name: 'token',
         resource_supported: true,
         node_supported: true,
-        databag_supported: true,
+        databag_supported: true
       },
       mocking: {
         name: 'mocking',
         resource_supported: true,
         node_supported: true,
-        databag_supported: false,
+        databag_supported: false
       },
       pagination_limit: {
         name: 'pagination_limit',
         resource_supported: false,
         node_supported: true,
-        databag_supported: false,
-      },
+        databag_supported: false
+      }
     }
   end
 
@@ -202,20 +202,20 @@ describe CMCredentials do
         test_creds = CMCredentials.new(nil, EmptyDummyResource.new)
         test_creds._get_resource_attribute(key).should eql nil
       end
-      
-        describe "#_get_node_attribute(#{key})" do
-          before :each do
-            TestData.stub_databag(true)
-            @test_node_data = TestData.node_data
-          end
-        
+
+      describe "#_get_node_attribute(#{key})" do
+        before :each do
+          TestData.stub_databag(true)
+          @test_node_data = TestData.node_data
+        end
+
         if data[:node_supported]
           it 'returns available node data' do
             test_creds = CMCredentials.new(@test_node_data, LoadedDummyResource.new)
             test_creds._get_node_attribute(key).should eql "node #{data[:name]}"
           end
         end
-     
+
         it 'returns nil for unavailable data' do
           test_creds = CMCredentials.new(nil, EmptyDummyResource.new)
           test_creds._get_node_attribute(key).should eql nil
@@ -228,20 +228,20 @@ describe CMCredentials do
         TestData.stub_databag(true)
         @test_node_data = TestData.node_data
       end
-      
+
       it 'returns nil without databag credentials' do
         test_creds = CMCredentials.new(nil, LoadedDummyResource.new)
         test_creds._get_databag_attribute(key).should eql nil
       end
-      
+
       if data[:databag_supported]
         it 'returns available databag data' do
           TestData.stub_databag(true)
           test_creds = CMCredentials.new(@test_node_data, LoadedDummyResource.new)
           test_creds._get_databag_attribute(key).should eql "databag #{data[:name]}"
         end
-        end
-      
+      end
+
       it 'returns nil for unavailable data' do
         TestData.stub_databag(false)
         test_creds = CMCredentials.new(@test_node_data, EmptyDummyResource.new)
@@ -274,7 +274,7 @@ describe CMCredentials do
           test_creds = CMCredentials.new(@test_node_data, EmptyDummyResource.new)
           test_creds.get_attribute(key).should eql "node #{data[:name]}"
         end
-        
+
         it 'favors node attributes over databag with a nil resource' do
           test_creds = CMCredentials.new(@test_node_data, nil)
           test_creds.get_attribute(key).should eql "node #{data[:name]}"

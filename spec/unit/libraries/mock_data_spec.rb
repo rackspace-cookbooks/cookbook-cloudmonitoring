@@ -592,7 +592,7 @@ describe 'mock_data' do
             all_output.should eql @test_entity.alarms[5..9]
             all_output.marker.should eql nil
           end
- 
+
           it 'Fails when limit < 1' do
             expect { @test_entity.alarms.all(limit: 0, marker: nil) }.to raise_exception
           end
