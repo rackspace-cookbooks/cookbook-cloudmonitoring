@@ -28,18 +28,24 @@ module Opscode
       #   parent_obj: Parent object to call methods against for finding/generating obj
       #   debug_name: Name string to print in informational/diagnostic/debug messages
       class CMObjBase
+        # Initialize: Initialize the class
+        # PRE: find_pagination_limit <= 1000 per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
+        # POST: None
+        def initialize(options = {find_pagination_limit: 100})
+          @find_page_limit = options[:find_pagination_limit]
+        end
+
         # paginated_find: Perform a .find call taking into account Fog pagination
         # https://github.com/fog/fog/issues/2469
         # PRE: parent_obj supports the all() method which accepts a marker option and returns an Enumerable class
-        # limit <= 1000 per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
         # POST: None
         # RETURN VALUE: Value of find method
         # Resolution for https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
-        def obj_paginated_find(parent_obj, debug_name, limit = 1000, &block)
+        def obj_paginated_find(parent_obj, debug_name, &block)
           marker = nil
           loop do
             # Obtain a block of objects starting at marker
-            search_obj = parent_obj.all(marker: marker, limit: limit)
+            search_obj = parent_obj.all(marker: marker, limit: @find_page_limit)
 
             # Search using the provided block
             ret_val = search_obj.find(&block)
