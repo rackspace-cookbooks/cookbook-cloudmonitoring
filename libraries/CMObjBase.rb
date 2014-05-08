@@ -22,7 +22,7 @@ module Opscode
   module Rackspace
     module Monitoring
       # CMObjBase: Common methods for interacting with MaaS Objects
-      # Intended to be inherited as a base class
+      # Intended to be inherited as a base class, note constructor must still be called.
       # Common arguments for methods:
       #   obj: Current target object
       #   parent_obj: Parent object to call methods against for finding/generating obj
@@ -31,8 +31,8 @@ module Opscode
         # Initialize: Initialize the class
         # PRE: find_pagination_limit <= 1000 per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
         # POST: None
-        def initialize(options = { find_pagination_limit: 100 })
-          @find_page_limit = options[:find_pagination_limit]
+        def initialize(options = {})
+          @find_page_limit = options[:find_pagination_limit].nil? ? 100 : options[:find_pagination_limit]
         end
 
         # paginated_find: Perform a .find call taking into account Fog pagination

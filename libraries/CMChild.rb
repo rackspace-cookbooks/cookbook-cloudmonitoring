@@ -39,6 +39,9 @@ module Opscode
           # Basically we're in a corner case where class variables are called for.
           # rubocop:disable ClassVars
 
+          # Initialize the base class
+          super(find_pagination_limit: credentials.get_attribute(:pagination_limit))
+
           @target_name = my_target_name
           @debug_name = my_debug_name
           @entity_chef_label = entity_chef_label

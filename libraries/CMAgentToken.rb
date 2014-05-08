@@ -27,6 +27,9 @@ module Opscode
       # CMAgentToken: Class for handling Cloud Monitoring Agent Token objects
       class CMAgentToken < Opscode::Rackspace::Monitoring::CMObjBase
         def initialize(credentials, token, label)
+          # Initialize the base class
+          super(find_pagination_limit: credentials.get_attribute(:pagination_limit))
+
           @cm = Opscode::Rackspace::Monitoring::CMApi.new(credentials).cm
           unless token.nil?
             @obj = obj_lookup_by_id(nil, @cm.agent_tokens, 'Agent_Token', token)

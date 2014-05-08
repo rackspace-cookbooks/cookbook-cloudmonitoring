@@ -38,6 +38,9 @@ module Opscode
           # Basically we're in a corner case where class variables are called for.
           # rubocop:disable ClassVars
 
+          # Initialize the base class
+          super(find_pagination_limit: credentials.get_attribute(:pagination_limit))
+
           @chef_label = my_chef_label
           @cm = Opscode::Rackspace::Monitoring::CMApi.new(credentials).cm
           @username = credentials.get_attribute(:username)
