@@ -58,7 +58,7 @@ module Opscode
 
             # Limits per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
             if my_options[:limit].nil?
-              fail "ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringParent.all: Passed nil limit"
+              fail 'ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringParent.all: Passed nil limit'
             end
 
             if my_options[:limit] < 1 || my_options[:limit] > 1000
