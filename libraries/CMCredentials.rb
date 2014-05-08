@@ -55,6 +55,11 @@ module Opscode
               resource: 'monitoring_mock_api',
               node:     '["rackspace_cloudmonitoring"]["mock"]',
               databag:  nil
+            },
+            pagination_limit: {
+              resource: nil,
+              node:     '["rackspace_cloudmonitoring"]["api"]["pagination_limit"]',
+              databag:  nil
             }
           }
         end

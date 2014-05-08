@@ -118,7 +118,13 @@ class TestData
         resource_supported: true,
         node_supported: true,
         databag_supported: false,
-      }
+      },
+      pagination_limit: {
+        name: 'pagination_limit',
+        resource_supported: false,
+        node_supported: true,
+        databag_supported: false,
+      },
     }
   end
 
