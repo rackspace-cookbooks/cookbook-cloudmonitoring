@@ -52,7 +52,7 @@ module Opscode
               databag:  'agent_token'
             },
             mocking: {
-              resource: 'monitoing_mock_api',
+              resource: 'monitoring_mock_api',
               node:     '["rackspace_cloudmonitoring"]["mock"]',
               databag:  nil
             }
