@@ -47,6 +47,13 @@ module Opscode
           # search_obj = parent_obj.all(limit: @find_page_limit)
           # return search_obj.find(&block)
 
+          #
+          # WARNING: The https://github.com/fog/fog/issues/2908 codepath is not tested by unit tests
+          # As this code is intended as a stopgap until 2908 is resolved it wasn't believed that
+          # unit tests would be worth the investement.  Removal is advised once Fog/2908 is resolved
+          # and released.
+          #
+
           marker = nil
           pagination_supported = true # https://github.com/fog/fog/issues/2908 Workaround
           loop do
