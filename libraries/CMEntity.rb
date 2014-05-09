@@ -31,7 +31,7 @@ module Opscode
         # PRE: credentials is a CMCredentials instance, my_chef_label is unique for this entity
         # POST: None
         # RETURN VALUE: None
-        def initialize(credentials, my_chef_label)
+        def initialize(credentials, my_chef_label, use_cache = true)
           # This class intentionally uses a class variable to share entity IDs across class instances
           # The class variable is guarded by use of the CMCache class which ensures IDs are utilized
           #    properly across different class instances.
@@ -49,7 +49,14 @@ module Opscode
           unless defined? @@entity_cache
             @@entity_cache = Opscode::Rackspace::Monitoring::CMCache.new(2)
           end
-          @entity_obj = @@entity_cache.get(@username, @chef_label)
+          
+          if use_cache
+            @entity_obj = @@entity_cache.get(@username, @chef_label)
+          else
+            # This is a testing codepath for high-level API tests where the cache interferes
+           @entity_obj = nil
+          end
+            
           unless @entity_obj.nil?
             Chef::Log.debug('Opscode::Rackspace::Monitoring::CMEntity: Using entity saved in local cache')
           end
