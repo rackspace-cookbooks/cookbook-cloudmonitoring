@@ -64,7 +64,7 @@ describe 'CMEntity' do
         test_obj.should be_an_instance_of Opscode::Rackspace::Monitoring::CMEntity
         # Cache already seeded by above test.
         test_obj.entity_obj.should eql @entity
-        
+
         # Test cache use in the constructor
         # Note that the cache is a class variable
         test_obj_2 = CMEntity.new(test_credentials, 'Valid Test Entity Label', false)
@@ -179,17 +179,17 @@ describe 'CMEntity' do
       (test_credentials_values['rackspace_cloudmonitoring']['api']['pagination_limit'] * 10).times do |c|
         label = "update_entity pagination test entity #{c}"
         test_obj = CMEntity.new(test_credentials, label)
-        test_obj.update_entity().should eql true
+        test_obj.update_entity.should eql true
         test_obj.entity_obj_id.should_not eql nil
 
         # Verify a subsequent update doesn't create a new entry
         test_obj2 = CMEntity.new(test_credentials, "update_entity pagination test entity #{c}", false)
         # As we bypassed the cache we need to lookup the entity
         test_obj2.lookup_entity_by_id(test_obj.entity_obj_id)
-        test_obj2.entity_obj_id.should eql test_obj.entity_obj_id        
-        test_obj2.update_entity().should eql false
+        test_obj2.entity_obj_id.should eql test_obj.entity_obj_id
+        test_obj2.update_entity.should eql false
       end
-    end      
+    end
   end
 
   describe '#delete_entity' do

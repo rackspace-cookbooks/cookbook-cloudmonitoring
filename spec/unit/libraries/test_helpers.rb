@@ -22,7 +22,7 @@ include Opscode::Rackspace::Monitoring
 
 def test_credentials_values
   return {
-    'rackspace_cloudmonitoring' => { 
+    'rackspace_cloudmonitoring' => {
       'mock' => true,
       'api'  => {
         'pagination_limit' => 5

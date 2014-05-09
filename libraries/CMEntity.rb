@@ -49,14 +49,14 @@ module Opscode
           unless defined? @@entity_cache
             @@entity_cache = Opscode::Rackspace::Monitoring::CMCache.new(2)
           end
-          
+
           if use_cache
             @entity_obj = @@entity_cache.get(@username, @chef_label)
           else
             # This is a testing codepath for high-level API tests where the cache interferes
-           @entity_obj = nil
+            @entity_obj = nil
           end
-            
+
           unless @entity_obj.nil?
             Chef::Log.debug('Opscode::Rackspace::Monitoring::CMEntity: Using entity saved in local cache')
           end
