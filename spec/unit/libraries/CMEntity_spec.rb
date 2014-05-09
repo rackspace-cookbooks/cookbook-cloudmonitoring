@@ -175,20 +175,21 @@ describe 'CMEntity' do
 
     # https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
     it 'does not create duplicate objects when the API paginates' do
-      # Create multiple pages of results
-      (test_credentials_values['rackspace_cloudmonitoring']['api']['pagination_limit'] * 10).times do |c|
-        label = "update_entity pagination test entity #{c}"
-        test_obj = CMEntity.new(test_credentials, label)
+      # Create multiple pages of results: 3xAPI_Max
+      test_obj = nil # test_obj must be initialized here or else it will only exist in loop scope
+      3000.times do |c|
+        test_obj = CMEntity.new(test_credentials, "update_entity pagination test entity #{c}")
         test_obj.update_entity.should eql true
         test_obj.entity_obj_id.should_not eql nil
-
-        # Verify a subsequent update doesn't create a new entry
-        test_obj2 = CMEntity.new(test_credentials, "update_entity pagination test entity #{c}", false)
-        # As we bypassed the cache we need to lookup the entity
-        test_obj2.lookup_entity_by_id(test_obj.entity_obj_id)
-        test_obj2.entity_obj_id.should eql test_obj.entity_obj_id
-        test_obj2.update_entity.should eql false
       end
+
+      # Verify a subsequent update doesn't create a new entry
+      # Test the last object
+      test_obj2 = CMEntity.new(test_credentials, test_obj.chef_label, false)
+      # As we bypassed the cache we need to lookup the entity
+      test_obj2.lookup_entity_by_id(test_obj.entity_obj_id)
+      test_obj2.entity_obj_id.should eql test_obj.entity_obj_id
+      test_obj2.update_entity.should eql false
     end
   end
 

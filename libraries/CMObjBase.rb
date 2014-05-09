@@ -44,7 +44,7 @@ module Opscode
         def obj_paginated_find(parent_obj, debug_name, &block)
           # Uncomment the following two lines to simulate pagination failure
           # This should trigger failures for this class, as well as CMEntity, CMCheck, CMAlarm, CMAgentToken
-          # search_obj = parent_obj.all(limit: @find_page_limit)
+          # search_obj = parent_obj.all(limit: 1000)
           # return search_obj.find(&block)
 
           #

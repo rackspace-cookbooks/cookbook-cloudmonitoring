@@ -191,21 +191,24 @@ describe 'CMCheck' do
         'type'  => 'Dummy Check'
       }
 
-      # Create multiple pages of results
-      (test_credentials_values['rackspace_cloudmonitoring']['api']['pagination_limit'] * 10).times do |c|
+      # Create multiple pages of results: 3xAPI_Max
+      test_obj = nil # test_obj must be initialized here or else it will only exist in loop scope
+      label = nil
+      3000.times do |c|
         label = "update pagination test object #{c}"
         test_obj = CMCheck.new(test_credentials, @cmentity_obj.chef_label, label)
         test_obj.update(update_data).should eql true
         test_obj.obj.id.should_not eql nil
-
-        # Verify a subsequent update doesn't create a new entry
-        test_obj2 = CMCheck.new(test_credentials, @cmentity_obj.chef_label, label, false)
-        # As we bypassed the cache we need to lookup the entity
-        test_obj2.lookup_by_id(test_obj.obj.id)
-        test_obj2.obj.should_not eql nil
-        test_obj2.obj.id.should eql test_obj.obj.id
-        test_obj2.update(update_data).should eql false
       end
+
+      # Verify a subsequent update doesn't create a new entry
+      # Test the last object
+      test_obj2 = CMCheck.new(test_credentials, @cmentity_obj.chef_label, label, false)
+      # As we bypassed the cache we need to lookup the entity
+      test_obj2.lookup_by_id(test_obj.obj.id)
+      test_obj2.obj.should_not eql nil
+      test_obj2.obj.id.should eql test_obj.obj.id
+      test_obj2.update(update_data).should eql false
     end
   end
 

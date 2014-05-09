@@ -106,20 +106,30 @@ describe 'CMAgentToken' do
 
     # https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
     it 'does not create duplicate objects when the API paginates' do
-      # Create multiple pages of results
-      (test_credentials_values['rackspace_cloudmonitoring']['api']['pagination_limit'] * 10).times do |c|
+      # Turn default pagination limit up or else this is le-slow
+      credentials = CMCredentials.new(test_credentials_values.merge('rackspace_cloudmonitoring' => {
+                                                                      'api'  => {
+                                                                        'pagination_limit' => 1000
+                                                                      }
+                                                                    }), nil)
+
+      # Create multiple pages of results: 3xAPI_Max
+      test_obj = nil # test_obj must be initialized here or else it will only exist in loop scope
+      label = nil
+      3000.times do |c|
         label = "update pagination test #{c}"
-        test_obj = CMAgentToken.new(test_credentials, nil, label)
+        test_obj = CMAgentToken.new(credentials, nil, label)
         test_obj.update.should eql true
         test_obj.obj.id.should_not eql nil
-
-        # Verify a subsequent update doesn't create a new object
-        test_obj2 = CMAgentToken.new(test_credentials, test_obj.obj.id, label)
-        # Tokens currently don't cache and lookup each initialization
-        test_obj2.obj.should_not eql nil
-        test_obj2.obj.id.should eql test_obj.obj.id
-        test_obj2.update.should eql false
       end
+
+      # Verify a subsequent update doesn't create a new object
+      # Test the last object
+      test_obj2 = CMAgentToken.new(test_credentials, test_obj.obj.id, label)
+      # Tokens currently don't cache and lookup each initialization
+      test_obj2.obj.should_not eql nil
+      test_obj2.obj.id.should eql test_obj.obj.id
+      test_obj2.update.should eql false
     end
   end
 
