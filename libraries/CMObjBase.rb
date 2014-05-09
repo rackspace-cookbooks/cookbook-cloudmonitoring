@@ -48,9 +48,16 @@ module Opscode
           # return search_obj.find(&block)
 
           marker = nil
+          pagination_supported = true # https://github.com/fog/fog/issues/2908 Workaround
           loop do
             # Obtain a block of objects starting at marker
-            search_obj = parent_obj.all(marker: marker, limit: @find_page_limit)
+            # Exception handler is a https://github.com/fog/fog/issues/2908 workaround
+            begin
+              search_obj = parent_obj.all(marker: marker, limit: @find_page_limit)
+            rescue ArgumentError
+              search_obj = parent_obj.all
+              pagination_supported = false
+            end
 
             # Search using the provided block
             ret_val = search_obj.find(&block)
@@ -58,11 +65,15 @@ module Opscode
               return ret_val
             end
 
+            # Exception handler is a https://github.com/fog/fog/issues/2908 workaround
             begin
-              # As of Fog 1.22.0 not all MaaS objects support the pagination marker
-              # https://github.com/fog/fog/issues/2908
               marker = search_obj.marker
             rescue NoMethodError
+              pagination_supported = false
+            end
+
+            # Workaround https://github.com/fog/fog/issues/2908
+            if pagination_supported == false
               # This may not be a hard fail: See if we are at the pagination limit
               if search_obj.length < @find_page_limit
                 # Below the limit: No match, no pagination
@@ -71,7 +82,7 @@ module Opscode
 
               # At the limit: Unknown if we need to paginate, assume failure to avoid nasty falure modes in subsequent code
               # Check https://github.com/fog/fog/issues/2908 if you're getting this failure: it may be solved by a Fog update.
-              raise "ERROR: Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Current Fog version does not support pagination marker (Fog #2908)"
+              fail "ERROR: Opscode::Rackspace::Monitoring::CMObjBase(#{debug_name}).obj_paginated_find: Current Fog version does not support pagination marker (Fog #2908)"
             end
 
             # No match: Return nil if there is no marker (no further results / no pagination)
