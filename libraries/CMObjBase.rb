@@ -64,7 +64,7 @@ module Opscode
               marker = search_obj.marker
             rescue NoMethodError
               # This may not be a hard fail: See if we are at the pagination limit
-              if search_obj.length < limit
+              if search_obj.length < @find_page_limit
                 # Below the limit: No match, no pagination
                 return nil
               end
