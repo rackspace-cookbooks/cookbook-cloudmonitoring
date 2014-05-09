@@ -50,6 +50,12 @@ These classes support the CM Classes above
 | CMObjBase | CMObjBase.rb | This is a common class implementing the basic actions required to interact with MaaS objects.  It is inherited by the higher level classes and serves to deduplicate code. |
 | CMChild | CMChild.rb | This is a common class for CMAlarm and CMCheck objects, which are incredibly similar.  It implements the shared behavior and entity loading for CMCheck and CMAlarm objects, and is inherited by both. |
 
+#### Pagination Warning
+The MaaS APIs paginatate and this is passed through Fog.
+Requests to the API may not return the entire dataset.
+Opscode::Rackspace::Monitoring::CMObjBase.paginated_find resolves this for find() calls.
+Other API gets must handle pagination otherwise undefined behavior could result.
+
 ### Recipe support libraries
 
 The following libraries implement methods to support the specified recipes:
