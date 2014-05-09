@@ -27,8 +27,8 @@ module Opscode
       class CMCheck < Opscode::Rackspace::Monitoring::CMChild
         # Note that this initializer DOES NOT LOAD ANY CHECKS!
         # User must call a lookup function before calling update
-        def initialize(credentials, entity_label, my_label)
-          super(credentials, entity_label, 'checks', 'Check', my_label)
+        def initialize(credentials, entity_label, my_label, use_cache = true)
+          super(credentials, entity_label, 'checks', 'Check', my_label, use_cache)
         end
       end
     end # END MODULE
