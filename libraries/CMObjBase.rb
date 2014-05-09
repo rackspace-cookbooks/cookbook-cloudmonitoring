@@ -57,6 +57,7 @@ module Opscode
             rescue ArgumentError
               search_obj = parent_obj.all
               pagination_supported = false
+              @find_page_limit = 100 # https://github.com/fog/fog/issues/2908 Workaround, 100 is the API default (as of 5/1/14)
             end
 
             # Search using the provided block
