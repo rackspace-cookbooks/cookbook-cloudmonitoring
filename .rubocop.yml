@@ -23,3 +23,7 @@ IfUnlessModifier:
 # Raise allowed CyclomaticComplexity to 10.
 CyclomaticComplexity:
   Max: 10
+
+# Raise allowed parameter count to 8, 5 is a bit low.
+ParameterLists:
+  Max: 8

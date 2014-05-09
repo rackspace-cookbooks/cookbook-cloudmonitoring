@@ -32,7 +32,7 @@ module Opscode
         # PRE: credentials is a CMCredentials instance, my_label is unique for this entity
         # POST: None
         # RETURN VALUE: None
-        def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_label)
+        def initialize(credentials, entity_chef_label, my_target_name, my_debug_name, my_label, use_cache = true)
           # This class intentionally uses a class variable to share object IDs across class instances
           # The class variable is guarded by use of the CMCache class which ensures IDs are utilized
           #    properly across different class instances.
@@ -56,7 +56,14 @@ module Opscode
           unless defined? @@obj_cache
             @@obj_cache = Opscode::Rackspace::Monitoring::CMCache.new(4)
           end
-          @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @label)
+
+          if use_cache
+            @obj = @@obj_cache.get(@username, @entity_chef_label, @target_name, @label)
+          else
+            # This is a testing codepath for high-level API tests where the cache interferes
+            @obj = nil
+          end
+
           # rubocop:enable ClassVars
         end
 
