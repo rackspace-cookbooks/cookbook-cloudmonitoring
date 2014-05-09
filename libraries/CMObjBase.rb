@@ -42,6 +42,11 @@ module Opscode
         # RETURN VALUE: Value of find method
         # Resolution for https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
         def obj_paginated_find(parent_obj, debug_name, &block)
+          # Uncomment the following two lines to simulate pagination failure
+          # This should trigger failures for this class, as well as CMEntity, CMCheck, CMAlarm, CMAgentToken
+          # search_obj = parent_obj.all(limit: @find_page_limit)
+          # return search_obj.find(&block)
+
           marker = nil
           loop do
             # Obtain a block of objects starting at marker
