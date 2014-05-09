@@ -18,6 +18,7 @@
 require 'spec_helper'
 
 require_relative '../../../libraries/CMAlarm.rb'
+require_relative '../../../libraries/mock_data.rb'
 require_relative 'test_helpers.rb'
 
 include Opscode::Rackspace::Monitoring
@@ -227,7 +228,7 @@ describe 'CMAlarm' do
 
     it 'looks up example alarms' do
       test_obj = CMAlarm.new(@credentials, @cmentity_obj.chef_label, 'Credentials Test Alarm Label')
-      test_obj.example_alarm('remote.http_body_match_1',  'string' => 'Some search thing').should be_an_instance_of MockMonitoringAlarmExample
+      test_obj.example_alarm('remote.http_body_match_1',  'string' => 'Some search thing').should be_an_instance_of MockData::MockMonitoringAlarmExample
     end
   end
 end
