@@ -103,6 +103,24 @@ describe 'CMAgentToken' do
       agent_token_obj.update('label' => 'Update Test 2').should eql false
       agent_token_obj.obj.compare?(orig_obj).should eql true
     end
+
+    # https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
+    it 'does not create duplicate objects when the API paginates' do
+      # Create multiple pages of results
+      (test_credentials_values['rackspace_cloudmonitoring']['api']['pagination_limit'] * 10).times do |c|
+        label = "update pagination test #{c}"
+        test_obj = CMAgentToken.new(test_credentials, nil, label)
+        test_obj.update.should eql true
+        test_obj.obj.id.should_not eql nil
+
+        # Verify a subsequent update doesn't create a new object
+        test_obj2 = CMAgentToken.new(test_credentials, test_obj.obj.id, label)
+        # Tokens currently don't cache and lookup each initialization
+        test_obj2.obj.should_not eql nil
+        test_obj2.obj.id.should eql test_obj.obj.id
+        test_obj2.update.should eql false
+      end
+    end
   end
 
   describe '#delete' do
