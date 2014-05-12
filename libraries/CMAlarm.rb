@@ -28,8 +28,8 @@ module Opscode
       class CMAlarm < Opscode::Rackspace::Monitoring::CMChild
         # Note that this initializer DOES NOT LOAD ANY ALARMS!
         # User must call a lookup function before calling update
-        def initialize(credentials, entity_label, my_label)
-          super(credentials, entity_label, 'alarms', 'Alarm', my_label)
+        def initialize(credentials, entity_label, my_label, use_cache = true)
+          super(credentials, entity_label, 'alarms', 'Alarm', my_label, use_cache)
           @credentials = credentials
         end
 

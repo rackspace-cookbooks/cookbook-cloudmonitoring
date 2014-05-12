@@ -20,14 +20,24 @@ require_relative '../../../libraries/CMCredentials.rb'
 require_relative '../../../libraries/CMEntity.rb'
 include Opscode::Rackspace::Monitoring
 
+def test_credentials_values
+  return {
+    'rackspace_cloudmonitoring' => {
+      'mock' => true,
+      'api'  => {
+        'pagination_limit' => 5
+      }
+    },
+    'rackspace' => { 'cloud_credentials' => {
+        'username' => 'Mr. Mockson',
+        'api_key'  => 'Woodruff'
+      }
+    }
+  }
+end
+
 def test_credentials
-  return CMCredentials.new({
-                             'rackspace_cloudmonitoring' => { 'mock' => true },
-                             'rackspace' => { 'cloud_credentials' => {
-                                 'username' => 'Mr. Mockson',
-                                 'api_key'  => 'Woodruff'
-                               } }
-                           }, nil)
+  return CMCredentials.new(test_credentials_values, nil)
 end
 
 def generate_token(credentials, label)

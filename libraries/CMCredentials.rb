@@ -22,7 +22,11 @@ module Opscode
   module Rackspace
     module Monitoring
       # CMCredentials: Class for handling the various credential sources
-      class CMCredentials
+      #
+      # As of 5/8/14 this class is two lines too long, mostly from the attribute map.
+      # While cutting 3 lines is doable, it would just pop back when a new attribute is defined
+      #  and would not improve overall code quality.  Disable the ClassLength cop here.
+      class CMCredentials # rubocop:disable ClassLength
         def initialize(my_node, my_resource)
           @node = my_node
           @resource = my_resource
@@ -52,8 +56,13 @@ module Opscode
               databag:  'agent_token'
             },
             mocking: {
-              resource: 'monitoing_mock_api',
+              resource: 'monitoring_mock_api',
               node:     '["rackspace_cloudmonitoring"]["mock"]',
+              databag:  nil
+            },
+            pagination_limit: {
+              resource: nil,
+              node:     '["rackspace_cloudmonitoring"]["api"]["pagination_limit"]',
               databag:  nil
             }
           }

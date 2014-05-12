@@ -29,7 +29,7 @@
 default['rackspace_cloudmonitoring']['monitors'] = {}
 
 # Versions of dependency packages
-default['rackspace_cloudmonitoring']['dependency_versions']['fog_version'] = '1.19.0'
+default['rackspace_cloudmonitoring']['dependency_versions']['fog_version'] = '1.22.0'
 
 # Credential Values
 # default['rackspace_cloudmonitoring']['auth']['url'] = nil
@@ -78,3 +78,7 @@ default['rackspace_cloudmonitoring']['templates_cookbook']['rackspace-monitoring
 
 # Testing option, not intended to be set in actual use
 default['rackspace_cloudmonitoring']['mock'] = false
+
+# Low level API tunable.  Sets the object count requested per API request.
+# Exposed as a workaround until Fog issue 2908 is resolved.  Recommend removal once 2908 is resolved.
+default['rackspace_cloudmonitoring']['api']['pagination_limit'] = 1000

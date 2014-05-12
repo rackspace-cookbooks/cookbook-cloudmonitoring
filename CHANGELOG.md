@@ -1,3 +1,11 @@
+v3.1.2
+------
+* Add support for Fog/API pagination.  Resolves >100 object bug (#31)
+
+v3.1.0
+------
+* Add alarm disable feature
+
 v3.0.0
 ------
 * Refactor monitors.rb alarm generation which is not completely backwards compatable.

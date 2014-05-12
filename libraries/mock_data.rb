@@ -42,8 +42,52 @@ module Opscode
 
         # MockMonitoringParent: Emulate the parent Fog object, inhereiting Array
         class MockMonitoringParent < Array
+          attr_accessor :marker
+
           def initialize(my_child_obj_class)
             @child_obj_class = my_child_obj_class
+          end
+
+          # Add the all method, used by Fog pagination
+          def all(options = {})
+            # Create my_options with default
+            my_options = {
+              limit: 100,
+              marker: nil
+            }.merge(options)
+
+            # Limits per http://docs.rackspace.com/cm/api/v1.0/cm-devguide/content/api-paginated-collections.html
+            if my_options[:limit].nil?
+              fail 'ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringParent.all: Passed nil limit'
+            end
+
+            if my_options[:limit] < 1 || my_options[:limit] > 1000
+              fail "ERROR: Opscode::Rackspace::Monitoring::MockData::MockMonitoringParent.all: Illegal limit #{my_options[:limit]}"
+            end
+
+            # Locate the index of the specified marker
+            if my_options[:marker].nil?
+              start_index = 0
+            else
+              target = find { |t| t.id == my_options[:marker] }
+              if target.nil?
+                start_index = 0
+              else
+                start_index = index(target)
+              end
+            end
+
+            # Emulate Fog pagination
+            ret_val = slice(start_index, my_options[:limit])
+
+            # Set the marker for pagination
+            if (start_index + my_options[:limit]) < length
+              ret_val.marker = self[(start_index + my_options[:limit])].id
+            else
+              ret_val.marker = nil
+            end
+
+            return ret_val
           end
 
           # Overload new
@@ -52,9 +96,9 @@ module Opscode
           end
         end
 
-        # MockMonitoringParent: Emulate the parent of the Fog entity child objects, inhereiting Array
+        # MockMonitoringChildObjParent: Emulate the parent of the Fog entity child objects, inhereiting Array
         # This is the same as MockMonitoringParent, except it passes the entity object to the child constructor
-        class MockMonitoringEntityParent < Array
+        class MockMonitoringChildObjParent < MockMonitoringParent
           def initialize(my_child_obj_class, my_entity)
             @child_obj_class = my_child_obj_class
             @entity = my_entity
@@ -73,7 +117,13 @@ module Opscode
           end
 
           def save
-            @parent.push(self)
+            # Overwrite objects with matching IDs
+            existing_obj = @parent.find { |o| o.id == id }
+            if existing_obj.nil?
+              @parent.push(self)
+            else
+              @parent[@parent.index(existing_obj)] = self
+            end
           end
 
           def destroy
@@ -111,8 +161,8 @@ module Opscode
               instance_variable_set("@#{k}", v)
             end
 
-            @alarms = MockMonitoringEntityParent.new(MockMonitoringAlarm, self)
-            @checks = MockMonitoringEntityParent.new(MockMonitoringCheck, self)
+            @alarms = MockMonitoringChildObjParent.new(MockMonitoringAlarm, self)
+            @checks = MockMonitoringChildObjParent.new(MockMonitoringCheck, self)
           end
 
           def compare?(other_obj)

@@ -52,7 +52,7 @@ describe 'CMCheck' do
         test_obj.obj.should eql nil
       end
 
-      it 'loads cached tokens' do
+      it 'loads cached checks' do
         # This test is jumping ahead a bit in that it needs to call the lookup method to seed the cache. Meh.
         # Seed the cache
         test_obj = CMCheck.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Check Label')
@@ -65,6 +65,19 @@ describe 'CMCheck' do
         # Note that the cache is a class variable
         test_obj_2 = CMCheck.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Check Label')
         test_obj_2.obj.should eql @check
+      end
+
+      it 'Does not load cached checks when use_cache is false' do
+        # This test is jumping ahead a bit in that it needs to call the lookup method to seed the cache. Meh.
+        # Seed the cache
+        test_obj = CMCheck.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Check Label')
+        # Cache already seeded via the previous tests
+        test_obj.obj.should eql @check
+
+        # Test cache use in the constructor
+        # Note that the cache is a class variable
+        test_obj_2 = CMCheck.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Check Label', false)
+        test_obj_2.obj.should eql nil
       end
     end
   end
@@ -170,6 +183,32 @@ describe 'CMCheck' do
                       'type'  => 'Dummy Check'
                       ).should eql false
       test_obj.obj.compare?(orig_obj).should eql true
+    end
+
+    # https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
+    it 'does not create duplicate objects when the API paginates' do
+      update_data = {
+        'type'  => 'Dummy Check'
+      }
+
+      # Create multiple pages of results: 3xAPI_Max
+      test_obj = nil # test_obj must be initialized here or else it will only exist in loop scope
+      label = nil
+      3000.times do |c|
+        label = "update pagination test object #{c}"
+        test_obj = CMCheck.new(test_credentials, @cmentity_obj.chef_label, label)
+        test_obj.update(update_data).should eql true
+        test_obj.obj.id.should_not eql nil
+      end
+
+      # Verify a subsequent update doesn't create a new entry
+      # Test the last object
+      test_obj2 = CMCheck.new(test_credentials, @cmentity_obj.chef_label, label, false)
+      # As we bypassed the cache we need to lookup the entity
+      test_obj2.lookup_by_id(test_obj.obj.id)
+      test_obj2.obj.should_not eql nil
+      test_obj2.obj.id.should eql test_obj.obj.id
+      test_obj2.update(update_data).should eql false
     end
   end
 

@@ -18,6 +18,7 @@
 require 'spec_helper'
 
 require_relative '../../../libraries/CMAlarm.rb'
+require_relative '../../../libraries/mock_data.rb'
 require_relative 'test_helpers.rb'
 
 include Opscode::Rackspace::Monitoring
@@ -52,7 +53,7 @@ describe 'CMAlarm' do
         test_obj.obj.should eql nil
       end
 
-      it 'loads cached tokens' do
+      it 'loads cached alarms' do
         # This test is jumping ahead a bit in that it needs to call the lookup method to seed the cache. Meh.
         # Seed the cache
         test_obj = CMAlarm.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Alarm Label')
@@ -65,6 +66,20 @@ describe 'CMAlarm' do
         # Note that the cache is a class variable
         test_obj_2 = CMAlarm.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Alarm Label')
         test_obj_2.obj.should eql @alarm
+      end
+
+      it 'Does not load cached alarms when use_cache is false' do
+        # This test is jumping ahead a bit in that it needs to call the lookup method to seed the cache. Meh.
+        # Seed the cache
+        test_obj = CMAlarm.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Alarm Label')
+        test_obj.should be_an_instance_of Opscode::Rackspace::Monitoring::CMAlarm
+        # Cache already seeded via the previous tests
+        test_obj.obj.should eql @alarm
+
+        # Test cache use in the constructor
+        # Note that the cache is a class variable
+        test_obj_2 = CMAlarm.new(test_credentials, @cmentity_obj.chef_label, 'Good Test Alarm Label', false)
+        test_obj_2.obj.should eql nil
       end
     end
   end
@@ -174,6 +189,33 @@ describe 'CMAlarm' do
                       ).should eql false
       test_obj.obj.compare?(orig_obj).should eql true
     end
+
+        # https://github.com/rackspace-cookbooks/rackspace_cloudmonitoring/issues/31
+    it 'does not create duplicate objects when the API paginates' do
+      update_data = {
+        'check'                => 'Test Check ID',
+        'notification_plan_id' => 'Test Notification Plan'
+      }
+
+      # Create multiple pages of results: 3xAPI_Max
+      test_obj = nil # test_obj must be initialized here or else it will only exist in loop scope
+      label = nil
+      3000.times do |c|
+        label = "update pagination test object #{c}"
+        test_obj = CMAlarm.new(test_credentials, @cmentity_obj.chef_label, label)
+        test_obj.update(update_data).should eql true
+        test_obj.obj.id.should_not eql nil
+      end
+
+      # Verify a subsequent update doesn't create a new entry
+      # Test the last object
+      test_obj2 = CMAlarm.new(test_credentials, @cmentity_obj.chef_label, label, false)
+      # As we bypassed the cache we need to lookup the entity
+      test_obj2.lookup_by_id(test_obj.obj.id)
+      test_obj2.obj.should_not eql nil
+      test_obj2.obj.id.should eql test_obj.obj.id
+      test_obj2.update(update_data).should eql false
+    end
   end
 
   describe '#delete' do
@@ -227,7 +269,7 @@ describe 'CMAlarm' do
 
     it 'looks up example alarms' do
       test_obj = CMAlarm.new(@credentials, @cmentity_obj.chef_label, 'Credentials Test Alarm Label')
-      test_obj.example_alarm('remote.http_body_match_1',  'string' => 'Some search thing').should be_an_instance_of MockMonitoringAlarmExample
+      test_obj.example_alarm('remote.http_body_match_1',  'string' => 'Some search thing').should be_an_instance_of MockData::MockMonitoringAlarmExample
     end
   end
 end
