@@ -22,6 +22,6 @@ def rackspace_cloudmonitoring_test_platforms
     ubuntu: %w(12.04),
     debian: %w(7.2), # Requires Fauxhai chicanery as https://github.com/customink/fauxhai/pull/60
                      #   hasn't made its way to RubyGems yet.
-    centos: %w(6.4)
+    centos: %w(6.4 6.5)
   }
 end
