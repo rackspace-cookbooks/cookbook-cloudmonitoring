@@ -9,9 +9,9 @@ driver:
   ssh_key: <%= ENV['ssh_key'] %>
 
 platforms:
-- name: centos-6.4
+- name: centos-6.5
   driver_config:
-    image_id: 'f70ed7c7-b42e-4d77-83d8-40fa29825b85'
+    image_id: '042395fc-728c-4763-86f9-9b0cacb00701'
 - name: ubuntu-12.04
   driver_config:
     image_id: '80fbcb55-b206-41f9-9bc2-2dd7aac6c061'

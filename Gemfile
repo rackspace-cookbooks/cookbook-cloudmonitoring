@@ -19,6 +19,6 @@ end
 group :integration do
   gem 'test-kitchen', '~> 1.1.0'
   gem 'kitchen-vagrant', '~> 0.14.0'
-  gem 'kitchen-rackspace', '>= 0.3.0'
+  gem 'kitchen-rackspace', '~> 0.5.0'
   gem 'serverspec', '~> 0.15.0'
 end
