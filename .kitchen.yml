@@ -10,8 +10,6 @@ platforms:
   driver_config:
     box: opscode-ubuntu-12.04
     box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-12.04_chef-provisionerless.box
-  run_list:
-  - recipe[rackspace_apt]
 - name: centos-6.5
   driver_config:
     box: opscode-centos-6.5
@@ -20,8 +18,6 @@ platforms:
   driver_config:
     box: opscode-debian-7.2.0
     box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-7.2.0_chef-provisionerless.box
-  run_list:
-  - recipe[rackspace_apt]
 
 suites:
   - name: agent_explicit_args

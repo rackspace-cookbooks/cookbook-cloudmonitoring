@@ -19,6 +19,19 @@
 #
 
 # Required to install fog
+
+if platform_family?('debian')
+	node.override['apt']['compile_time_update'] = true
+	include_recipe 'apt'
+end
+
+node.set['build-essential']['compile_time'] = true
+include_recipe 'build-essential'
+
+chef_gem 'nokogiri' do
+  version '1.6.2.1'
+end
+
 include_recipe 'xml::ruby'
 
 chef_gem 'fog' do

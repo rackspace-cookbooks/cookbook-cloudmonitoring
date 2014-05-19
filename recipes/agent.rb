@@ -24,7 +24,7 @@
 include_recipe 'rackspace_cloudmonitoring::default'
 
 if platform_family?('debian')
-  rackspace_apt_repository 'cloud-monitoring' do
+  apt_repository 'cloud-monitoring' do
 
     if node['platform'] == 'ubuntu'
       uri "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-#{node['platform_version']}-#{node['kernel']['machine']}"
@@ -53,13 +53,9 @@ elsif platform_family?('rhel')
     signing_key = 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc'
   end
 
-  rackspace_yum_key 'Rackspace-Monitoring' do
-    url signing_key
-    action :add
-  end
-
-  rackspace_yum_repository 'cloud-monitoring' do
+  yum_repository 'cloud-monitoring' do
     description 'Rackspace Monitoring'
+    gpgkey signing_key
     url "http://stable.packages.cloudmonitoring.rackspace.com/#{node['platform']}-#{release_version}-#{node['kernel']['machine']}"
     action :add
   end
