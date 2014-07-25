@@ -32,11 +32,6 @@ when "redhat","centos","fedora", "amazon","scientific"
     signingKey = 'https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc'
   end
 
-#  yum_key "Rackspace-Monitoring" do
-#    url signingKey
-#    action :add
-#  end
-
   yum_repository "cloud-monitoring" do
     description "Rackspace Monitoring"
     url "http://stable.packages.cloudmonitoring.rackspace.com/#{node['platform']}-#{releaseVersion}-#{node['kernel']['machine']}"
