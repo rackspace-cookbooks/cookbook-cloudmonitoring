@@ -80,7 +80,7 @@ if node['rackspace_cloudmonitoring']['config']['agent']['token'].nil? || node['r
 
   e.run_action(:create)
 
-  my_token_obj = CMAgentToken.new(credentials, node['rackspace_cloudmonitoring']['config']['agent']['token'], node['hostname'])
+  my_token_obj = CMAgentToken.new(credentials, node['rackspace_cloudmonitoring']['config']['agent']['token'], "#{node['hostname']}-#{node['IP']}")
   my_token = my_token_obj.obj
 
   unless my_token.nil?
