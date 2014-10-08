@@ -34,7 +34,14 @@ end
 #Make sure setuptools are latest version
 python_pip "setuptools" do
   action :upgrade
-  retries 10
+  retries 2
+  retry_delay 2
+  version "6.0.2"
+end
+
+python_pip "setuptools" do
+  action :upgrade
+  retries 2
   retry_delay 2
   version "6.0.2"
 end
