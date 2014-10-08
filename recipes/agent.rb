@@ -82,11 +82,12 @@ if node['cloud_monitoring']['agent']['token'].nil?
     possible = Hash[*possible.flatten(1)]
 
     if !possible.empty? then
-      possible.values.first
-      token = possible[label].token
+      possible.values.first 
     else
       nil
     end
+    
+    token = possible[label].token
 
     if Chef::Config[:solo]
       Chef::Log.warn("Under chef-solo, you must persist the agent token to " +
