@@ -34,6 +34,9 @@ end
 #Make sure setuptools are latest version
 python_pip "setuptools" do
   action :upgrade
+  retries 10
+  retry_delay 2
+  version "6.0.2"
 end
 
 #Install the raxmon-cli
