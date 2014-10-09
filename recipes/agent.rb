@@ -89,7 +89,11 @@ if node['cloud_monitoring']['agent']['token'].nil?
 	nil
       end
       
-      token = possible[label].token
+      begin
+	token = possible[label].token
+      rescue
+	Chef::Log.warn("Failed to get a token for monitoring agent, trying again...")
+      end
     end
 
     if Chef::Config[:solo]
