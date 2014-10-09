@@ -69,8 +69,6 @@ if node['cloud_monitoring']['agent']['token'].nil?
       action :nothing
     end
 
-    token = nil
-    while token == nil do
       create_token.run_action(:create)
 
       #Pull just the token itself into a variable named token
@@ -92,9 +90,8 @@ if node['cloud_monitoring']['agent']['token'].nil?
       begin
 	token = possible[label].token
       rescue
-	Chef::Log.warn("Failed to get a token for monitoring agent, trying again...")
+	Chef::Log.warn("Failed to get a token for monitoring agent...")
       end
-    end
 
     if Chef::Config[:solo]
       Chef::Log.warn("Under chef-solo, you must persist the agent token to " +
