@@ -87,33 +87,17 @@ if node['cloud_monitoring']['agent']['token'].nil?
 	nil
       end
       
-      head = {'Content-Type' => 'application/json','Accept' => 'application/json'}
-      js = "{\"auth\":{\"RAX-KSKEY:apiKeyCredentials\":{\"username\": \"#{node['cloud_monitoring']['rackspace_username']}\", \"apiKey\":\"#{node['cloud_monitoring']['rackspace_api_key']}\"}}}"
-
-      response = HTTParty.post("https://identity.api.rackspacecloud.com/v2.0/tokens",
+      begin
+	token = possible[label].token
+      rescue
+	Chef::Log.warn("Failed to get a token for monitoring agent, Trying alternative approach...")
+	head = {'Content-Type' => 'application/json','Accept' => 'application/json'}
+	js = "{\"auth\":{\"RAX-KSKEY:apiKeyCredentials\":{\"username\": \"#{node['cloud_monitoring']['rackspace_username']}\", \"apiKey\":\"#{node['cloud_monitoring']['rackspace_api_key']}\"}}}"
+	response = HTTParty.post("https://identity.api.rackspacecloud.com/v2.0/tokens",
                                :body => js ,
                                :headers => head)
-      
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts response
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      obj = JSON.parse(response.body)
-      token = obj['access']['token']['id']
-      puts token
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      
-      begin
-	#token = possible[label].token
-      rescue
-	Chef::Log.warn("Failed to get a token for monitoring agent...")
+	obj = JSON.parse(response.body)
+	token = obj['access']['token']['id']
       end
 
     if Chef::Config[:solo]
@@ -138,11 +122,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
     config_template.run_action(:create)
 
   end
-
 end
-
-
-
 
 package "rackspace-monitoring-agent" do
   if node['cloud_monitoring']['agent']['version'] == 'latest'
