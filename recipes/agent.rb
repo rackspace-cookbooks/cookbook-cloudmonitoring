@@ -103,7 +103,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
       puts response
       puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      JSON.parse(response.body)
+      obj = JSON.parse(response.body)
       token = obj['access']['token']['id']
       puts token
       puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
