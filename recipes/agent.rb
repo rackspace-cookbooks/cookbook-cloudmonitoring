@@ -97,7 +97,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
                                :body => js ,
                                :headers => head)
 	obj = JSON.parse(response.body)
-	token = obj['access']['token']['id']
+	token = "#{obj['access']['token']['id']}.883327"
       end
 
     if Chef::Config[:solo]

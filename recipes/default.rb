@@ -24,6 +24,7 @@ chef_gem "fog" do
 end
 
 chef_gem "httparty" do
+  version ">=0.13.1"
   action :install
 end
 
