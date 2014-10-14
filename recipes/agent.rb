@@ -88,7 +88,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
       end
       
       head = {'Content-Type' => 'application/json','Accept' => 'application/json'}
-      js = '{"auth":{"RAX-KSKEY:apiKeyCredentials":{"username": "#{node['cloud_monitoring']['rackspace_username']}", "apiKey":"#{node['cloud_monitoring']['rackspace_api_key']}"}}}'
+      js = "{\"auth\":{\"RAX-KSKEY:apiKeyCredentials\":{\"username\": \"#{node['cloud_monitoring']['rackspace_username']}\", \"apiKey\":\"#{node['cloud_monitoring']['rackspace_api_key']}\"}}}"
 
       response = HTTParty.post("https://identity.api.rackspacecloud.com/v2.0/tokens",
                                :body => js ,
