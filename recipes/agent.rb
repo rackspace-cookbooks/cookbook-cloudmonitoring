@@ -90,6 +90,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
       begin
 	token = possible[label].token
       rescue
+	#Honeybadger since this recipe sometimes fails with no token.
 	Chef::Log.warn("Failed to get a token for monitoring agent, Trying alternative approach...")
 	head = {'Content-Type' => 'application/json','Accept' => 'application/json'}
 	js = "{\"auth\":{\"RAX-KSKEY:apiKeyCredentials\":{\"username\": \"#{node['cloud_monitoring']['rackspace_username']}\", \"apiKey\":\"#{node['cloud_monitoring']['rackspace_api_key']}\"}}}"
