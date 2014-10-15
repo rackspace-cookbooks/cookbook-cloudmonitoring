@@ -87,9 +87,9 @@ if node['cloud_monitoring']['agent']['token'].nil?
 	nil
       end
       
-      begin
-	token = possible[label].token
-      rescue
+      #begin
+#	token = possible[label].token
+#      rescue
 	#Honeybadger since this recipe sometimes fails with no token.
 	Chef::Log.warn("Failed to get a token for monitoring agent, Trying alternative approach...")
 	head = {'Content-Type' => 'application/json','Accept' => 'application/json'}
@@ -98,8 +98,16 @@ if node['cloud_monitoring']['agent']['token'].nil?
                                :body => js ,
                                :headers => head)
 	obj = JSON.parse(response.body)
-	token = "#{obj['access']['token']['id']}.883327"
-      end
+	rstoken = "#{obj['access']['token']['id']}"
+	tenant = "#{obj['access']['token']['tenant']['id']}"
+	
+	head = {'Content-Type' => 'application/json','Accept' => 'application/json','X-Auth-Token' => rstoken}
+	response = HTTParty.get("https://monitoring.api.rackspacecloud.com/v1.0/#{tenant}/agent_tokens",
+                               :headers => head)
+	obj = JSON.parse(response.body)
+	token = "#{obj['values']['token']}"
+	
+#      end
 
     if Chef::Config[:solo]
       Chef::Log.warn("Under chef-solo, you must persist the agent token to " +
