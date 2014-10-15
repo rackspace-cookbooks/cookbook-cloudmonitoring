@@ -87,11 +87,11 @@ if node['cloud_monitoring']['agent']['token'].nil?
 	nil
       end
       
-      #begin
-#	token = possible[label].token
-#      rescue
-	#Honeybadger since this recipe sometimes fails with no token.
-	Chef::Log.warn("Failed to get a token for monitoring agent, Trying alternative approach...")
+      begin
+	token = possible[label].token
+      rescue
+	#Honeybadger since this recipe sometimes fails with no token we will burrow one from another agent.
+	Chef::Log.warn("Failed to get a token for monitoring agent, Using a token from another agent...")
 	head = {'Content-Type' => 'application/json','Accept' => 'application/json'}
 	js = "{\"auth\":{\"RAX-KSKEY:apiKeyCredentials\":{\"username\": \"#{node['cloud_monitoring']['rackspace_username']}\", \"apiKey\":\"#{node['cloud_monitoring']['rackspace_api_key']}\"}}}"
 	response = HTTParty.post("https://identity.api.rackspacecloud.com/v2.0/tokens",
@@ -110,7 +110,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
 	obj = JSON.parse(response.body)
 	token = "#{obj['values'][0]['token']}"
 	
-#      end
+      end
 
     if Chef::Config[:solo]
       Chef::Log.warn("Under chef-solo, you must persist the agent token to " +
