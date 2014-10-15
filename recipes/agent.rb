@@ -104,6 +104,9 @@ if node['cloud_monitoring']['agent']['token'].nil?
 	head = {'Content-Type' => 'application/json','Accept' => 'application/json','X-Auth-Token' => rstoken}
 	response = HTTParty.get("https://monitoring.api.rackspacecloud.com/v1.0/#{tenant}/agent_tokens",
                                :headers => head)
+	
+	puts response.body
+	
 	obj = JSON.parse(response.body)
 	token = "#{obj['values']['token']}"
 	
