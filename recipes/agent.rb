@@ -108,7 +108,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
 	puts response.body
 	
 	obj = JSON.parse(response.body)
-	token = "#{obj['values']['token']}"
+	token = "#{obj['values'][0]['token']}"
 	
 #      end
 
