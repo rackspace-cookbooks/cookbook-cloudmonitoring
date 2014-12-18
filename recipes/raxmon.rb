@@ -31,6 +31,21 @@ template "/root/.raxrc" do
   )
 end
 
+#Make sure setuptools are latest version
+python_pip "setuptools" do
+  action :upgrade
+  retries 2
+  retry_delay 2
+  version "6.0.2"
+end
+
+python_pip "setuptools" do
+  action :upgrade
+  retries 2
+  retry_delay 2
+  version "6.0.2"
+end
+
 #Install the raxmon-cli
 python_pip "rackspace-monitoring-cli" do
   action :upgrade

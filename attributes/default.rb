@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 default['cloud_monitoring']['rackspace_monitoring_version'] = '0.2.18'
-default['cloud_monitoring']['fog_version'] = '1.16.0'
+default['cloud_monitoring']['fog_version'] = '1.18.0'
 default['cloud_monitoring']['checks'] = {}
 default['cloud_monitoring']['alarms'] = {}
 default['cloud_monitoring']['rackspace_username'] = 'your_rackspace_username'
