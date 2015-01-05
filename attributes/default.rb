@@ -24,12 +24,14 @@ default['cloud_monitoring']['rackspace_username'] = 'your_rackspace_username'
 default['cloud_monitoring']['rackspace_api_key'] = 'your_rackspace_api_key'
 default['cloud_monitoring']['rackspace_auth_region'] = 'us'
 default['cloud_monitoring']['abort_on_failure'] = true
+default['cloud_monitoring']['in_rackspace_cloud'] = nil
 
 default['cloud_monitoring']['agent'] = {}
 default['cloud_monitoring']['agent']['id'] = nil
 default['cloud_monitoring']['agent']['channel'] = nil
 default['cloud_monitoring']['agent']['version'] = 'latest'
 default['cloud_monitoring']['agent']['token'] = nil
+default['cloud_monitoring']['agent']['config_file_action'] = :create_if_missing
 default['cloud_monitoring']['monitoring_endpoints'] = [] # This should be a list of strings like 'x.x.x.x:port'
 
 default['cloud_monitoring']['plugin_path'] = '/usr/lib/rackspace-monitoring-agent/plugins'
