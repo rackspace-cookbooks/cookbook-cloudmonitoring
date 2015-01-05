@@ -17,6 +17,9 @@ module Opscode
         username = new_resource.rackspace_username || creds['username']
         auth_url = new_resource.rackspace_auth_url || creds['auth_url']
         Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: creating new Fog connection") if(!defined?(@@cm) || @@cm.nil?)
+
+        require 'fog'
+
         @@cm ||= Fog::Rackspace::Monitoring.new(
           :rackspace_api_key => apikey,
           :rackspace_username => username,
