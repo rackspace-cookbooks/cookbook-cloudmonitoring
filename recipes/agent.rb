@@ -30,29 +30,7 @@ if node['cloud_monitoring']['agent']['token'].nil?
 
     create_token.run_action(:create)
 
-    #Pull just the token itself into a variable named token
-    label = "#{node.hostname}"
-    monitoring = Fog::Rackspace::Monitoring.new(
-      :rackspace_api_key => node['cloud_monitoring']['rackspace_api_key'],
-      :rackspace_username => node['cloud_monitoring']['rackspace_username']
-    )
-    tokens = Hash[monitoring.agent_tokens.all.map  {|x| [x.label, x]}]
-    possible = tokens.select {|key, value| value.label === label}
-    possible = Hash[*possible.flatten(1)]
-
-    if !possible.empty? then
-      possible.values.first
-    else
-      nil
-    end
-
-    token = possible[label].token
-
-    if Chef::Config[:solo]
-      Chef::Log.warn("Under chef-solo, you must persist the agent token to " +
-                     "node['cloud_monitoring']['agent']['token'] or you will " +
-                     "regenerate the token every time. TOKEN: #{token}")
-    end
+    retrieve_agent_token
 
     #Fire off a template run using the token pulled out of fog. This should only ever run on a new node, or if your node attributes get lost.
     config_template = template "/etc/rackspace-monitoring-agent.cfg" do
