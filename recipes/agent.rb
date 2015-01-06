@@ -92,6 +92,4 @@ service "rackspace-monitoring-agent" do
   end
 
   action [ :enable, :start ]
-  subscribes :restart, resources(:template => '/etc/rackspace-monitoring-agent.cfg'), :delayed
-
 end
