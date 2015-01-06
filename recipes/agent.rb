@@ -60,6 +60,8 @@ unless node['cloud_monitoring']['agent']['token'].nil?
       :monitoring_id => node['cloud_monitoring']['agent']['id'],
       :monitoring_token => node['cloud_monitoring']['agent']['token']
     )
+    notifies :restart, "service[rackspace-monitoring-agent", :immediately
+    notifies :restart, "service[rackspace-monitoring-agent", :delayed
   end
 end
 
