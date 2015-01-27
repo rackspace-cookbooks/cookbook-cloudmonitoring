@@ -25,7 +25,7 @@ rescue Exception => e
 end
 
 if node['cloud_monitoring']['agent']['token'].nil?
-  get_agent_token
+  retrieve_agent_token
 end
 
 # If unable to retieve the agent token via API, create a new one
