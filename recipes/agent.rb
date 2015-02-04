@@ -47,7 +47,7 @@ begin
 
   values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
 
-  node.set['cloud_monitoring']['agent']['token'] = values['agent_token'] || nil
+  node.set['cloud_monitoring']['agent']['token'] = values['agent_token'] if values.to_hash.has_key? 'agent_token'
 rescue Exception => e
   Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
