@@ -9,7 +9,7 @@ include_recipe 'cloud_monitoring::agent_repo.rb'
 
 # Get the agent id
 if node['cloud_monitoring']['agent']['id'].nil?
-  node.set['cloud_monitoring']['agent']['id'] = node['hostname']
+  node['cloud_monitoring']['agent']['id'] = 'xenstore-read name | head -n1 | sed "s/^instance-//"'
 end
 
 # Try to retireve agent token from the data bag
