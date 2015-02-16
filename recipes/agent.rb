@@ -50,6 +50,23 @@ package "rackspace-monitoring-agent" do
   notifies :restart, "service[rackspace-monitoring-agent]"
 end
 
+service "rackspace-monitoring-agent" do
+  # TODO: RHEL, CentOS, ... support
+  supports value_for_platform(
+    "ubuntu" => { "default" => [ :start, :stop, :restart, :status ] },
+    "default" => { "default" => [ :start, :stop ] }
+  )
+
+  case node[:platform]
+    when "ubuntu"
+    if node[:platform_version].to_f >= 9.10
+      provider Chef::Provider::Service::Upstart
+    end
+  end
+
+  action [ :enable, :start ]
+end
+
 unless node['cloud_monitoring']['agent']['token'].nil?
   template "/etc/rackspace-monitoring-agent.cfg" do
     source "rackspace-monitoring-agent.erb"
@@ -79,19 +96,3 @@ node['cloud_monitoring']['plugins'].each_pair do |source_cookbook, path|
   end
 end
 
-service "rackspace-monitoring-agent" do
-  # TODO: RHEL, CentOS, ... support
-  supports value_for_platform(
-    "ubuntu" => { "default" => [ :start, :stop, :restart, :status ] },
-    "default" => { "default" => [ :start, :stop ] }
-  )
-
-  case node[:platform]
-    when "ubuntu"
-    if node[:platform_version].to_f >= 9.10
-      provider Chef::Provider::Service::Upstart
-    end
-  end
-
-  action [ :enable, :start ]
-end
