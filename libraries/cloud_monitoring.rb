@@ -1,5 +1,6 @@
 module Opscode
   module Rackspace
+    # Rackspace Cloud Monitoring modules
     module Monitoring
       def cm
         begin
