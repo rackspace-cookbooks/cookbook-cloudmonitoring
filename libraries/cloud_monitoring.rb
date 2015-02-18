@@ -87,8 +87,6 @@ module Opscode
         obj = objs.select { |x| x.identity === id }
         if !obj.empty?
           obj.first
-        else
-          nil
         end
       end
 
@@ -97,8 +95,6 @@ module Opscode
         obj = objs.select { |x| x.label === label }
         if !obj.empty?
           obj.first
-        else
-          nil
         end
       end
 
@@ -114,8 +110,6 @@ module Opscode
 
         if !possible.empty?
           possible.values.first
-        else
-          nil
         end
       end
 
@@ -131,8 +125,6 @@ module Opscode
 
         unless possible == {}
           possible
-        else
-          nil
         end
       end
 
@@ -163,8 +155,6 @@ module Opscode
 
         if !possible.empty?
           possible.values.first
-        else
-          nil
         end
       end
     end
