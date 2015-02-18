@@ -9,6 +9,10 @@ action :create do
     agent_token.save
     new_resource.updated_by_last_action(true)
     clear_tokens
+    if @new_resouce.label == node['cloud_monitoring']['agent']['id'] then
+      Chef::Log.debug("Updating agent token for #{new_resource.label}")
+      node.set['cloud_monitoring']['agent']['token'] = get_token_by_label(@new_resource.label).token
+    end
   else
     Chef::Log.debug("#{new_resource} exists, skipping create")
     new_resource.updated_by_last_action(false)

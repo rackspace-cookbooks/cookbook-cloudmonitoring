@@ -28,15 +28,10 @@ if node['cloud_monitoring']['agent']['token'].nil?
   retrieve_agent_token
 end
 
-# If unable to retieve the agent token via API, create a new one
-if node['cloud_monitoring']['agent']['token'].nil?
-    create_token = cloud_monitoring_agent_token "#{node.hostname}" do
-      rackspace_username  node['cloud_monitoring']['rackspace_username']
-      rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
-      action :create
-    end
-
-    retrieve_agent_token
+cloud_monitoring_agent_token node['cloud_monitoring']['agent']['id'] do
+  rackspace_username  node['cloud_monitoring']['rackspace_username']
+  rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
+  action :create
 end
 
 package "rackspace-monitoring-agent" do
@@ -67,19 +62,18 @@ service "rackspace-monitoring-agent" do
   action [ :enable, :start ]
 end
 
-unless node['cloud_monitoring']['agent']['token'].nil?
-  template "/etc/rackspace-monitoring-agent.cfg" do
-    source "rackspace-monitoring-agent.erb"
-    owner "root"
-    group "root"
-    mode 0600
-    variables(
+template "/etc/rackspace-monitoring-agent.cfg" do
+  source "rackspace-monitoring-agent.erb"
+  owner "root"
+  group "root"
+  mode 0600
+  variables lazy {
+    {
       :monitoring_id => node['cloud_monitoring']['agent']['id'],
-      :monitoring_token => node['cloud_monitoring']['agent']['token']
-    )
-    notifies :restart, "service[rackspace-monitoring-agent]", :immediately
-    notifies :restart, "service[rackspace-monitoring-agent]", :delayed
-  end
+      :monitoring_token => node['cloud_monitoring']['agent']['token'],
+    }
+  }
+  notifies :restart, "service[rackspace-monitoring-agent]", :delayed
 end
 
 node['cloud_monitoring']['plugins'].each_pair do |source_cookbook, path|
