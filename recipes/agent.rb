@@ -9,7 +9,7 @@ include_recipe 'cloud_monitoring::agent_repo.rb'
 
 # Get the agent id
 if node['cloud_monitoring']['agent']['id'].nil?
-  node.set['cloud_monitoring']['agent']['id'] = node['hostname']
+  node['cloud_monitoring']['agent']['id'] = `xenstore-read name | head -n1 | sed "s/^instance-//"`
 end
 
 # Try to retireve agent token from the data bag
@@ -28,15 +28,10 @@ if node['cloud_monitoring']['agent']['token'].nil?
   retrieve_agent_token
 end
 
-# If unable to retieve the agent token via API, create a new one
-if node['cloud_monitoring']['agent']['token'].nil?
-    create_token = cloud_monitoring_agent_token "#{node.hostname}" do
-      rackspace_username  node['cloud_monitoring']['rackspace_username']
-      rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
-      action :create
-    end
-
-    retrieve_agent_token
+cloud_monitoring_agent_token node['cloud_monitoring']['agent']['id'] do
+  rackspace_username  node['cloud_monitoring']['rackspace_username']
+  rackspace_api_key   node['cloud_monitoring']['rackspace_api_key']
+  action :create
 end
 
 package "rackspace-monitoring-agent" do
@@ -48,35 +43,6 @@ package "rackspace-monitoring-agent" do
   end
 
   notifies :restart, "service[rackspace-monitoring-agent]"
-end
-
-unless node['cloud_monitoring']['agent']['token'].nil?
-  template "/etc/rackspace-monitoring-agent.cfg" do
-    source "rackspace-monitoring-agent.erb"
-    owner "root"
-    group "root"
-    mode 0600
-    variables(
-      :monitoring_id => node['cloud_monitoring']['agent']['id'],
-      :monitoring_token => node['cloud_monitoring']['agent']['token']
-    )
-    notifies :restart, "service[rackspace-monitoring-agent]", :immediately
-    notifies :restart, "service[rackspace-monitoring-agent]", :delayed
-  end
-end
-
-node['cloud_monitoring']['plugins'].each_pair do |source_cookbook, path|
-  remote_directory "cloud_monitoring_plugins_#{source_cookbook}" do
-    path node['cloud_monitoring']['plugin_path']
-    cookbook source_cookbook
-    source path
-    files_mode 0755
-    owner 'root'
-    group 'root'
-    mode 0755
-    recursive true
-    purge false
-  end
 end
 
 service "rackspace-monitoring-agent" do
@@ -95,3 +61,32 @@ service "rackspace-monitoring-agent" do
 
   action [ :enable, :start ]
 end
+
+template "/etc/rackspace-monitoring-agent.cfg" do
+  source "rackspace-monitoring-agent.erb"
+  owner "root"
+  group "root"
+  mode 0600
+  variables lazy {
+    {
+      :monitoring_id => node['cloud_monitoring']['agent']['id'],
+      :monitoring_token => node['cloud_monitoring']['agent']['token'],
+    }
+  }
+  notifies :restart, "service[rackspace-monitoring-agent]", :delayed
+end
+
+node['cloud_monitoring']['plugins'].each_pair do |source_cookbook, path|
+  remote_directory "cloud_monitoring_plugins_#{source_cookbook}" do
+    path node['cloud_monitoring']['plugin_path']
+    cookbook source_cookbook
+    source path
+    files_mode 0755
+    owner 'root'
+    group 'root'
+    mode 0755
+    recursive true
+    purge false
+  end
+end
+
