@@ -40,4 +40,3 @@ default['cloud_monitoring']['plugins']['cloud_monitoring'] = 'plugins'
 
 default['cloud_monitoring']['credentials']['databag_name'] = 'rackspace'
 default['cloud_monitoring']['credentials']['databag_item'] = 'cloud'
-

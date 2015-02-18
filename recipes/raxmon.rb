@@ -16,22 +16,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe "python"
+include_recipe 'python'
 
-#Create the .raxrc with credentials in /root
-template "/root/.raxrc" do
-  source "raxrc.erb"
-  owner "root"
-  group "root"
+# Create the .raxrc with credentials in /root
+template '/root/.raxrc' do
+  source 'raxrc.erb'
+  owner 'root'
+  group 'root'
   mode 0600
   variables(
-    :raxusername => node['cloud_monitoring']['rackspace_username'],
-    :raxapikey => node['cloud_monitoring']['rackspace_api_key'],
-    :raxauthurl => node['cloud_monitoring']['rackspace_auth_url'] 
+    raxusername: node['cloud_monitoring']['rackspace_username'],
+    raxapikey: node['cloud_monitoring']['rackspace_api_key'],
+    raxauthurl: node['cloud_monitoring']['rackspace_auth_url']
   )
 end
 
-#Install the raxmon-cli
-python_pip "rackspace-monitoring-cli" do
+# Install the raxmon-cli
+python_pip 'rackspace-monitoring-cli' do
   action :upgrade
 end
