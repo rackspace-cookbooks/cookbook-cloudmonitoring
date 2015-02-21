@@ -2,7 +2,22 @@ module Opscode
   module Rackspace
     module Monitoring
 
-      def cm
+      def cm(rackspace_api_key = nil, rackspace_username = nil, rackspace_auth_url = nil)
+        # This is a simple helper method to deduplicate precedence logic code
+        def attribute_logic(argument, resource, databag)
+          # Precedence:
+          # 1) Arguments
+          # 2) new_resource variables (If available)
+          # 3) Data bag
+          if argument
+            return argument
+          end
+          if resource
+            return resource
+          end
+          return databag
+        end
+
         begin
           # Access the Rackspace Cloud encrypted data_bag
           creds = Chef::EncryptedDataBagItem.load(
@@ -13,9 +28,10 @@ module Opscode
           creds = {'username' => nil, 'apikey' => nil, 'auth_url' => nil }
         end
 
-        apikey = new_resource.rackspace_api_key || creds['apikey']
-        username = new_resource.rackspace_username || creds['username']
-        auth_url = new_resource.rackspace_auth_url || creds['auth_url']
+        apikey   = attribute_logic(rackspace_api_key,  defined?(new_resource) ? new_resource.rackspace_api_key : nil,  creds['apikey'])
+        username = attribute_logic(rackspace_username, defined?(new_resource) ? new_resource.rackspace_username : nil, creds['username'])
+        auth_url = attribute_logic(rackspace_auth_url, defined?(new_resource) ? new_resource.rackspace_auth_url : nil, creds['auth_url'])
+
         Chef::Log.debug("Opscode::Rackspace::Monitoring.cm: creating new Fog connection") if(!defined?(@@cm) || @@cm.nil?)
 
         require 'fog'
