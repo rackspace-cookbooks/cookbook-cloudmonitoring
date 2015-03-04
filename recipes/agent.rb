@@ -9,7 +9,10 @@ include_recipe 'cloud_monitoring::agent_repo.rb'
 
 # Get the agent id
 if node['cloud_monitoring']['agent']['id'].nil?
-  node['cloud_monitoring']['agent']['id'] = `xenstore-read name | head -n1 | sed "s/^instance-//"`
+  # TO DO: Add functionality for other OSes. Only tested for Ubuntu
+  agent_id = `xenstore-read name | head -n1 | sed "s/^instance-//"`
+
+  node.set['cloud_monitoring']['agent']['id'] = agent_id
 end
 
 # Try to retireve agent token from the data bag
@@ -18,15 +21,14 @@ begin
   databag_filename = node['cloud_monitoring']['credentials']['databag_item']
 
   values = Chef::EncryptedDataBagItem.load(databag_dir, databag_filename)
-
-  node.set['cloud_monitoring']['agent']['token'] = values['agent_token'] if values.to_hash.key? 'agent_token'
+  if values.to_hash.key? 'agent_token'
+    node.set['cloud_monitoring']['agent']['token'] = values['agent_token']
+  end
 rescue Exception => e
   Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
 
-if node['cloud_monitoring']['agent']['token'].nil?
-  retrieve_agent_token
-end
+retrieve_agent_token if node['cloud_monitoring']['agent']['token'].nil?
 
 cloud_monitoring_agent_token node['cloud_monitoring']['agent']['id'] do
   rackspace_username node['cloud_monitoring']['rackspace_username']
@@ -53,10 +55,10 @@ service 'rackspace-monitoring-agent' do
   )
 
   case node[:platform]
-    when 'ubuntu'
-      if node[:platform_version].to_f >= 9.10
-        provider Chef::Provider::Service::Upstart
-      end
+  when 'ubuntu'
+    if node[:platform_version].to_f >= 9.10
+      provider Chef::Provider::Service::Upstart
+    end
   end
 
   action [:enable, :start]
