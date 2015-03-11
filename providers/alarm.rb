@@ -70,8 +70,12 @@ def load_current_resource
   end
 
   @current_resource = get_alarm_by_id @entity.id, node['cloud_monitoring']['alarms'][@new_resource.label]
-  if @current_resource.nil?
-    @current_resource = get_alarm_by_label @entity.id, @new_resource.label
-    update_node_alarm(@new_resource.label, @current_resource.identity) unless @current_resource.nil?
-  end
+
+  return unless @current_resource.nil?
+
+  @current_resource = get_alarm_by_label @entity.id, @new_resource.label
+
+  return if @current_resource.nil?
+
+  update_node_alarm(@new_resource.label, @current_resource.identity)
 end

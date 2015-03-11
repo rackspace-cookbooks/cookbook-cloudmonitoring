@@ -52,9 +52,9 @@ end
 
 def load_current_resource
   @current_resource = get_entity_by_id node['cloud_monitoring']['entity_id']
-  if @current_resource.nil?
-    @current_resource = get_entity_by_label @new_resource.label
-    update_node_entity_id(@current_resource.identity) unless @current_resource.nil?
-    update_node_agent_id((@current_resource.agent_id || @current_resource.label)) unless @current_resource.nil?
-  end
+  return unless @current_resource.nil?
+
+  @current_resource = get_entity_by_label @new_resource.label
+  update_node_entity_id(@current_resource.identity) unless @current_resource.nil?
+  update_node_agent_id((@current_resource.agent_id || @current_resource.label)) unless @current_resource.nil?
 end

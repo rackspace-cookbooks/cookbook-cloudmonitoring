@@ -54,8 +54,9 @@ def load_current_resource
   end
 
   @current_resource = get_check_by_id @entity.id, node['cloud_monitoring']['checks'][@new_resource.label]
-  if @current_resource.nil?
-    @current_resource = get_check_by_label @entity.id, @new_resource.label
-    update_node_check(@new_resource.label, @current_resource.identity) unless @current_resource.nil?
-  end
+
+  return unless @current_resource.nil?
+
+  @current_resource = get_check_by_label @entity.id, @new_resource.label
+  update_node_check(@new_resource.label, @current_resource.identity) unless @current_resource.nil?
 end

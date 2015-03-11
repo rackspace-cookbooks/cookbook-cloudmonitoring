@@ -58,6 +58,7 @@ rescue Exception => e
   Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
 
-if node[:cloud_monitoring][:rackspace_username] == 'your_rackspace_username' || node['cloud_monitoring']['rackspace_api_key'] == 'your_rackspace_api_key'
+if node[:cloud_monitoring][:rackspace_username] == 'your_rackspace_username' ||
+   node['cloud_monitoring']['rackspace_api_key'] == 'your_rackspace_api_key'
   Chef::Log.info 'Rackspace username or api key has not been set. For this to work, either set the default attributes or create an encrypted databag of rackspace cloud per the cookbook README'
 end

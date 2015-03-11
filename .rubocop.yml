@@ -1,0 +1,34 @@
+
+
+Metrics/LineLength:
+  Max:
+    100
+  Exclude:
+    - 'recipes/default.rb'
+    - 'recipes/agent_repo.rb'
+    - 'libraries/cloud_monitoring.rb'
+    - 'providers/alarm.rb'
+    - 'providers/entity.rb'
+    - 'providers/agent_token.rb'
+    - 'providers/check.rb'
+
+
+Lint/RescueException:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 21
+
+Metrics/AbcSize:
+  Exclude:
+    - 'providers/*'
+    - 'libraries/cloud_monitoring.rb'
+
+Metrics/CyclomaticComplexity:
+  Max:
+    10
+
+Metrics/PerceivedComplexity:
+  Max:
+    10
+

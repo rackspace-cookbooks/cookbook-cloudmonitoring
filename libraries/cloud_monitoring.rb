@@ -9,46 +9,46 @@ module Opscode
             node['cloud_monitoring']['credentials']['databag_name'],
             node['cloud_monitoring']['credentials']['databag_item']
           )
-        rescue Exception => e
+        rescue
           creds = { 'username' => nil, 'apikey' => nil, 'auth_url' => nil }
         end
 
         apikey = new_resource.rackspace_api_key || creds['apikey']
         username = new_resource.rackspace_username || creds['username']
         auth_url = new_resource.rackspace_auth_url || creds['auth_url']
-        Chef::Log.debug('Opscode::Rackspace::Monitoring.cm: creating new Fog connection') if !defined?(@@cm) || @@cm.nil?
+        Chef::Log.debug('Opscode::Rackspace::Monitoring.cm: creating new Fog connection') if !defined?(@cm) || @cm.nil?
 
         require 'fog'
 
-        @@cm ||= Fog::Rackspace::Monitoring.new(
+        @cm ||= Fog::Rackspace::Monitoring.new(
           rackspace_api_key: apikey,
           rackspace_username: username,
           rackspace_auth_url: auth_url
         )
 
-        Chef::Log.debug('Opscode::Rackspace::Monitoring.cm: Loading views') if !defined?(@@view) || @@view.nil?
-        @@view ||= Hash[@@cm.entities.overview(limit: 1000).map { |x| [x.identity, x] }]
-        @@cm
+        Chef::Log.debug('Opscode::Rackspace::Monitoring.cm: Loading views') if !defined?(@view) || @view.nil?
+        @view ||= Hash[@cm.entities.overview(limit: 1000).map { |x| [x.identity, x] }]
+        @cm
       end
 
       def tokens
-        Chef::Log.debug('Opscode::Rackspace::Monitoring.tokens: Loading tokens') if !defined?(@@tokens) || @@tokens.nil?
-        @@tokens ||= Hash[cm.agent_tokens.all(limit: 1000).map { |x| [x.identity, x] }]
+        Chef::Log.debug('Opscode::Rackspace::Monitoring.tokens: Loading tokens') if !defined?(@tokens) || @tokens.nil?
+        @tokens ||= Hash[cm.agent_tokens.all(limit: 1000).map { |x| [x.identity, x] }]
       end
 
       def clear
         Chef::Log.debug('Opscode::Rackspace::Monitoring.clear called; clearing view')
-        @@view = nil
+        @view = nil
       end
 
       def clear_tokens
         Chef::Log.debug('Opscode::Rackspace::Monitoring.clear_tokens called; clearing tokens')
-        @@tokens = nil
+        @tokens = nil
       end
 
       def view
         cm
-        @@view
+        @view
       end
 
       def update_node_entity_id(entity_id)
@@ -84,18 +84,19 @@ module Opscode
 
       def get_child_by_id(entity_id, id, type)
         objs = get_type entity_id, type
-        obj = objs.select { |x| x.identity === id }
-        if !obj.empty?
-          obj.first
-        end
+        obj = objs.select { |x| x.identity == id }
+
+        return if obj.empty?
+
+        obj.first
       end
 
       def get_child_by_label(entity_id, label, type)
         objs = get_type entity_id, type
-        obj = objs.select { |x| x.label === label }
-        if !obj.empty?
-          obj.first
-        end
+        obj = objs.select { |x| x.label == label }
+        return if obj.empty?
+
+        obj.first
       end
 
       #####
@@ -105,27 +106,25 @@ module Opscode
       end
 
       def get_entity_by_label(label)
-        possible = view.select { |_key, value| value.label === label }
+        possible = view.select { |_key, value| value.label == label }
         possible = Hash[*possible.flatten(1)]
 
-        if !possible.empty?
-          possible.values.first
-        end
+        return if possible.empty?
+
+        possible.values.first
       end
 
       def get_entity_by_ip(ip_address)
         possible = {}
         view.each do | x |
           unless x[1].ip_addresses.nil?
-            if x[1].ip_addresses.value?(ip_address)
-              possible = x[1]
-            end
+            possible = x[1] if x[1].ip_addresses.value?(ip_address)
           end
         end
 
-        unless possible == {}
-          possible
-        end
+        return if possible == {}
+
+        possible
       end
 
       def get_check_by_id(entity_id, id)
@@ -150,12 +149,12 @@ module Opscode
 
       def get_token_by_label(label)
         Chef::Log.debug("Opscode::Rackspace::Monitoring: Attempting to find tokens for #{label}")
-        possible = tokens.select { |_key, value| value.label === label }
+        possible = tokens.select { |_key, value| value.label == label }
         possible = Hash[*possible.flatten(1)]
 
-        if !possible.empty?
-          possible.values.first
-        end
+        return if possible.empty?
+
+        possible.values.first
       end
     end
   end

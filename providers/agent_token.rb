@@ -33,9 +33,9 @@ end
 
 def load_current_resource
   @current_resource = get_token_by_id @new_resource.token
-  if @current_resource.nil?
-    @current_resource = get_token_by_label @new_resource.label
-    node.set['cloud_monitoring']['agent']['token'] = @current_resource.identity unless @current_resource.nil?
-    node.set['cloud_monitoring']['agent']['id'] = @current_resource.label unless @current_resource.nil?
-  end
+  return unless @current_resource.nil?
+
+  @current_resource = get_token_by_label @new_resource.label
+  node.set['cloud_monitoring']['agent']['token'] = @current_resource.identity unless @current_resource.nil?
+  node.set['cloud_monitoring']['agent']['id'] = @current_resource.label unless @current_resource.nil?
 end
