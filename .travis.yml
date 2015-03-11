@@ -1,5 +1,7 @@
 language: ruby
-cache: bundler ridley
+cache:
+  - bundler
+  - ridley
 notifications:
   webhooks:
     urls:
