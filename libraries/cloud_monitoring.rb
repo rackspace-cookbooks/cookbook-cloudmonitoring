@@ -116,7 +116,7 @@ module Opscode
 
       def get_entity_by_ip(ip_address)
         possible = {}
-        view.each do | x |
+        view.each do |x|
           unless x[1].ip_addresses.nil?
             possible = x[1] if x[1].ip_addresses.value?(ip_address)
           end
