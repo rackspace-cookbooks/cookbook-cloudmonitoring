@@ -21,9 +21,9 @@ group :development do
   gem 'guard-foodcritic', '~> 1.0'
   gem 'guard-kitchen', '~> 0.0'
   gem 'guard-rspec', '~> 4.5'
-  gem 'rb-fsevent', require => false
-  gem 'rb-inotify', require => false
-  gem 'terminal-notifier-guard', require => false
+  gem 'rb-fsevent', require: false
+  gem 'rb-inotify', require: false
+  gem 'terminal-notifier-guard', require: false
   gem 'psych', '~> 2.0.12'
   require 'rbconfig'
   if RbConfig::CONFIG['target_os'] =~ /mswin|mingw|cygwin/i
