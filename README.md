@@ -1,6 +1,8 @@
 **NOTE, there have been many changes in v1.0.0 series of this cookbook. Some of which are possibly breaking for older installations. Please see the changelog.**
  Older versions can be found on the [release page](https://github.com/rackspace-cookbooks/cookbook-cloudmonitoring/releases)
 
+[![Build Status](https://travis-ci.org/racker/cookbook-cloudmonitoring.svg)](https://travis-ci.org/racker/cookbook-cloudmonitoring)
+
 # Description
 
 [![Join the chat at https://gitter.im/racker/cookbook-cloudmonitoring](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/racker/cookbook-cloudmonitoring?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
