@@ -3,6 +3,8 @@
 
 # Description
 
+[![Join the chat at https://gitter.im/racker/cookbook-cloudmonitoring](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/racker/cookbook-cloudmonitoring?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This cookbook provides automated way to manage the various resources using the Rackspace Cloud Monitoring API.
 Specifically this recipe will focus on main atom's in the system.
 
