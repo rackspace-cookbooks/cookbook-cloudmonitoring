@@ -40,7 +40,7 @@ begin
 
   if node['cloud_monitoring']['rackspace_auth_region'] == 'us'
     node.default['cloud_monitoring']['rackspace_auth_url'] = 'https://identity.api.rackspacecloud.com/v2.0'
-  elsif node['cloud_monitoring']['rackspace_auth_region']  == 'uk'
+  elsif node['cloud_monitoring']['rackspace_auth_region'] == 'uk'
     node.default['cloud_monitoring']['rackspace_auth_url'] = 'https://lon.identity.api.rackspacecloud.com/v2.0'
   else
     Chef::Log.info "Using the encrypted data bag for rackspace cloud but no raxregion attribute was set (or it was set to something other then 'us' or 'uk'). Assuming 'us'. If you have a 'uk' account make sure to set the raxregion in your data bag"
