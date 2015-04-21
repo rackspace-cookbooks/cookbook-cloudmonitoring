@@ -28,8 +28,6 @@ rescue Exception => e
   Chef::Log.error 'Failed to load rackspace cloud data bag: ' + e.to_s
 end
 
-retrieve_agent_token if node['cloud_monitoring']['agent']['token'].nil?
-
 cloud_monitoring_agent_token node['cloud_monitoring']['agent']['id'] do
   rackspace_username node['cloud_monitoring']['rackspace_username']
   rackspace_api_key node['cloud_monitoring']['rackspace_api_key']
