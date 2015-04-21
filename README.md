@@ -1,6 +1,8 @@
 **NOTE, there have been many changes in v1.0.0 series of this cookbook. Some of which are possibly breaking for older installations. Please see the changelog.**
  Older versions can be found on the [release page](https://github.com/rackspace-cookbooks/cookbook-cloudmonitoring/releases)
 
+[![Build Status](https://travis-ci.org/racker/cookbook-cloudmonitoring.svg)](https://travis-ci.org/racker/cookbook-cloudmonitoring)
+
 # Description
 
 This cookbook provides automated way to manage the various resources using the Rackspace Cloud Monitoring API.
