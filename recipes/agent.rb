@@ -5,7 +5,7 @@ chef_gem 'fog' do
   action :install
 end
 
-include_recipe 'cloud_monitoring::agent_repo.rb'
+include_recipe 'cloud_monitoring::agent_repo'
 
 # Get the agent id
 if node['cloud_monitoring']['agent']['id'].nil?
