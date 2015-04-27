@@ -23,7 +23,18 @@ chef_gem 'fog' do
   action :install
 end
 
+chef_gem 'httparty' do
+  version '>=0.13.1'
+  action :install
+end
+
+chef_gem 'json' do
+  action :install
+end
+
 require 'fog'
+require 'httparty'
+require 'json'
 
 begin
   # Access the Rackspace Cloud encrypted data_bag
